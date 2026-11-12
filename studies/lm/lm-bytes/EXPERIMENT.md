@@ -1,7 +1,7 @@
 ---
 name: lm-bytes
 title: "Byte-level language modelling on TinyStories: TTN against n-grams, MLP, chain and transformer"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 10
@@ -10,6 +10,9 @@ disk_gb: 60
 data: data__tinystories
 secrets:
 approved_utc: 2026-11-12T21:42:22Z
+result: supported
+finished_utc: 2026-11-12T23:46:01Z
+writeup: studies/lm/lm-bytes/README.md
 ---
 
 # Byte-level language modelling on TinyStories: TTN against n-grams, MLP, chain and transformer
@@ -268,4 +271,18 @@ None.
 
 ## Outcome
 
-Not run yet.
+**Supported** (H1). Test bits/byte. TTN means the untied r = 32 TTN: median of 3 seeds, 1.2860 [1.2857, 1.2867]. All 40 runs finished, with none skipped, diverged or failed.
+
+- H1, TTN vs best KN order ≤ 4 (1.815): supported, with all 3 seeds below it.
+- TTN vs best KN order ≤ 8: KN better, at 1.158 on 100 MB and 1.215 on 10.24M bytes. The highest order the TTN beats is 6.
+- TTN vs MLP (1.619): TTN better.
+- TTN vs matched chain (1.213): chain better.
+- Untied vs level-tied (1.425): untied better. The tied TTN starts position-blind; early points are in the write-up.
+- TTN vs transformer (1.301): equal (gap 0.015, under the 0.02 margin), though all 3 TTN seeds are lower.
+- TTN vs frozen-fusion TTN (2.228): TTN better.
+- Identity vs variance init (1.366, 2 seeds): identity better. The variance arm started slowly but didn't stall: it first went below the KN unigram at updates 7,000 and 7,500.
+- Convergence: not converged at 40k. The 160k run reached 1.211.
+- Plateau: left. Every run went below the KN unigram, the identity-init runs by update 500.
+- Cost and time: 1.91 h of worker time on one A40 at $0.59/h, about $1.13, against a 10 h cap and a $10 budget. Training took 1.86 h.
+
+Write-up: [README.md](README.md).

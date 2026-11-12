@@ -75,7 +75,7 @@ def main(res, figs):
     fig.savefig(Path(figs) / 'curves.pdf')
     plt.close(fig)
 
-    fig, ax = plt.subplots(figsize=(5.2, 3.6))
+    fig, ax = plt.subplots(figsize=(7.4, 3.6))
     seen = set()
     for g, rs in sorted(groups.items()):
         for r in rs:
@@ -95,7 +95,8 @@ def main(res, figs):
                     transform=ax.get_yaxis_transform())
     ax.set(xscale='log', xlabel='parameters', ylabel='test bits/byte', title='final test bits/byte (one marker per seed)')
     ax.xaxis.set_minor_formatter(plt.NullFormatter())
-    ax.legend(fontsize=6.5, title=INIT_NOTE, title_fontsize=6.5)
+    # legend outside the axes so it doesn't hide markers (the frozen-fusion TTN sits mid-plot)
+    ax.legend(fontsize=6.5, title=INIT_NOTE.replace('; ', '\n'), title_fontsize=6.5, loc='upper left', bbox_to_anchor=(1.08, 1))
     fig.tight_layout()
     fig.savefig(Path(figs) / 'params.pdf')
     plt.close(fig)
