@@ -71,7 +71,7 @@ pack_dirs = []    # folders `orch data upload` publishes for workers, e.g. ["dat
 experiment_log = "EXPERIMENTS.md"   # the log of every experiment; commit it
 
 [viewer]
-port = 8000   # the dashboard of running and past experiments
+port = 8010   # the dashboard (8000 is rr-trial's) of running and past experiments
 chat = true           # the dashboard's question box: a Claude Code agent that can only read the project's files
 chat_model = "sonnet" # the model it uses; "" for your Claude Code default
 
