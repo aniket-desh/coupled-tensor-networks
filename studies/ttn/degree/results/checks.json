@@ -1,0 +1,127 @@
+{
+ "core_contraction_vs_dense_T": 1.4710455076283324e-15,
+ "autograd_vs_finite_difference": 1.739212662776879e-10,
+ "teacher_cores_reproduce_targets_max_err": 0.0,
+ "gram_minus_identity_none": 0.003265380859375,
+ "gram_minus_identity_leaf": 0.007720947265625,
+ "gram_minus_identity_quarter": 0.012420654296875,
+ "gram_minus_identity_split2": 0.00494384765625,
+ "gram_minus_identity_half": 0.0028076171875,
+ "gram_minus_identity_split4": 0.003936767578125,
+ "init_m2_r4_alpha1.0_leaf": [
+  1.0042206612915836,
+  0.10003552119741693
+ ],
+ "init_m2_r4_alpha1.0_quarter": [
+  1.0561912461762593,
+  0.254304200217882
+ ],
+ "init_m2_r4_alpha1.0_half": [
+  1.0757770365757318,
+  0.5902206388834326
+ ],
+ "init_m2_r4_alpha1.0_out": [
+  1.3680492902371821,
+  1.7418933247794617
+ ],
+ "init_m2_r4_alpha0.7_leaf": [
+  0.4920681240328759,
+  0.04901740538673429
+ ],
+ "init_m2_r4_alpha0.7_quarter": [
+  0.12425984392139068,
+  0.029918634851433593
+ ],
+ "init_m2_r4_alpha0.7_half": [
+  0.007296168074467832,
+  0.004003012553624212
+ ],
+ "init_m2_r4_alpha0.7_out": [
+  3.083492848709581e-05,
+  3.926112639728956e-05
+ ],
+ "init_m2_r8_alpha1.0_leaf": [
+  1.0167276454864473,
+  0.06132217920699245
+ ],
+ "init_m2_r8_alpha1.0_quarter": [
+  1.0158044171790888,
+  0.14144325914466843
+ ],
+ "init_m2_r8_alpha1.0_half": [
+  1.0441574017487976,
+  0.3206601771357255
+ ],
+ "init_m2_r8_alpha1.0_out": [
+  1.063571002545094,
+  0.6809277087911089
+ ],
+ "init_m2_r8_alpha0.7_leaf": [
+  0.4981965462883591,
+  0.030047867811426307
+ ],
+ "init_m2_r8_alpha0.7_quarter": [
+  0.11950837387670257,
+  0.01664065799511109
+ ],
+ "init_m2_r8_alpha0.7_half": [
+  0.007081716415520967,
+  0.0021747913067729626
+ ],
+ "init_m2_r8_alpha0.7_out": [
+  2.397218874967656e-05,
+  1.534766134180418e-05
+ ],
+ "init_m2_r16_alpha1.0_leaf": [
+  1.015951596724059,
+  0.051507764843809346
+ ],
+ "init_m2_r16_alpha1.0_quarter": [
+  1.0293014574304116,
+  0.10859671170160662
+ ],
+ "init_m2_r16_alpha1.0_half": [
+  1.0591101205663995,
+  0.23271957170954236
+ ],
+ "init_m2_r16_alpha1.0_out": [
+  1.1348213828040365,
+  0.5261502091347334
+ ],
+ "init_m2_r16_alpha0.7_leaf": [
+  0.497816282394789,
+  0.02523880477346658
+ ],
+ "init_m2_r16_alpha0.7_quarter": [
+  0.12109628716523045,
+  0.012776294534982316
+ ],
+ "init_m2_r16_alpha0.7_half": [
+  0.007183129204560179,
+  0.0015783578303694892
+ ],
+ "init_m2_r16_alpha0.7_out": [
+  2.5578125316174082e-05,
+  1.1859078607706637e-05
+ ],
+ "init_m2_out_alpha0.7_predicted": 2.2539340290692216e-05,
+ "mobility_groups_sum_to_full": 3.469446951953614e-18,
+ "velocity_vs_grad_inner_product": 2.753094216763605e-17,
+ "first_order_dc_rel_err": 1.4577262795241732e-05,
+ "frozen_q1_L_moved": 0.0,
+ "unfrozen_run_moved_q1": 0.24559546516502506,
+ "frozen_groups_K_abs": 0.0,
+ "frozen_groups_velocity_abs": 0.0,
+ "masked_output_target_changes_grad": 0.0,
+ "alignment_at_teacher_min": 0.0,
+ "alignment_unrelated_feature_q1": 0.0004879870650449347,
+ "gram_vs_dense_T_norm": 6.938893903907228e-17,
+ "population_vs_mc_loss_max_rel": 0.00931052733305018,
+ "population_vs_mc_coeff_max_abs": 0.0062014369239369056,
+ "population_at_teacher_coeff_err": 0.0,
+ "population_at_teacher_loss": 0.0,
+ "permutation_symmetry_deg2_vs_deg8": 4.743384504624082e-20,
+ "failed": [
+  "alignment_at_teacher_min"
+ ]
+}
