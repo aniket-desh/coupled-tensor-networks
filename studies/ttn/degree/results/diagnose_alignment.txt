@@ -1,0 +1,24 @@
+== run 1
+activation column norms per node: {'q1': [64.0, 64.0, 0.0, 0.0], 'q2': [64.0, 64.0, 64.0, 0.0], 'q3': [64.0, 64.0, 64.0, 0.0], 'q4': [64.0, 64.0, 64.0, 0.0], 'L': [64.0, 64.0, 64.0, 0.0], 'R': [64.0, 64.0, 64.0, 0.0]}
+gelsy call 1: min 1.16826468522421e-05, entries off 1 by > 1e-6: [('comp 1', 'q3', '1.0006'), ('comp 3', 'q1', '1.16826e-05')], unrelated 0.000488
+gelsy call 2: min 0.999999999999921, entries off 1 by > 1e-6: [('comp 3', 'q3', '1.00009')], unrelated 0.000488
+gelsy call 3: min 0.999999999999921, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsd call 1: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsd call 2: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsd call 3: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+== run 2
+activation column norms per node: {'q1': [64.0, 64.0, 0.0, 0.0], 'q2': [64.0, 64.0, 64.0, 0.0], 'q3': [64.0, 64.0, 64.0, 0.0], 'q4': [64.0, 64.0, 64.0, 0.0], 'L': [64.0, 64.0, 64.0, 0.0], 'R': [64.0, 64.0, 64.0, 0.0]}
+gelsy call 1: min 1.16826468522421e-05, entries off 1 by > 1e-6: [('comp 3', 'q1', '1.16826e-05'), ('comp 3', 'q2', '1.00009')], unrelated 0.000488
+gelsy call 2: min 0.999999999999921, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsy call 3: min 0.999999999999935, entries off 1 by > 1e-6: [('comp 3', 'q3', '1.00009'), ('comp 3', 'L', '1.00017')], unrelated 0.000488
+gelsd call 1: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsd call 2: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsd call 3: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+== run 3
+activation column norms per node: {'q1': [64.0, 64.0, 0.0, 0.0], 'q2': [64.0, 64.0, 64.0, 0.0], 'q3': [64.0, 64.0, 64.0, 0.0], 'q4': [64.0, 64.0, 64.0, 0.0], 'L': [64.0, 64.0, 64.0, 0.0], 'R': [64.0, 64.0, 64.0, 0.0]}
+gelsy call 1: min 0, entries off 1 by > 1e-6: [('comp 2', 'q1', '0'), ('comp 3', 'q4', '1.00029'), ('comp 3', 'R', '1.0007')], unrelated 0.000488
+gelsy call 2: min 0, entries off 1 by > 1e-6: [('comp 3', 'q1', '0')], unrelated 0.000488
+gelsy call 3: min 0.999999999999921, entries off 1 by > 1e-6: [('comp 1', 'q4', '1.00199')], unrelated 0.000488
+gelsd call 1: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsd call 2: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488
+gelsd call 3: min 0.999999999999919, entries off 1 by > 1e-6: [], unrelated 0.000488

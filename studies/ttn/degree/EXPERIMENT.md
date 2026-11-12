@@ -1,7 +1,7 @@
 ---
 name: degree
 title: "Degree as a difficulty axis under a constant-biased leaf init"
-status: approved
+status: done
 gpu: NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe
 count: 1
 hours: 5.5
@@ -10,6 +10,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-12T18:37:28Z
+result: failed
+finished_utc: 2026-11-12T18:52:16Z
+writeup: studies/ttn/degree/README.md
 ---
 
 # Degree as a difficulty axis under a constant-biased leaf init
@@ -126,4 +129,13 @@ None.
 
 ## Outcome
 
-Not run yet.
+**Failed** (2026-11-12): stopped before training because a pre-training check failed, as "If something fails" requires.
+
+- **Checks:** failed. `alignment_at_teacher_min` = 0 (needs > 0.999); every other check passed. Cause: the default CPU
+  least-squares driver (gelsy) in `ctn.ttn.alignment` is not reproducible on the rank-deficient teacher activations;
+  gelsd passes. Needs a fix in shared code, then a rerun of this definition unchanged.
+- **Symmetry control:** not run.
+- **Supported / not supported (slopes at w = 0.25 and 0.5):** not run.
+- **Quantitative agreement:** not run.
+- **Cost and time:** about 3 minutes of an A100-SXM4-80GB at $2.19/h, about $0.12 of the $12.05 budget and 5.5 h cap.
+- **Write-up:** [README.md](README.md).
