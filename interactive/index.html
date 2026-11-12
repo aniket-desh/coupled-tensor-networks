@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shared-feature tensor tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* A figure from a paper that runs. Math labels in STIX, every number in mono, nodes in the lavender of the
+   tensor-network diagrams this page answers. The eight tensor cells carry the page; everything else stays quiet. */
+:root {
+  color-scheme: light;
+  --paper: #f2f4f7; --panel: #fcfcfb; --ink: #14171f; --ink2: #4a5162; --ink3: #737a8c; --rule: #d9dde5;
+  --node: #bdbcf6; --node-ink: #1d1a57; --accent: #3f37b5; --warn: #b4530a;
+  --pos: #eb6834; --neg: #2a78d6;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
+  --math: "STIX Two Text", "Times New Roman", serif;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #11131a; --panel: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --ink3: #94958f; --rule: #33353d;
+    --node: #5a56b8; --node-ink: #f3f2ff; --accent: #a9a5ff; --warn: #f0a35e;
+    --pos: #d95926; --neg: #3987e5;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #11131a; --panel: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --ink3: #94958f; --rule: #33353d;
+  --node: #5a56b8; --node-ink: #f3f2ff; --accent: #a9a5ff; --warn: #f0a35e;
+  --pos: #d95926; --neg: #3987e5;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.5 var(--sans); }
+main { max-width: 1120px; margin: 0 auto; padding: 28px 20px 48px; display: grid; gap: 18px; }
+h1 { font: 500 clamp(28px, 4.4vw, 42px)/1.12 var(--math); margin: 0 0 10px; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font: 600 14px/1.3 var(--sans); margin: 0; }
+.lede { margin: 0; max-width: 66ch; color: var(--ink2); font-size: 16px; }
+i.m, .m { font-family: var(--math); font-style: italic; font-size: 1.08em; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; min-width: 0; }
+.panel p.sub { margin: 2px 0 8px; font-size: 13px; color: var(--ink2); }
+
+.transport { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center;
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; }
+button, select { font: 500 13px/1.2 var(--sans); color: var(--ink); background: transparent; border: 1px solid var(--rule);
+  border-radius: 4px; padding: 6px 10px; cursor: pointer; }
+button:hover, select:hover { border-color: var(--ink3); }
+button:disabled { color: var(--ink3); cursor: not-allowed; border-style: dashed; }
+button.on { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#play { min-width: 76px; background: var(--accent); border-color: var(--accent); color: var(--panel); }
+#scrub { flex: 1 1 200px; min-width: 140px; accent-color: var(--accent); }
+.clock { font: 14px var(--mono); white-space: nowrap; min-width: 16ch; }
+label.inline { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--ink2); }
+
+.setup { display: grid; gap: 10px; }
+.row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.row > .tag { font-size: 13px; color: var(--ink2); min-width: 92px; }
+.seg { display: inline-flex; }
+.seg button { border-radius: 0; margin-left: -1px; }
+.seg button:first-child { border-radius: 4px 0 0 4px; margin-left: 0; }
+.seg button:last-child { border-radius: 0 4px 4px 0; }
+#delta { width: 150px; accent-color: var(--accent); }
+.note { margin: 0; font-size: 13px; color: var(--warn); }
+.note:empty { display: none; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.stat { background: var(--panel); padding: 10px 14px; }
+.stat b { display: block; font: 500 22px/1.2 var(--mono); font-variant-numeric: tabular-nums; }
+.stat span { display: block; font-size: 12.5px; color: var(--ink2); }
+
+.tensors { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 18px; }
+.cube { position: relative; width: 300px; height: 196px; margin: 4px auto 2px; }
+.cube svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cube text { font: 12px var(--sans); fill: var(--ink2); }
+.cell { position: absolute; width: 72px; height: 37px; border-radius: 3px; border: 1px solid var(--rule); padding: 2px 5px 1px 8px;
+  background: color-mix(in srgb, var(--tone, var(--pos)) calc(var(--v, 0) * 62%), var(--panel));
+  display: flex; flex-direction: column; justify-content: center; touch-action: none; }
+.cell::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 3px 0 0 3px; background: var(--stripe, transparent); }
+.cell small { font: 9.5px/1 var(--mono); color: var(--ink2); }
+.cell .v, .cell input { font: 500 14px/1.2 var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+.cell input { width: 100%; padding: 0; border: 0; background: transparent; outline: 0; cursor: ns-resize; }
+.cell input:focus { cursor: text; }
+.cell.edit { border-color: var(--ink3); border-style: solid; }
+.cell.edit:hover, .cell.edit:focus-within { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.cell .up { position: absolute; right: 4px; top: 3px; font-size: 10px; line-height: 1; color: var(--warn); visibility: hidden; }
+.cell.above .up { visibility: visible; }
+.cell.above { border-color: var(--warn); box-shadow: 0 0 0 1px var(--warn); }
+.hint { margin: 4px 0 0; font-size: 12.5px; color: var(--ink2); text-align: center; }
+.pcts { margin: 4px 0 0; font-size: 12.5px; color: var(--ink2); text-align: center; min-height: 19px; }
+
+.network { display: grid; grid-template-columns: minmax(0, 3fr) minmax(250px, 2fr); gap: 18px; align-items: start; }
+@media (max-width: 760px) { .network { grid-template-columns: minmax(0, 1fr); } }
+#tn { width: 100%; height: auto; display: block; color: var(--ink); }
+#tn .lab { font: italic 15px var(--math); fill: currentColor; }
+#tn .lab2 { font: 12px var(--sans); fill: var(--ink2); }
+#tn .val { font: 500 11.5px var(--mono); fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+#tn .nodel { font: italic 19px var(--math); fill: var(--node-ink); text-anchor: middle; dominant-baseline: central; }
+.phases { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.phases li { padding: 7px 10px; border-left: 3px solid var(--rule); font-size: 13.5px; color: var(--ink2); }
+.phases li.now { border-left-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+.phases-note { margin: 6px 0 0; font-size: 13.5px; color: var(--ink2); }
+
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; }
+@media (max-width: 480px) { .charts, .tensors { grid-template-columns: minmax(0, 1fr); } }
+.chart { position: relative; touch-action: none; cursor: crosshair; }
+.chart svg { display: block; width: 100%; }
+.chart text { font: 11px var(--sans); fill: var(--ink2); }
+.chart text.dl { font: 11px var(--mono); fill: var(--ink); }
+.chart .dim { opacity: 0.15; }
+.legend { display: flex; flex-wrap: wrap; gap: 3px 12px; font-size: 12px; color: var(--ink2); margin: 2px 0 4px; min-height: 18px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { display: inline-block; width: 16px; height: 0; border-top: 2px solid var(--c, var(--ink2)); }
+.legend i.dash { border-top-style: dashed; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--ink3); border-radius: 4px;
+  padding: 5px 8px; font: 11.5px/1.4 var(--mono); color: var(--ink); white-space: nowrap; z-index: 3; visibility: hidden; }
+footer { font-size: 13px; color: var(--ink2); max-width: 78ch; display: grid; gap: 6px; }
+footer p { margin: 0; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>One shared vector, two outputs, and an overshoot</h1>
+    <p class="lede">A small tensor network learns a 2×2×2 target by gradient flow. Both outputs read input 1 through the same vector <i class="m">u</i>, so training either output moves the other. Drag any number in the target and the whole run recomputes.</p>
+  </header>
+
+  <div class="transport" role="group" aria-label="Playback">
+    <button id="play" type="button">Pause</button>
+    <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Training time">
+    <span class="clock" id="clock">t = 0</span>
+    <label class="inline" for="speed">Speed
+      <select id="speed"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
+    </label>
+  </div>
+
+  <section class="panel setup" aria-label="Setup">
+    <div class="row"><span class="tag">Target</span><span class="row" id="presets"></span></div>
+    <div class="row"><span class="tag">Network</span>
+      <span class="seg" id="net"><button type="button" data-k="1">Shared <i class="m">u</i></button><button type="button" data-k="2">One <i class="m">u</i> per output</button></span>
+      <label class="inline" for="overlay"><input id="overlay" type="checkbox" checked> Dash the other network on the charts</label>
+    </div>
+    <div class="row"><span class="tag">Start</span>
+      <span class="seg" id="init"><button type="button" data-i="aligned">Aligned</button><button type="button" data-i="random">Random</button></span>
+      <button id="reseed" type="button">New random start</button>
+      <label class="inline" for="delta">Starting size <span class="m">δ</span>
+        <input id="delta" type="range" min="0" max="100" value="50"><span class="num" id="deltaval"></span></label>
+    </div>
+    <p class="note" id="note"></p>
+  </section>
+
+  <section class="stats" aria-label="Summary of this run" id="stats"></section>
+
+  <section class="tensors">
+    <div class="panel">
+      <h2>Target tensor, <span class="m">T</span>*</h2>
+      <p class="sub">The task. Eight entries, one per choice of output, input 1 and input 2.</p>
+      <div class="cube" id="cube-target"></div>
+      <p class="hint">Drag a number up or down, or click it and type. Arrow keys also work.</p>
+    </div>
+    <div class="panel">
+      <h2>Model tensor, <span class="m">T</span>(<span class="m">t</span>)</h2>
+      <p class="sub">What the network computes right now, on the same axes and colour scale.</p>
+      <div class="cube" id="cube-model"></div>
+      <p class="pcts" id="pcts"></p>
+    </div>
+  </section>
+
+  <section class="panel network">
+    <div>
+      <h2>Inside the network</h2>
+      <p class="sub" id="tn-sub"></p>
+      <svg id="tn" viewBox="0 0 640 336" role="img" aria-label="Tensor network with u, R and B, showing the current entries of each tensor"></svg>
+    </div>
+    <div>
+      <h2>What is happening at this moment</h2>
+      <div id="phases"></div>
+    </div>
+  </section>
+
+  <section class="charts">
+    <div class="panel"><h2>Model entries over training</h2><p class="sub">Dotted lines mark the targets. Click or drag on any chart to move through time.</p><div class="legend" id="lg-a"></div><div class="chart" id="ch-a"></div></div>
+    <div class="panel"><h2>Close-up around the target</h2><p class="sub">Each entry's distance from its target, as a percentage of the target.</p><div class="legend" id="lg-b"></div><div class="chart" id="ch-b"></div></div>
+    <div class="panel"><h2>Factor entries over training</h2><p class="sub">Solid is <i class="m">R</i> or <i class="m">u</i>, dashed is <i class="m">B</i>. Colour follows the output each row of <i class="m">R</i> and <i class="m">B</i> serves.</p><div class="legend" id="lg-c"></div><div class="chart" id="ch-c"></div></div>
+    <div class="panel"><h2>Loss over training</h2><p class="sub">Half the squared distance between model and target, on a log scale.</p><div class="legend" id="lg-d"></div><div class="chart" id="ch-d"></div></div>
+  </section>
+
+  <footer>
+    <p><b>The model.</b> <span class="m">T<sub>oij</sub></span> = <span class="m">u<sub>i</sub></span> (<span class="m">RB</span>)<sub class="m">oj</sub> with loss ½‖<span class="m">T</span> − <span class="m">T</span>*‖², the population loss for whitened inputs. With one <i class="m">u</i> per output the only change is <span class="m">u<sub>i</sub></span> → <span class="m">U<sub>oi</sub></span>, so any gap between the solid and dashed curves comes from sharing.</p>
+    <p><b>The computation.</b> Your browser integrates exact gradient flow on all 10 or 12 parameters with adaptive Runge-Kutta, so there is no step size that could cause an overshoot by itself. Aligned start: <span class="m">r<sub>k</sub></span> = <span class="m">b<sub>k</sub></span> = <span class="m">δ</span>, <i class="m">u</i> = (√2<span class="m">δ</span>, 0). Random start: independent normal entries with standard deviation <span class="m">δ</span>. <span id="provenance">Checked against the offline runs behind the post: at target (1, 0.5) and <span class="m">δ</span> = 0.01 both give a 1.72% overshoot, and the weaker entry reaches half its target at t = 86 with shared <i class="m">u</i> and t = 198 with one <i class="m">u</i> per output.</span></p>
+  </footer>
+</main>
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

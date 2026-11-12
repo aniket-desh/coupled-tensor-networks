@@ -1,0 +1,89 @@
+{
+ "rho0.2": {
+  "n": 400,
+  "K_star": [
+   [
+    3.010865946017398,
+    0.17710976153043517
+   ],
+   [
+    0.17710976153043517,
+    0.4604853799791315
+   ]
+  ],
+  "eigs": [
+   0.4482448394058728,
+   3.023106486590657
+  ],
+  "predicted_equals_observed": 400,
+  "no_overshoot_runs": 0,
+  "both_overshoot_runs": 0,
+  "c1_overshoots": 334,
+  "trapped_runs": 400,
+  "theory_late_ratio": -0.06911273815449914,
+  "late_ratio_median_over_c1_overshooters": -0.06910913693196069,
+  "late_ratio_max_abs_dev": 3.6880812858686163e-06,
+  "late_ratio_nan": 0,
+  "sep_slope_near_origin": 0.19803802181034225,
+  "sep_log_kappa": -1.2372323500930666,
+  "smallest_c_on_sep": 9.999999999999996e-11
+ },
+ "rho0.5": {
+  "n": 400,
+  "K_star": [
+   [
+    3.0525713134755517,
+    0.3815714141844439
+   ],
+   [
+    0.3815714141844439,
+    1.3354999496455537
+   ]
+  ],
+  "eigs": [
+   1.2545249816773443,
+   3.133546281443761
+  ],
+  "predicted_equals_observed": 400,
+  "no_overshoot_runs": 0,
+  "both_overshoot_runs": 0,
+  "c1_overshoots": 298,
+  "trapped_runs": 400,
+  "theory_late_ratio": -0.21221445044902615,
+  "late_ratio_median_over_c1_overshooters": -0.2121950959154345,
+  "late_ratio_max_abs_dev": 0.20020675941677113,
+  "late_ratio_nan": 0,
+  "sep_slope_near_origin": 0.49995553983123403,
+  "sep_log_kappa": -0.19486401083863214,
+  "smallest_c_on_sep": 9.999999999999996e-11
+ },
+ "rho0.8": {
+  "n": 400,
+  "K_star": [
+   [
+    3.1086810199597377,
+    0.5406401773843024
+   ],
+   [
+    0.5406401773843024,
+    2.3788167804909297
+   ]
+  ],
+  "eigs": [
+   2.091470391138935,
+   3.396027409311732
+  ],
+  "predicted_equals_observed": 400,
+  "no_overshoot_runs": 0,
+  "both_overshoot_runs": 0,
+  "c1_overshoots": 239,
+  "trapped_runs": 400,
+  "theory_late_ratio": -0.5314928512013655,
+  "late_ratio_median_over_c1_overshooters": -0.5296746393559801,
+  "late_ratio_max_abs_dev": 2.0274689297620565,
+  "late_ratio_nan": 0,
+  "sep_slope_near_origin": 0.7999989348567014,
+  "sep_log_kappa": 0.05544016673470636,
+  "smallest_c_on_sep": 9.999999999999996e-11
+ }
+}

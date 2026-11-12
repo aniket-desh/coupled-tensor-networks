@@ -1,0 +1,10 @@
+/Users/aniket/Documents/university/research/cbai/shared-ttn/hierarchy.py:79: RuntimeWarning: overflow encountered in exp
+  return (self.A.T @ (c * (s - c))) * np.exp(-2 * x)
+/Users/aniket/Documents/university/research/cbai/shared-ttn/hierarchy.py:79: RuntimeWarning: invalid value encountered in multiply
+  return (self.A.T @ (c * (s - c))) * np.exp(-2 * x)
+done order
+done race
+done scaling
+done overshoot
+done loss
+done dense

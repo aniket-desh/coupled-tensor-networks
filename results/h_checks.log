@@ -1,0 +1,24 @@
+dense_grad_fd                                    2.61948e-10
+dense_single_output_grad_fd                      1.38056e-10
+teacher_components_orthonormal                   0
+factor_flow_fd_hierarchy                         5.57496e-09
+factor_flow_fd_u_only                            5.82592e-10
+factor_flow_fd_group_only                        1.2542e-10
+factor_flow_fd_independent                       2.75042e-10
+K_dense_vs_closed                                5.55112e-17
+K12_over_K13_expected_ratio_error                0
+factor_vs_reduced_max_diff                       4.75484e-05
+factor_vs_dense_max_diff                         3.7653e-05
+half_times_factor                                [14.598131, 15.402721, 16.141073, 16.958872]
+half_times_dense                                 [14.598125, 15.402732, 16.141074, 16.958864]
+balances_max_drift                               2.30094e-13
+two_component_overshoot_pct (0.3104)             0.310407
+two_component_half_times (27.9670, 37.8080)      [27.967027, 37.807994]
+independent_vs_scalar_law_half_time_rel_diff     8.38316e-09
+independent_overshoot                            3.55892e-07
+delta_1e-3_half_time_abs_diff_tol                1.20103e-05
+delta_1e-3_half_times                            [117698363.54823, 117698377.357902, 117774157.918588, 117774173.430723]
+jac_fd_hierarchy                                 1.59383e-10
+jac_fd_independent                               4.27791e-10
+radau_vs_dop853_half_time_abs_diff               1.39777e-05
+radau_vs_dop853_overshoot_abs_diff               8.60796e-07

@@ -1,0 +1,44 @@
+{
+ "dense_grad_fd": 2.6194801883150376e-10,
+ "dense_single_output_grad_fd": 1.3805578902292837e-10,
+ "teacher_components_orthonormal": 0.0,
+ "factor_flow_fd_hierarchy": 5.5749587168918424e-09,
+ "factor_flow_fd_u_only": 5.825917526181001e-10,
+ "factor_flow_fd_group_only": 1.2542048649644144e-10,
+ "factor_flow_fd_independent": 2.750417116281767e-10,
+ "K_dense_vs_closed": 5.551115123125783e-17,
+ "K12_over_K13_expected_ratio_error": 0.0,
+ "factor_vs_reduced_max_diff": 4.75484035620255e-05,
+ "factor_vs_dense_max_diff": 3.765302618818911e-05,
+ "half_times_factor": [
+  14.598131196217675,
+  15.402720774101281,
+  16.141073347570803,
+  16.958871804744987
+ ],
+ "half_times_dense": [
+  14.598125209320166,
+  15.402732493768328,
+  16.141073732851904,
+  16.958864156654272
+ ],
+ "balances_max_drift": 2.300937218535637e-13,
+ "two_component_overshoot_pct (0.3104)": 0.31040712749488275,
+ "two_component_half_times (27.9670, 37.8080)": [
+  27.96702732720419,
+  37.80799378204724
+ ],
+ "independent_vs_scalar_law_half_time_rel_diff": 8.383163163649954e-09,
+ "independent_overshoot": 3.558923180602136e-07,
+ "delta_1e-3_half_time_abs_diff_tol": 1.2010335922241211e-05,
+ "delta_1e-3_half_times": [
+  117698363.54822999,
+  117698377.35790151,
+  117774157.91858809,
+  117774173.43072255
+ ],
+ "jac_fd_hierarchy": 1.5938300679252393e-10,
+ "jac_fd_independent": 4.277911358485653e-10,
+ "radau_vs_dop853_half_time_abs_diff": 1.3977696653455496e-05,
+ "radau_vs_dop853_overshoot_abs_diff": 8.60796413704179e-07
+}

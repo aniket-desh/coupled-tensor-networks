@@ -1,0 +1,93 @@
+% Eight-leaf binary TTN (64 inputs, bond dimension r = 16, 10 outputs), drawn with tensor-network.sty
+% from https://github.com/mptoolkit/tikz-diagrams, same conventions as tn_diagram.tex. Build with:
+%   TEXINPUTS=/path/to/tikz-diagrams//: pdflatex ttn8_diagram.tex
+%   pdftoppm -png -r 300 -singlefile ttn8_diagram.pdf ttn8_diagram
+%
+% Index conventions: A_j has (bond a_j, input i_j); every fusion core W has (parent, left child, right child);
+% the root C has (output o, left alpha, right beta). Parameter count P(r) = 8*9r + 6r^3 + 10r^2 = 28,288 at r=16.
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\usepackage{tensor-network}
+\usetikzlibrary{backgrounds}
+\pagestyle{empty}
+\tnsetup{tensorsize=28pt, xscale=1, yscale=1, outer xsep=0pt, outer ysep=0pt, tensor fill=gray!10}
+\newsavebox{\diagram}
+\begin{document}
+\sbox{\diagram}{%
+\begin{tikzpicture}[tensornetwork, line width=0.7pt,
+    bond/.style={font=\small, inner sep=1.5pt},
+    data/.style={circle, fill=black, inner sep=0pt, minimum size=6pt},
+    level/.style={anchor=west, font=\small, align=left}]
+  % ---- geometry: leaves 2.2 cm apart, levels 2 cm apart
+  \def\dx{2.2}
+  \def\yin{0} \def\yleaf{1.8} \def\yq{3.8} \def\yh{5.8} \def\yroot{7.8} \def\yout{9.4}
+
+  % ---- data vectors phi(x^(j)) = (1, x^(j)) and leaf matrices A_j
+  \foreach \j in {1,...,8} {
+    \pgfmathsetmacro{\x}{(\j-4.5)*\dx}
+    \node[data] (phi\j) at (\x, \yin) {};
+    \node[atensor] (A\j) at (\x, \yleaf) {$A_{\j}$};
+    \draw (phi\j) -- (A\j) node[bond, midway, right] {$i_{\j}$, 9};
+    \pgfmathtruncatemacro{\lo}{8*\j-7}
+    \pgfmathtruncatemacro{\hi}{8*\j}
+    \node[below=5pt, font=\small, align=center] at (phi\j) {$x^{(\j)}$\\[-1pt]{\footnotesize $x_{\lo:\hi}$}};
+  }
+
+  % ---- quarter fusion cores W_1..W_4, each joining leaves 2k-1 and 2k
+  \foreach \k in {1,...,4} {
+    \pgfmathsetmacro{\x}{(2*\k-1-4)*\dx}
+    \pgfmathtruncatemacro{\l}{2*\k-1}
+    \pgfmathtruncatemacro{\r}{2*\k}
+    \node[atensor] (W\k) at (\x, \yq) {$W_{\k}$};
+    \draw (A\l) -- (W\k) node[bond, midway, above left] {$a_{\l}$, 16};
+    \draw (A\r) -- (W\k) node[bond, midway, above right] {$a_{\r}$, 16};
+  }
+
+  % ---- half fusion cores W_L (quarters 1,2) and W_R (quarters 3,4)
+  \node[atensor] (WL) at (-2*\dx, \yh) {$W_{\mathrm L}$};
+  \node[atensor] (WR) at ( 2*\dx, \yh) {$W_{\mathrm R}$};
+  \draw (W1) -- (WL) node[bond, midway, above left]  {$q_1$, 16};
+  \draw (W2) -- (WL) node[bond, midway, above right] {$q_2$, 16};
+  \draw (W3) -- (WR) node[bond, midway, above left]  {$q_3$, 16};
+  \draw (W4) -- (WR) node[bond, midway, above right] {$q_4$, 16};
+
+  % ---- root and open output leg
+  \node[atensor] (C) at (0, \yroot) {$C$};
+  \coordinate (o) at (0, \yout);
+  \draw (WL) -- (C) node[bond, midway, above left]  {$\alpha$, 16};
+  \draw (WR) -- (C) node[bond, midway, above right] {$\beta$, 16};
+  \draw (C) -- (o) node[bond, midway, right] {$o$, 10};
+  \node[above=3pt] at (o) {output $f(x) \in \mathbb{R}^{10}$};
+
+  % ---- shaded halves: everything below alpha computes L(x_L), below beta computes R(x_R)
+  \begin{scope}[on background layer]
+    \fill[blue!5, rounded corners=6pt]   (-4.5*\dx-0.75, -1.05) rectangle (-0.35, \yh+0.75);
+    \fill[orange!7, rounded corners=6pt] ( 0.35, -1.05) rectangle (4.5*\dx+0.75, \yh+0.75);
+  \end{scope}
+  \node[anchor=north west, font=\small, align=left, text=blue!50!black]
+    at (-4.5*\dx-0.65, \yh+0.65) {left subtree, 7 cores\\$L_\alpha(x_{1:32})$};
+  \node[anchor=north east, font=\small, align=right, text=orange!50!black]
+    at (4.5*\dx+0.65, \yh+0.65) {right subtree, 7 cores\\$R_\beta(x_{33:64})$};
+
+  % ---- per-level shapes and parameter counts
+  \def\xl{4.5*\dx+1.3}
+  \node[level] at (\xl, \yroot) {$C_{o\alpha\beta} \in \mathbb{R}^{10\times16\times16}$\\ 2{,}560 params};
+  \node[level] at (\xl, \yh) {$W_{\mathrm L}, W_{\mathrm R} \in \mathbb{R}^{16\times16\times16}$\\ $2\times 4{,}096$ params};
+  \node[level] at (\xl, \yq) {$W_1,\dots,W_4 \in \mathbb{R}^{16\times16\times16}$\\ $4\times 4{,}096$ params};
+  \node[level] at (\xl, \yleaf) {$A_1,\dots,A_8 \in \mathbb{R}^{16\times 9}$\\ $8\times 144$ params};
+  \node[level] at (\xl, \yin) {$\phi(x^{(j)}) = (1, x^{(j)}) \in \mathbb{R}^{9}$\\ data, not trained};
+  \node[level] at (\xl, -1.6) {total trainable $= 28{,}288$};
+
+  % ---- the contraction
+  \node[font=\small] at (0, -2.5) {$\displaystyle
+    f_o(x) = \sum C_{o\alpha\beta}\,(W_{\mathrm L})_{\alpha q_1 q_2}\,(W_{\mathrm R})_{\beta q_3 q_4}
+    \prod_{k=1}^{4} (W_k)_{q_k a_{2k-1} a_{2k}} \prod_{j=1}^{8} (A_j)_{a_j i_j}\, \phi(x^{(j)})_{i_j}$};
+  \node[font=\small] at (0, -3.35) {sum over all bond indices $\alpha,\beta,q_k,a_j,i_j$;\quad
+    fusion-core indices ordered (parent, left child, right child);\quad bonds labeled ``index, dimension''};
+\end{tikzpicture}}
+\pdfpagewidth=\dimexpr\wd\diagram+16pt\relax
+\pdfpageheight=\dimexpr\ht\diagram+\dp\diagram+16pt\relax
+\hoffset=-1in \voffset=-1in \oddsidemargin=8pt \topmargin=8pt \headheight=0pt \headsep=0pt
+\parindent=0pt \textwidth=\wd\diagram \textheight=\pdfpageheight
+\usebox{\diagram}
+\end{document}

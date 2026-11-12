@@ -1,0 +1,43 @@
+% Tensor network of the two-component shared-feature model, drawn with tensor-network.sty from
+% https://github.com/mptoolkit/tikz-diagrams (commit 23e8080). Build with that file on TEXINPUTS:
+%   TEXINPUTS=/path/to/tikz-diagrams//: pdflatex tn_diagram.tex
+%   pdftoppm -png -r 300 -singlefile tn_diagram.pdf tn_diagram
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\usepackage{tensor-network}
+\pagestyle{empty}
+\tnsetup{tensorsize=30pt, xscale=1, yscale=1, outer xsep=0pt, outer ysep=0pt, tensor fill=gray!10}
+\newsavebox{\diagram}
+\begin{document}
+\sbox{\diagram}{%
+\begin{tikzpicture}[tensornetwork, line width=0.7pt]
+  \node[atensor] (R) at (0, 0) {$R$};
+  \node[atensor] (u) at (-3.4, -1.9) {$u$};
+  \node[atensor] (B) at (3.4, -1.9) {$B$};
+  \coordinate (o) at (0, 1.75);
+  \coordinate (i) at (-3.4, -3.75);
+  \coordinate (j) at (3.4, -3.75);
+  \draw (R) -- (o) (R) -- (u) (R) -- (B) (u) -- (i) (B) -- (j);
+  % indices and bond dimensions
+  \node[right=5pt] at (0, 1.0) {$o$, dim 2};
+  \node[anchor=south east, xshift=-3pt, yshift=4pt] at (-1.7, -0.95) {$\alpha$, dim 1};
+  \node[anchor=south west, xshift=3pt, yshift=4pt] at (1.7, -0.95) {$\beta$, dim 2};
+  \node[right=5pt] at (-3.4, -2.95) {$i$, dim 2};
+  \node[right=5pt] at (3.4, -2.95) {$j$, dim 2};
+  % tensors and sizes
+  \node[right=22pt, yshift=5pt] at (R) {$R_{o\alpha\beta} \in \mathbb{R}^{2\times 1\times 2}$};
+  \node[left=20pt] at (u) {$u_{\alpha i} \in \mathbb{R}^{1\times 2}$};
+  \node[right=20pt] at (B) {$B_{\beta j} \in \mathbb{R}^{2\times 2}$};
+  % open legs
+  \node[above=5pt] at (o) {output $f(x_1, x_2) \in \mathbb{R}^{2}$};
+  \node[below=5pt] at (i) {input $x_1 \in \mathbb{R}^{2}$};
+  \node[below=5pt] at (j) {input $x_2 \in \mathbb{R}^{2}$};
+  % the contraction, tying alpha (which takes one value) back to the notation in the post
+  \node at (0, -5.1) {$T_{oij} = \sum_{\alpha,\beta} u_{\alpha i}\, R_{o\alpha\beta}\, B_{\beta j} = u_i\, (RB)_{oj}$};
+\end{tikzpicture}}
+\pdfpagewidth=\dimexpr\wd\diagram+16pt\relax
+\pdfpageheight=\dimexpr\ht\diagram+\dp\diagram+16pt\relax
+\hoffset=-1in \voffset=-1in \oddsidemargin=8pt \topmargin=8pt \headheight=0pt \headsep=0pt
+\parindent=0pt \textwidth=\wd\diagram \textheight=\pdfpageheight
+\usebox{\diagram}
+\end{document}
