@@ -1,0 +1,106 @@
+{
+ "posterior_root with an unobserved leaf vs brute force": {
+  "ok": true,
+  "detail": "max err 0.00e+00, mean max-posterior 0.750"
+ },
+ "posterior_root vs brute force (tiny grammar)": {
+  "ok": true,
+  "detail": "max err 0.00e+00"
+ },
+ "posterior_token vs brute force (tiny grammar)": {
+  "ok": true,
+  "detail": "max err 0.00e+00, total prob 1.000000000000"
+ },
+ "parse recovers every latent level": {
+  "ok": true,
+  "detail": ""
+ },
+ "task_batch 'last': leaf 15 is the mask token, target is token 15": {
+  "ok": true,
+  "detail": ""
+ },
+ "task_batch 'root': all tokens in, root out": {
+  "ok": true,
+  "detail": ""
+ },
+ "diag_trees is deterministic": {
+  "ok": true,
+  "detail": ""
+ },
+ "Bayes last-token posterior is normalized and covers the true token": {
+  "ok": true,
+  "detail": ""
+ },
+ "checkpoint round trip reproduces logits (tree, tie=none, perm=False, init=variance)": {
+  "ok": true,
+  "detail": ""
+ },
+ "checkpoint round trip reproduces logits (tree, tie=level, perm=False, init=variance)": {
+  "ok": true,
+  "detail": ""
+ },
+ "checkpoint round trip reproduces logits (tree, tie=none, perm=True, init=variance)": {
+  "ok": true,
+  "detail": ""
+ },
+ "checkpoint round trip reproduces logits (chain, tie=None, perm=False, init=variance)": {
+  "ok": true,
+  "detail": ""
+ },
+ "checkpoint round trip reproduces logits (tree, tie=none, perm=False, init=identity)": {
+  "ok": true,
+  "detail": ""
+ },
+ "checkpoint round trip reproduces logits (chain, tie=None, perm=False, init=identity)": {
+  "ok": true,
+  "detail": ""
+ },
+ "training decreases the loss on a fixed batch (root)": {
+  "ok": true,
+  "detail": "3.062 -> 0.283"
+ },
+ "training decreases the loss on a fixed batch (last)": {
+  "ok": true,
+  "detail": "2.908 -> 0.312"
+ },
+ "production split: one unseen per class, unseen children occur on the same side in seen productions": {
+  "ok": true,
+  "detail": "48 seen, 16 unseen, 1 redraws"
+ },
+ "restricted sampler (seen): only allowed root productions, trees parse": {
+  "ok": true,
+  "detail": ""
+ },
+ "restricted sampler (unseen): only allowed root productions, trees parse": {
+  "ok": true,
+  "detail": ""
+ },
+ "freezing ['leaf', 'L1', 'L2', 'L3']: frozen bitwise unchanged, the rest moved": {
+  "ok": true,
+  "detail": "1024 of 10240 parameters trainable"
+ },
+ "freezing ['leaf', 'L1', 'L2']: frozen bitwise unchanged, the rest moved": {
+  "ok": true,
+  "detail": "2048 of 10240 parameters trainable"
+ },
+ "rescale_frozen (C): fresh cores receive unit-RMS bonds": {
+  "ok": true,
+  "detail": "rho 1.891 -> rms 1.000000"
+ },
+ "rescale_frozen (WC): fresh cores receive unit-RMS bonds": {
+  "ok": true,
+  "detail": "rho 1.596 -> rms 1.000000"
+ },
+ "oracle top: level-1 symbols from the parse, a lookup C classifies every tree": {
+  "ok": true,
+  "detail": "acc 1.0"
+ },
+ "LR schedule: warmup to peak at 100, cosine to 0.1x at the end": {
+  "ok": true,
+  "detail": "[0.01, 1.0, 1.0, 0.1]"
+ },
+ "checkpoint steps for 40,000 updates are common.CHECKPOINTS": {
+  "ok": true,
+  "detail": ""
+ }
+}
