@@ -1,0 +1,81 @@
+# runpod-research project configuration. Commit this file; it holds no secrets.
+# Secrets go in .env next to it (git-ignored), with at least RUNPOD_API_KEY.
+# Anything still saying CHANGE-ME counts as not set: `orch doctor` lists what's left.
+
+[project]
+# Every pod and volume created gets this prefix, and the tools refuse to delete anything without it.
+name_prefix = "aniket-ctn"
+# A file of this project's own rules for experiments, relative to the project root: the controls every experiment
+# needs, evaluation standards, where write-ups go and how they are laid out. Claude reads it when defining, reviewing,
+# running and writing up an experiment. Leave empty if CLAUDE.md already says it all.
+instructions = "EXPERIMENT_RULES.md"
+
+[runpod]
+# Mounted only on the coordinator. Pinned to one data center. Holds the project and working state.
+network_volume_id = "2we3auziu3"
+# Mounted on the coordinator and every worker. Any data center. Models, datasets and published results only.
+global_volume_id = "cmwauswzn000007jj1dyl5bbo"
+
+[coordinator]
+name = "aniket-rr-coordinator"   # one coordinator can serve several projects: they all name the same pod here
+data_center = "US-NC-1"        # the network volume's data center; workers avoid it, since SSH doesn't work inside one
+cpu_flavor = "cpu3g"             # cpu3g has 4 GB per vCPU, cpu3m has 8 GB
+vcpus = 2
+# SSH public keys allowed to log in to the coordinator (your laptop).
+authorized_keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC4bpXkuTuGSRwt5MWyB1yEi2em+5FV/FkCpH7/KPUNu aniketdeshh@gmail.com"]
+# Pods with these name prefixes are never listed as workers or touched, for example your own GPU machines.
+protected_name_prefixes = []
+
+[worker]
+setup = "uv sync --frozen"           # how to build the project's environment on a fresh worker
+default_gpus = "NVIDIA A100-SXM4-80GB,NVIDIA H200"         # GPU types to try, in order of preference, comma-separated
+# Container disk. A launch without an explicit size gets disk_gb, or more when its data needs it: the size of the
+# listed tars plus disk_headroom_gb for the environment and outputs. A size that is too small is refused.
+# disk_gb = 200
+# disk_headroom_gb = 40
+# Each experiment's own folder, passed to jobs as $EXP_DIR. Its definition, scripts, figures and write-up live
+# there, and only that folder is merged back. Placeholders: {name}, {date}, {monday}, {week}.
+experiment_folder = "studies/ttn/{name}"
+# Experiments launch only from an approved definition file in that folder (orch experiment ...).
+require_definition = true
+# Extra variables for the worker's environment. HF_HUB_OFFLINE keeps Hugging Face from fetching newer files than the
+# data the worker was given, so a run uses exactly what the coordinator has.
+# env = { HF_HUB_OFFLINE = "1" }
+# Names of non-secret .env entries every worker gets, such as a cache location. Nothing else in .env leaves the
+# coordinator: secrets are named per experiment, and the account's Runpod key is never sent.
+pass_env = []
+
+[budget]
+# Defaults proposed for each new experiment, and applied by `orch up` when it's called without them. 0 = not set.
+worker_hours = 6        # hard time cap for one worker
+worker_usd = 10          # most one worker may cost
+overnight_pod_usd = 50   # worker spend for one overnight run
+overnight_api_usd = 20   # API spend for one overnight run (judges and other paid calls)
+
+[publish]
+# Folders whose new files come back as data, not through git. Everything else changed comes back on a git branch.
+data_dirs = ["runs", "artifacts"]
+# Path prefixes never published, such as submodules.
+skip = []
+# Besides its own folder, an experiment may add brand-new files under these paths. Edits to existing files are held back.
+append_paths = []
+
+[results]
+keep_days = 14   # delete published tars from the global volume this long after collection; 0 keeps them
+
+[data]
+hf_hub = ""       # path of a Hugging Face hub cache in this project, if any, e.g. ".cache/hf/hub"
+pack_dirs = []    # folders `orch data upload` publishes for workers, e.g. ["data"]
+
+[paths]
+experiment_log = "EXPERIMENTS.md"   # the log of every experiment; commit it
+
+[viewer]
+port = 8000   # the dashboard of running and past experiments
+chat = true           # the dashboard's question box: a Claude Code agent that can only read the project's files
+chat_model = "sonnet" # the model it uses; "" for your Claude Code default
+
+[overnight]
+folder = "overnight/{date}"
+timezone = "America/New_York"   # the zone wake times and dates are read in (an IANA name, e.g. "Europe/London")
+project_instructions = ""   # extra rules for overnight runs only, on top of project.instructions (same kind of file)

@@ -21,3 +21,15 @@ Hierarchy model and its four-component teacher, with groups $G = \{1,2\}, \{3,4\
 T_{oijl} = u_i\, F_{gj}\, P_{ag}\, R_{oab}\, B_{bl}, \qquad
 T^\star = \sum_{k=1}^{4} s_k\, e_k \otimes g \otimes h_{G(k)} \otimes w_k
 ```
+
+## Code
+
+`ctn/` is the shared library and `studies/<name>/` holds one study each: `model.py` (network, teacher, closed-form reduction), `experiments.py`, `checks.py`, `plot.py`, plus its `results/` and `figures/` (PDF). Run everything from the repository root:
+
+```sh
+python -m studies.hierarchy.checks
+python -m studies.hierarchy.experiments order race   # all experiments if none named
+python -m studies.hierarchy.plot
+```
+
+A new tree is one einsum spec. `Network('i,gj,ag,oab,bl->oijl', dims, components)` gives the tensor, exact gradients of the population, moment and minibatch losses, and, from the component index choices, the teacher, the coefficient readout $c_k$, the balanced aligned init and the aligned-sector factor flow (`Pattern`). A sharing pattern on its own is `Pattern.from_paths([...])`, one tuple of factor labels per component. Each `results/source_7acb860/` holds the code that produced the stored results.

@@ -1,4 +1,4 @@
-"""Check interactive/core.js against model.py, which produced the published numbers.
+"""Check interactive/core.js against studies/shared_feature, which produced the published numbers.
 
 Each check targets an error that would make the page show a wrong trajectory: a wrong gradient on a general
 (editable) target, integrator drift on the conserved balances, or a wrong closed-form loss floor.
@@ -12,7 +12,9 @@ import numpy as np
 
 here = pathlib.Path(__file__).parent
 sys.path.insert(0, str(here.parent))
-import model as m
+from ctn import integrate
+from ctn.measure import half_time, overshoot
+from studies.shared_feature import model as m
 
 JS = r"""
 const C = require(process.argv[1]);
@@ -49,15 +51,14 @@ rng = np.random.default_rng(0)
 
 
 def fd_grad(th, T):
-    def L(x):
-        U, R, B = m.unpack(x)
-        return 0.5 * ((m.tensor(U, R, B) - T) ** 2).sum()
+    net = m.SHARED if th.size == m.SHARED.n else m.CONTROL
+    L = lambda x: net.loss(x, T)
     return np.array([(L(th + 1e-6 * e) - L(th - 1e-6 * e)) / 2e-6 for e in np.eye(th.size)])
 
 
 pts = []
 for P in (10, 12):
-    for T in (m.target([1, 0.3]), rng.standard_normal((2, 2, 2))):
+    for T in (m.TARGET([1, 0.3]), rng.standard_normal((2, 2, 2))):
         pts.append({'th': (0.5 * rng.standard_normal(P)).tolist(), 'T': T.ravel().tolist()})
 AND = [1, 1, 1, 0, 0, 0, 0, 1]
 floors = [['and gate', AND], ['two input-1 directions', [1, 0, 0, 0, 0, 0, 0, 0.5]],
@@ -72,10 +73,11 @@ print(f'gradient vs centered differences, general targets: {err:.2e}')
 print('rho  delta  K  overshoot % (js, model.py)   half-times (js)      half-times (model.py)     steps')
 for r in res['runs']:
     s = np.array([1.0, r['rho']])
-    sol = m.flow(m.init_aligned(s, r['delta'], r['K'] == 1), s, 2000, stop_loss=1e-16)
-    t = m.refine(sol)
-    c = np.array([m.coeffs(y) for y in sol.sol(t).T]).T
-    over, half = m.overshoot(c, s)[0], [m.half_time(t, c[k], s[k]) for k in range(2)]
+    net = m.net(r['K'] == 1)
+    sol = m.flow(net, net.aligned(r['delta']), s, 2000, stop_loss=1e-16)
+    t = integrate.refine(sol)
+    c = net.coeffs(sol.sol(t))
+    over, half = overshoot(c, s)[0], [half_time(t, c[k], s[k]) for k in range(2)]
     print(f"{r['rho']:.1f}  {r['delta']:.2f}  {r['K']}  {100*r['over']:9.5f} {100*over:9.5f}     "
           f"{r['half'][0]:9.4f} {r['half'][1]:9.4f}  {half[0]:9.4f} {half[1]:9.4f}  {r['steps']}")
 print('balance drift', np.abs(res['balance']).max())
