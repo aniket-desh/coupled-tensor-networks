@@ -1,7 +1,7 @@
 ---
 name: rhm-transfer
 title: "RHM feature reuse: do pretrained lower subtrees transfer to unseen root productions?"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 4
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-12T21:43:41Z
+result: supported
+finished_utc: 2026-11-12T22:18:56Z
+writeup: studies/rhm/rhm-transfer/README.md
 ---
 
 # RHM feature reuse: do pretrained lower subtrees transfer to unseen root productions?
@@ -220,4 +223,13 @@ None.
 
 ## Outcome
 
-Not run yet.
+**Supported** (both H1 variants). Write-up: [README.md](README.md).
+
+- Correctness checks: 26/26 passed. All 9 units passed the pretraining gate (seen accuracy 1.0), and so did the other-grammar pretraining. All 81 phase-2 arms finished, and no pair was dropped.
+- Scratch learned: median final unseen accuracy 1.0, loss 8e-7 nats.
+- H1 (C): `frozen_learned_C` reached 0.9 at median 42 updates [42, 50], against scratch at 148 in every unit (the first logged step at or above 0.9; the crossing is after 126). It won 9 of 9 pairs (p = 0.002), 3–0 in each grammar. `oracle_C` took 36 [31, 36], so the ratio is 1.17, within 2×.
+- H1 (WC): `frozen_learned_WC` took 50 [50, 58] and won 9 of 9 pairs against scratch (p = 0.002), 3–0 in each grammar. The ratio to the oracle is 1.39.
+- Floor (descriptive): `frozen_other` never reached 0.9 in either variant (final unseen 0.10 C, 0.19 WC), as expected.
+- Descriptive: `frozen_random` never reached 0.9 (0.16 C, 0.25 WC). `finetune` took 75 [68, 75], faster than scratch and slower than `frozen_learned_C` in 9 of 9 pairs each, and kept seen accuracy at 0.994.
+- The pilot LR, 3e-3, is at the grid's top edge.
+- Cost: one A40, 27 min, about $0.26, against a 4 h cap and a $4.50 budget. Training used 22 min of its 3 h deadline.
