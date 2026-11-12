@@ -1,7 +1,7 @@
 ---
 name: rhm-sample-efficiency
 title: "RHM sample efficiency: r = 16 TreeTN on fixed training sets of 2^10 to 2^20 trees"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 7
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-12T21:42:22Z
+result: supported
+finished_utc: 2026-11-12T22:54:50Z
+writeup: studies/rhm/rhm-sample-efficiency/README.md
 ---
 
 # RHM sample efficiency: r = 16 TreeTN on fixed training sets of 2^10 to 2^20 trees
@@ -166,4 +169,10 @@ None.
 
 ## Outcome
 
-Not run yet.
+Supported. Write-up: [README.md](README.md).
+
+- **H1, supported.** The median root test accuracy (3 grammars) is 0.084 at 2^10, 0.152 at 2^12 and 0.99996 at 2^14, and stays at least 0.9999 up to 2^20. The threshold lies between P* and 4 P*.
+- **H2, supported.** 0 of 18 runs with N ≥ 2^16 are optimization-limited, because all 18 learned. All 12 runs that failed (N ≤ 2^12, both tasks) fit their training sets and are data-limited.
+- **Descriptive.** The last-token test KL to Bayes falls from 2.45 nats at 2^10 to 0.012 at 2^20. The online references reach 0.9995 root accuracy and 0.027 nats last-token KL at 20,000 updates. Each run took 7.3–9.8 ms per update with 6 runs sharing the GPU.
+- **Health.** 42 of 42 planned runs finished, with no amendments and no reruns.
+- **Cost.** One A40 at $0.59/h, 1 h 04 min, about $0.63, against a cap of 7 h and $8.
