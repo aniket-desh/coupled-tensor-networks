@@ -1,7 +1,7 @@
 ---
 name: rhm-controls
 title: "RHM architecture controls: correct tree vs permuted leaves, tied cores and a parameter-matched chain"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 6
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-12T21:42:22Z
+result: supported
+finished_utc: 2026-11-12T22:14:47Z
+writeup: studies/rhm/rhm-controls/README.md
 ---
 
 # RHM architecture controls: correct tree vs permuted leaves, tied cores and a parameter-matched chain
@@ -185,4 +188,12 @@ None.
 
 ## Outcome
 
-Not run yet.
+Result: **supported** (H1 and H3 supported, H2 no consistent difference). Write-up: [README.md](README.md).
+
+- **Run health:** 48 of 48 planned runs finished, no pair dropped, checks 26/26; every arm learned on both tasks.
+- **H1 (tree vs perm):** supported. The tree wins 12 of 12 pairs on steps to threshold and 12 of 12 on final quality, 4–0 in every grammar.
+- **H2 (tree vs tied):** no consistent difference. Steps split 6–6 (the tied tree is faster on 'root', the tree on 'last'), and quality is tied in 12 of 12.
+- **H3 (tied vs chain):** supported. The tied tree wins 12 of 12 pairs on both measures. On 'last' the steps win disappears in summed LR.
+- **Descriptive (tree vs chain):** the tree is better on both measures, 12 of 12.
+- **Caveat:** the losing controls' piloted LR sat at the grid top (3e-3) for the permuted tree on both tasks and the chain on 'root'.
+- **Cost:** one RTX 4090 at $0.89/h for 25 minutes, about $0.36, against a $6.6 budget and a 6 h cap.
