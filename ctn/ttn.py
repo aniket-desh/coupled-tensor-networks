@@ -246,9 +246,13 @@ def alignment(acts, x, comps):
     for k, c in enumerate(comps):
         for v, node in enumerate(NODES):
             h = features(x, [dict(coords=restrict(c, node))]).double()  # (R, N, 1)
-            sol = torch.linalg.lstsq(Z[:, :, v], h).solution
-            proj = Z[:, :, v] @ sol
-            out[:, k, v] = ((proj ** 2).sum((1, 2)) / (h ** 2).sum((1, 2))).cpu()
+            # Projection onto the column span of Z through its SVD with a rank cutoff. Z is often rank-deficient (a
+            # node using fewer than r channels, e.g. at the teacher), where lstsq's default CPU driver (gelsy) returns
+            # irreproducible answers and the CUDA driver (gels) assumes full rank.
+            U, sv, _ = torch.linalg.svd(Z[:, :, v], full_matrices=False)  # (R, N, r), (R, r)
+            keep = (sv > sv[:, :1] * Z.shape[1] * torch.finfo(Z.dtype).eps).unsqueeze(1)  # (R, 1, r)
+            coef = (U * keep).transpose(1, 2) @ h  # (R, r, 1): coordinates of P_Z h in the kept left singular vectors
+            out[:, k, v] = ((coef ** 2).sum((1, 2)) / (h ** 2).sum((1, 2))).cpu()
     out[bad.cpu()] = float('nan')
     return out
 

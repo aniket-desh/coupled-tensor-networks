@@ -1,7 +1,7 @@
 ---
 name: degree
 title: "Degree as a difficulty axis under a constant-biased leaf init"
-status: done
+status: approved
 gpu: NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe
 count: 1
 hours: 5.5
@@ -9,7 +9,7 @@ budget_usd: 12.05
 disk_gb: 60
 data:
 secrets:
-approved_utc: 2026-11-12T18:37:28Z
+approved_utc: 2026-11-12T21:42:21Z
 result: failed
 finished_utc: 2026-11-12T18:52:16Z
 writeup: studies/ttn/degree/README.md
@@ -55,10 +55,10 @@ From the project root on the worker:
 set -euo pipefail
 nvidia-smi
 uv run --frozen python -c "import torch; assert torch.cuda.is_available(), 'no CUDA'; print(torch.__version__, torch.cuda.get_device_name())"
-uv run --frozen python -m studies.ttn.checks "$EXP_DIR/results/checks.json"
-PYTHONPATH=. uv run --frozen python studies/ttn/degree/run.py --out "$EXP_DIR/results" --hours 4.5
-PYTHONPATH=. uv run --frozen python studies/ttn/degree/analyze.py "$EXP_DIR/results"
-PYTHONPATH=. uv run --frozen python studies/ttn/degree/plot.py "$EXP_DIR/results" "$EXP_DIR/figures"
+OMP_NUM_THREADS=8 MKL_NUM_THREADS=8 uv run --frozen python -m studies.ttn.checks "$EXP_DIR/results/checks.json"
+OMP_NUM_THREADS=8 MKL_NUM_THREADS=8 PYTHONPATH=. uv run --frozen python studies/ttn/degree/run.py --out "$EXP_DIR/results" --hours 4.5
+OMP_NUM_THREADS=8 MKL_NUM_THREADS=8 PYTHONPATH=. uv run --frozen python studies/ttn/degree/analyze.py "$EXP_DIR/results"
+OMP_NUM_THREADS=8 MKL_NUM_THREADS=8 PYTHONPATH=. uv run --frozen python studies/ttn/degree/plot.py "$EXP_DIR/results" "$EXP_DIR/figures"
 ```
 
 The checks exit non-zero if any value is out of tolerance. Run the training as its own `orch exec` step from a background command.
@@ -125,11 +125,22 @@ The draft (a shared-vs-separate degree sweep under the isotropic init) was revie
 
 ## Amendments
 
-None.
+- **2026-11-12, rerun after a shared-code fix.** The first attempt failed its pre-training checks: `ctn.ttn.alignment` solved
+  rank-deficient least-squares problems with torch's default CPU driver (gelsy), whose answers are not reproducible, so
+  `alignment_at_teacher_min` was 0 on the worker (diagnosis in `attempt1/README.md`). `alignment` now projects onto the
+  activations' column span through an SVD with a rank cutoff, which is exact for rank-deficient inputs on CPU and GPU;
+  the check passed 3 of 3 runs on the coordinator. The design, grid and criteria are unchanged; the user approved the
+  rerun. The first attempt's write-up, results and diagnosis script are kept in `attempt1/`
+  (`attempt1/diagnose_alignment.py` reproduces the old driver's behaviour by patching `torch.linalg.lstsq`, which the
+  new code no longer calls).
+- **2026-11-12, thread cap.** Every python command now runs with `OMP_NUM_THREADS=8 MKL_NUM_THREADS=8`. The workers report
+  128 CPUs to `nproc` but have a CPU quota of about 13.6 cores, and without a cap torch ran ~190 threads on tiny CPU
+  tensors under throttling (the sharing-location supervisor saw its checks run 11 minutes without finishing). This
+  changes no computed value.
 
 ## Outcome
 
-**Failed** (2026-11-12): stopped before training because a pre-training check failed, as "If something fails" requires.
+**First attempt failed** (2026-11-12): stopped before training because a pre-training check failed, as "If something fails" requires (see `attempt1/`). Rerun pending.
 
 - **Checks:** failed. `alignment_at_teacher_min` = 0 (needs > 0.999); every other check passed. Cause: the default CPU
   least-squares driver (gelsy) in `ctn.ttn.alignment` is not reproducible on the rank-deficient teacher activations;

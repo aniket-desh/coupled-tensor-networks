@@ -65,7 +65,7 @@ keep_days = 14   # delete published tars from the global volume this long after 
 
 [data]
 hf_hub = ""       # path of a Hugging Face hub cache in this project, if any, e.g. ".cache/hf/hub"
-pack_dirs = []    # folders `orch data upload` publishes for workers, e.g. ["data"]
+pack_dirs = ["data/tinystories"]    # folders `orch data upload` publishes for workers, e.g. ["data"]
 
 [paths]
 experiment_log = "EXPERIMENTS.md"   # the log of every experiment; commit it
