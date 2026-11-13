@@ -1,7 +1,7 @@
 ---
 name: lang-induction
 title: "Storing associations before the query: key-value retrieval and multi-match induction in a TreeTN across bond dimension 16-128"
-status: draft
+status: approved
 gpu: NVIDIA RTX A6000,NVIDIA L40S,NVIDIA A40
 count: 1
 hours: 10
@@ -9,6 +9,7 @@ budget_usd: 12
 disk_gb: 120
 data:
 secrets:
+approved_utc: 2026-11-13T23:52:39Z
 ---
 
 # Storing associations before the query: key-value retrieval and multi-match induction in a TreeTN across bond dimension 16-128
