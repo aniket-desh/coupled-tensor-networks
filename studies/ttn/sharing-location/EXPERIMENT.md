@@ -1,7 +1,7 @@
 ---
 name: sharing-location
 title: "Where and how much computation two outputs share: agreement sets in the 15-core TTN"
-status: approved
+status: done
 gpu: NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe
 count: 1
 hours: 5.5
@@ -10,6 +10,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-12T18:37:28Z
+result: failed
+finished_utc: 2026-11-13T00:09:12Z
+writeup: studies/ttn/sharing-location/README.md
 ---
 
 # Where and how much computation two outputs share: agreement sets in the 15-core TTN
@@ -159,8 +162,19 @@ A sibling review found the basis-permutation symmetry. It made the old quarter a
 
 ## Amendments
 
-None.
+- **2026-11-12 18:55 UTC, checks rerun with a thread cap (supervisor).** The first `studies.ttn.checks` step ran 11 minutes without finishing on the worker. The container has a CPU quota of 13.6 cores (`cpu.max` 1360000/100000) but `nproc` reports 128, and `checks.py` imports torch before `ctn.io` sets `OMP_NUM_THREADS=1`, so torch ran 193 threads on tiny CPU tensors under CFS throttling. The checks were killed and rerun unchanged except for `OMP_NUM_THREADS=8 MKL_NUM_THREADS=8` in front of the command. This changes no computed value, only the thread count.
+- **2026-11-12 22:26 UTC, sampled replicate stopped to protect the population groups (supervisor).** At 3.5 h of training no population group had finished, although the startup step times (5.95–8.30 ms, 2e6 steps) put split2 at about 22:13. Five population groups have a step budget above the 2e6 steps they want, so the 4.5 h deadline doesn't shorten them, `train()` has no wall-clock check, and a group saves only when it ends: an overrun past the worker's hard cap (about 00:11 UTC) would lose every unfinished family. `nvidia-smi pmon` showed the `quarter_sampled` process (32 GB, 261 ms/step) taking about 66% of SM time while the six population processes got about 16% each when scheduled: without MPS the processes time-slice the GPU. The sampled group's deadline budget only reached t <= 3097, where the pilot had c2 learned in about 3/16 runs even by t = 5000, so its h2 ratio would be almost entirely censored. The `quarter_sampled` process was killed; the finite-data replicate is not reported. The population families are unchanged. If a population group is still running at 23:45 UTC it will be killed too, so that the saved groups can be analysed and published before the cap.
+- **2026-11-12 22:52 UTC, population groups restarted with a deadline that fits the cap (supervisor).** At 22:51 (3.9 h of training, 1.34 h left on the worker cap) still no group had saved. The worker grants no ptrace, so step counters can't be read. The startup step times were evidently taken before the sampled group began its heavy kernels, so the population groups ran at an unknown fraction of their measured speed (at least 1.2x slower for split2, likely 2–3x given the 66% time-slice share); at that rate they would end around or after the cap and lose everything, since a group saves only when it ends. The run was killed and the six population groups (`--groups none,leaf,split2,quarter,split4,half`) restarted into `results/rerun` with `--hours 0.85`, in the definition's rerun form. Each group's step budget is then set by the deadline (the six groups alone match the startup timing conditions), so every group saves by about 23:47 UTC, leaving about 25 minutes for analysis, plots and publishing before the cap. The definition's crash-rerun margin of 0.75 h would leave only 0.58 h; 0.85 h was chosen because the remaining steps (analysis, plots, `orch finish`) take about 15 minutes. Consequence: groups reach roughly t ~ 2e4 instead of 1e5, so far more runs are censored than planned; the pilot had quarter vs none at 11/16 vs 3/16 c2 learned by t = 2e4. analyze.py and plot.py run on `results/rerun`. The 4 h of the first attempt are lost.
+- **2026-11-13 00:02 UTC, rerun stopped to publish before the cap (supervisor, recorded after acting).** The rerun overran its 0.85 h deadline as well: leaf ran 11.6 ms/step against a startup timing of 8.6 ms. Leaf saved at about 00:01. The other five groups hadn't saved by 00:02, and the worker's own last automatic publish (at 23:56:51) had come before leaf saved. The job was stopped and `orch finish` run at 00:02 with about 9 minutes left on the cap, so that leaf's results were kept. Nothing else was saved.
 
 ## Outcome
 
-Not run yet.
+**Failed: no answer.** Only the leaf family saved; none of the definition's outcome classes can be evaluated (its "Run failed" class doesn't strictly apply, because the checks passed and one population family ran). Write-up: [README.md](README.md).
+
+- Supported / partly / not supported (quarter and half against none, Spearman over the 6 families): not evaluable, because none, quarter and half have no results.
+- Mechanism (K22 against none, drive fractions): not evaluable against none. Leaf alone gave own 5.48, cross from y1 0.00, cross from y3 0.00, rest -4.48 and resolved 1.00, from the 2 seeds that learned c2.
+- Location (quarter vs split2, half vs split4): not evaluable.
+- Sampled replicate: stopped at 3.5 h (amendment), no results.
+- Inconclusive (fewer than 8/16 learn c2): not evaluable for quarter, half and none. Leaf learned c2 in 2/16 by t = 1.78e4.
+- Checks: all passed.
+- Cost and time: one A100 SXM at $2.19/h for about 5.33 h, about $11.7 against the $12.05 budget, inside the 5.5 h cap.
