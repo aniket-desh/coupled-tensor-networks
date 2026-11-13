@@ -112,7 +112,7 @@ OMP_NUM_THREADS=8 PYTHONPATH=. uv run --frozen python studies/lang/lang-inductio
 PYTHONPATH=. uv run --frozen python -m studies.lang.interpret_all runs/lang-induction --procs 3 --hours 3 --first retrieval
 OMP_NUM_THREADS=8 PYTHONPATH=. uv run --frozen python studies/lang/lang-induction/analyze.py runs/lang-induction "$EXP_DIR/results"
 PYTHONPATH=. uv run --frozen python studies/lang/lang-induction/plot.py "$EXP_DIR/results" "$EXP_DIR/figures"
-for d in runs/lang-induction/*128_s*/; do [ -f "$d/interpret.json" ] || continue; last=$(ls "$d"ckpt_*.pt | sort -t_ -k2 -n | tail -n1); find "$d" -name 'ckpt_*.pt' ! -name ckpt_0.pt ! -path "$last" -delete; done
+for d in runs/lang-induction/*128_s*/; do [ -f "$d/interpret.json" ] || continue; last=$(ls "$d"ckpt_*.pt | sort -V | tail -n1); find "$d" -name 'ckpt_*.pt' ! -name ckpt_0.pt ! -path "$last" -delete; done
 ```
 
 Run the training and interpretation steps from a background command. The checks exit non-zero on failure. The training deadline (4.5 h) counts from the end of setup and the pilots. Interpretation takes retrieval runs first within each seed, since H5 depends on them.
@@ -139,11 +139,22 @@ The last line removes the intermediate checkpoints of each r = 128 run (about 11
 ## Success and failure criteria
 
 - **H1:** supported if r = 128 beats r = 16 on final KL in 3 of 3 seeds; not supported otherwise. The selected width (or none) and collapse counts per width are reported with it.
-- **H2:** supported if the r = 16 gap is > 0.05 in 3 of 3 seeds and the r = 128 gap is < half of it in ≥ 2 of 3; partly supported if only the first holds; not supported otherwise.
-- **H3:** supported if the tree beats perm on final KL in ≥ 5 of 6 pairs with no losses; "opposite direction" if the mirror holds; not supported otherwise. Speed is reported with it.
-- **H4:** supported if r = 128 beats r = 16 in 3 of 3 seeds and the median KL at r = 128 is > 0.01; partly supported if only the first holds; not supported otherwise.
+- **H2:**
+  - A seed counts as learned if its near accuracy at r = 16 is ≥ 0.8 × Bayes. Other seeds are reported as "did not learn".
+  - supported if every learned seed shows the capacity pattern (|acc(4–5) − acc(6)| ≤ 0.02 and both > acc(0–3) + 0.05), and the mid − far gap at r = 128 is below half its r = 16 value in all but at most one learned seed;
+  - partly supported if only the pattern holds;
+  - not supported otherwise;
+  - inconclusive with fewer than 2 learned seeds.
+  - Whether each seed is graded (near > mid > far) is reported.
+- **H3:** supported if the tree beats perm on final KL in ≥ 5 of 6 pairs with no losses; "opposite direction" if the mirror holds; inconclusive with fewer than 4 usable pairs; not supported otherwise. Speed is reported with it.
+- **H4:**
+  - supported if r = 128 beats r = 16 in 3 of 3 seeds and the median KL at r = 128 is > 0.01 with the r = 128 runs converged (diagnostic KL over the last 10,000 updates fell by < 5% or < 0.002 nats);
+  - partly supported if only the first clause holds, or if the gap remains while the runs are still improving (reported as "partly supported (r = 128 still improving)");
+  - not supported if r = 128 doesn't beat r = 16 in 3 of 3;
+  - inconclusive with fewer than 2 usable pairs.
+  - The width rule reports "unresolved (still improving)" in the same case.
 - **H5:** descriptive counts.
-- **Inconclusive:** more than a quarter of the planned runs didn't finish (this overrides every verdict), or a comparison has fewer than 2 usable pairs.
+- **Inconclusive:** more than a quarter of the planned runs didn't finish (this overrides every verdict), or a comparison has fewer usable pairs than its rule above needs.
 - **Run failed:** the checks fail, CUDA is unavailable, or no tree run finished.
 
 ## Time and cost
@@ -200,6 +211,10 @@ An independent review returned "needs revision" (no P0). Findings and changes:
   - missing pairs give inconclusive, and H2 uses finished runs only;
   - the pilot is now 12,000 updates;
   - the checkpoint counts are corrected.
+- **Re-check.** It confirmed these fixes and found two remaining P1s, both fixed:
+  - the pruning loop's sort kept the wrong checkpoint (now `sort -V`, verified by the reviewer to keep ckpt_60000.pt);
+  - the criteria section still had the old H2 and H4 rules (now the revised rules, matching `analyze.py`).
+  - H3's minimum of 4 usable pairs is stated.
 
 
 ## Amendments
