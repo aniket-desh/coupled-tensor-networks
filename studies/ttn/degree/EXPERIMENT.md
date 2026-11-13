@@ -1,7 +1,7 @@
 ---
 name: degree
 title: "Degree as a difficulty axis under a constant-biased leaf init"
-status: approved
+status: done
 gpu: NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe
 count: 1
 hours: 5.5
@@ -10,8 +10,8 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-12T21:42:21Z
-result: failed
-finished_utc: 2026-11-12T18:52:16Z
+result: supported
+finished_utc: 2026-11-13T01:54:54Z
 writeup: studies/ttn/degree/README.md
 ---
 
@@ -137,16 +137,37 @@ The draft (a shared-vs-separate degree sweep under the isotropic init) was revie
   128 CPUs to `nproc` but have a CPU quota of about 13.6 cores, and without a cap torch ran ~190 threads on tiny CPU
   tensors under throttling (the sharing-location supervisor saw its checks run 11 minutes without finishing). This
   changes no computed value.
+- **2026-11-12 23:40 UTC, training restarted with all 12 groups at once and t_max = 3e4 (supervisor).** The first
+  training job (`20261112T214538-train`, 8 groups at a time, the rest queued) had saved no group after 1.8 h. Each group
+  sets its step budget from a startup timing of the bare gradient step (5.6–7.1 ms; 23 ms for w0.250_D8), `train()` has
+  no wall-clock check, and a group saves only when it ends. The one group that finished, w0.250_D8, ran its 7.03e5 steps
+  in 6424 s, 9.1 ms/step under 8-way GPU sharing, so the other first-wave groups (2e6 steps) would have ended around
+  02:50 UTC, minutes before the worker's hard cap (about 03:14 UTC), and the four queued groups, including the w = 1/9
+  symmetry control, would never have run. (A probe of the real `train()` loop under load gave a similar picture.) The
+  sharing-location supervisor saw the same failure on its worker. The job was killed at 23:36 and the 12 groups were
+  restarted together (`--procs 12`) into `results/rerun`, with `--t-max 3e4` and `--hours 4`. Running them together
+  gives every group, the control included, the same horizon, so censoring is at the same t across D within each w and
+  in the control; t_max sets that horizon (`--hours 4` only matters if a startup timing exceeds 24 ms/step). 6e5 steps at
+  an expected ~14 ms/step under 12-way sharing end around 02:00 UTC, which leaves room before the cap if the rate is up
+  to about 1.25x worse. Consequence: runs that would have learned between t = 3e4 and 1e5 are censored, so the high-D
+  groups, especially at w = 0.5, lose learned seeds and the "at least 12 of 16 learned at 3 or more D values" condition
+  is harder to meet. Grid, seeds, eta, the criteria and the budget are unchanged; `analyze.py` and `plot.py` run on
+  `results/rerun`. The first job's w0.250_D8 group (t <= 3.5e4, 15/16 censored) stays in `results/` for reference only.
+  About 1.8 h of worker time (~$4) produced nothing else.
 
 ## Outcome
 
-**First attempt failed** (2026-11-12): stopped before training because a pre-training check failed, as "If something fails" requires (see `attempt1/`). Rerun pending.
+**Supported** (rerun, 2026-11-13), at a horizon of t = 3e4 instead of 1e5 after the restart amendment above. Quantitative
+agreement with the prediction was not met.
 
-- **Checks:** failed. `alignment_at_teacher_min` = 0 (needs > 0.999); every other check passed. Cause: the default CPU
-  least-squares driver (gelsy) in `ctn.ttn.alignment` is not reproducible on the rank-deficient teacher activations;
-  gelsd passes. Needs a fix in shared code, then a rerun of this definition unchanged.
-- **Symmetry control:** not run.
-- **Supported / not supported (slopes at w = 0.25 and 0.5):** not run.
-- **Quantitative agreement:** not run.
-- **Cost and time:** about 3 minutes of an A100-SXM4-80GB at $2.19/h, about $0.12 of the $12.05 budget and 5.5 h cap.
-- **Write-up:** [README.md](README.md).
+- **Checks:** all passed on the worker, including `alignment_at_teacher_min` = 1 and the permutation symmetry (6.1e-20).
+- **Symmetry control:** passed. At w = 1/9, D = 1 vs D = 8: 13/16 learned in each, Mann-Whitney p = 0.97.
+- **Supported:** yes. D = 1, 2, 4, 6 qualify at both w (14 to 16 of 16 learned; D = 8 has 11/16 and 4/16). Slope of log
+  t_half on D: 0.600 (0.469 to 0.730) at w = 0.25, 1.214 (1.092 to 1.333) at w = 0.5. Both intervals are above 0, and
+  the w = 0.5 slope is larger.
+- **Quantitative agreement:** not met. Predicted 0.425 and 0.901 lie outside both intervals; the measured slopes are 35
+  to 41% steeper.
+- **Cost and time:** 4 h 01 m of an A100-SXM4-80GB at $2.19/h, about $8.81 of the $12.05 budget and inside the 5.5 h
+  cap. About 1.8 h (~$4) went to the first training job, which was killed (see Amendments).
+- **Write-up:** [README.md](README.md). The first attempt (failed at the pre-training checks, about $0.12) is in
+  [attempt1/](attempt1/).
