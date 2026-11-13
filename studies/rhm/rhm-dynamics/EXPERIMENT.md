@@ -1,7 +1,7 @@
 ---
 name: rhm-dynamics
 title: "RHM learning dynamics: TreeTN on root and last-token tasks across widths, grammars and seeds"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 8
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-12T21:42:22Z
+result: supported
+finished_utc: 2026-11-13T02:30:28Z
+writeup: studies/rhm/rhm-dynamics/README.md
 ---
 
 # RHM learning dynamics: TreeTN on root and last-token tasks across widths, grammars and seeds
@@ -225,8 +228,16 @@ An independent review returned "needs revision". Findings and changes:
 
 ## Amendments
 
-None.
+- **2026-11-12 ~23:00 UTC, supervisor: descriptive rerun of the r = 64 runs at peak LR 1e-3.** At the shared LR 3e-3 (the r = 16 pilot choice; the r = 64 pilot preferred 3e-4 but did not diverge at 3e-3, so `shared_lr` kept 3e-3), 3 of the 6 r = 64 runs (last g0, last g1, root g2) learned to near-Bayes diagnostic accuracy by update 3,000 and then collapsed to the uniform output (diagnostic loss 2.773 = log 16) by update 10,000, ending at chance. Their losses stayed finite, so this is not the "diverge" case the definition covers, and the 4,000-update pilot ended before the collapse. The definition's rules are applied unchanged: these runs are status finished and enter H2b with their measured steps to threshold, and the write-up flags that they collapsed later. To show whether the collapse comes from the shared LR, after the interpretation step the 6 r = 64 runs are rerun once with `--only r64 --lr 1e-3` (the next lower grid LR, mirroring the divergence rule) into `runs/rhm-dynamics-rerun` (with the original `lr.json` copied in first). They are reported separately and do not enter H2a or H2b. Cost: about 15 minutes of worker time (~$0.20), inside the cap and budget.
 
 ## Outcome
 
-Not run yet.
+Result: supported (H1), with the width hypotheses conditional on the shared LR. Write-up: [README.md](README.md).
+
+- **H1:** supported. r = 16, seed 0: root test accuracy 1.0, 1.0, 1.0; last-token test KL 0.0040, 0.0036, 0.0055 nats (bar 0.05).
+- **H2a:** partly supported, conditional on the shared LR. r = 16 beat r = 8 in 3 pairs, lost none, tied 3 (all root, both at zero error). r = 8 reaches the Bayes error rate; its last-token KL is about twice r = 16's.
+- **H2b:** supported, conditional on the shared LR. r = 64 reached threshold first in 6 of 6 pairs (107–200 against 219–449 updates), but 3 of the 6 r = 64 runs collapsed to chance after reaching it. r = 32 was faster than r = 16 in 6 of 6 (descriptive).
+- **Conditional:** the r = 64 pilot preferred 3e-4 and the r = 8 root pilot preferred 1e-3 (by 1e-6 nats); the r = 16 choice, 3e-3, is at the top of the grid.
+- **Inconclusive triggers:** none. All 48 planned runs finished, every comparison had 6 usable pairs, and the r = 16 reference learned on both tasks.
+- **Descriptive:** the variance init stayed at chance in 6 of 6 runs; at m = 8, root was solved about 6.5 times slower and last-token did not reach threshold in 40,000 updates (KL 0.36–0.40 nats). The amended r = 64 rerun at 1e-3 had no collapse. Interpretation completed for all identity-init r = 16 runs; 4 of the 6 r = 64 runs were cut off by the timeout.
+- **Cost and time:** one RTX A6000, 4.63 h at $0.69/h, about $3.19, against an 8 h cap and a $9 budget.
