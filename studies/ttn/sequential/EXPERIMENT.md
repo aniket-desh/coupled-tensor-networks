@@ -1,7 +1,7 @@
 ---
 name: sequential
 title: "Sequential transfer: add output 2 after output 1, freeze vs update vs fresh tree"
-status: approved
+status: done
 gpu: NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe
 count: 1
 hours: 5.5
@@ -10,6 +10,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-12T18:37:29Z
+result: failed
+finished_utc: 2026-11-13T00:16:05Z
+writeup: studies/ttn/sequential/README.md
 ---
 
 # Sequential transfer: add output 2 after output 1, freeze vs update vs fresh tree
@@ -153,8 +156,16 @@ The first draft was reviewed. Findings and changes:
 
 ## Amendments
 
-None.
+- **2026-11-12 18:58 UTC, thread cap (execution only, no change to method, criteria or budget).** The first `studies.ttn.checks` run on the worker stalled for about 11 minutes: the container reports 255 host CPUs but has a 27.2-CPU cgroup quota, so torch started ~320 threads and the cgroup was throttled in 6436 of 7118 scheduler periods. The same checks finished in under a minute on the degree worker. The stuck process was killed and the checks and training commands are run with `OMP_NUM_THREADS=8` prepended. Phase-2 group processes still call `torch.set_num_threads(cpu_count // procs)` in `studies/ttn/common.py`; that is left as is because those groups run on the GPU.
 
 ## Outcome
 
-Not run yet.
+**Failed: no answer.** Phase 1 ran, but none of the six phase-2 groups finished before the 5.5 h cap, so no phase-2 data exists. Write-up: [README.md](README.md).
+
+- **Transfer, primary:** not evaluated (no phase-2 data).
+- **Location of transfer** (quarter and half): not evaluated.
+- **Inconclusive, phase-1 gate:** not triggered. 15 of 16 seeds passed (the floor is 10).
+- **Inconclusive, `none` baseline censored:** not evaluated.
+- **Descriptive** (fresh tree, interference, K12): not produced.
+- **Run failed conditions:** none occurred. The checks passed (after the thread-cap amendment), CUDA was available, and phase 1 ran. The failure was a phase-2 step budget sized from a 3-step timing of 5.7–6.0 ms/step when the real cost was at least 7.4–7.7 ms/step.
+- **Cost and time:** 5 h 26 m on an A100 SXM, about $11.90 of the $12.05 budget.
