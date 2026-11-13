@@ -16,6 +16,9 @@ rows = json.load(open(res / 'activations.json'))['rows']
 out['part_a_alpha1'] = {r['r']: {k: r[f'{k}_m2_mean'] for k in ('leaf', 'quarter', 'half', 'out')} for r in rows if r['alpha'] == 1.0}
 
 groups = sorted(p.stem for p in res.glob('alpha*_eta*.json'))
+if not groups:  # no training group finished (e.g. the worker cap hit first): write Part A only
+    json.dump(out, open(res / 'analysis.json', 'w'), indent=1, default=float)
+    sys.exit('no training groups saved; analysis.json holds Part A only')
 eta = max(float(g.split('_eta')[1]) for g in groups)
 main = {float(g[5:].split('_')[0]): g for g in groups if float(g.split('_eta')[1]) == eta}
 tab = {}

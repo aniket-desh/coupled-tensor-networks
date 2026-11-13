@@ -1,0 +1,10 @@
+part A done
+6 groups, 6 at a time: ['alpha1.0_eta0.05', 'alpha0.95_eta0.05', 'alpha0.9_eta0.05', 'alpha0.85_eta0.05', 'alpha0.8_eta0.05', 'alpha1.0_eta0.025']
+alpha0.95_eta0.05: 9.91 ms/step, budget 1.54e+06 steps (t <= 7.714e+04), wanted 3.9e+06
+alpha0.9_eta0.05: 6.11 ms/step, budget 2.5e+06 steps (t <= 1.251e+05), wanted 7.87e+06
+alpha1.0_eta0.05: 8.76 ms/step, budget 1.75e+06 steps (t <= 8.73e+04), wanted 2e+06
+alpha1.0_eta0.025: 7.90 ms/step, budget 1.93e+06 steps (t <= 4.837e+04), wanted 4e+06
+alpha0.8_eta0.05: 10.24 ms/step, budget 1.49e+06 steps (t <= 7.464e+04), wanted 3.64e+07
+alpha0.85_eta0.05: 7.72 ms/step, budget 1.98e+06 steps (t <= 9.9e+04), wanted 1.65e+07
+/usr/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

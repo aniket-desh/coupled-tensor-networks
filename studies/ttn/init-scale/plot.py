@@ -32,6 +32,8 @@ save(fig, fig_dir, 'activations')
 
 # Coefficients per alpha group (first 8 seeds), log time.
 groups = sorted((p.stem for p in res.glob('alpha*_eta*.json')), key=lambda g: (-float(g[5:].split('_')[0]), g))
+if not groups:  # no training group finished: the activation figure is all there is
+    sys.exit('no training groups saved; only figures/activations.pdf written')
 eta = max(float(g.split('_eta')[1]) for g in groups)
 fig, ax = plt.subplots(1, len(groups), figsize=(3.4 * len(groups), 3.2), constrained_layout=True, squeeze=False)
 for i, g in enumerate(groups):

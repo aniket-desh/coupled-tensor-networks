@@ -1,7 +1,7 @@
 ---
 name: init-scale
 title: "Init scale: activation variance, small-init plateaus, and the depth law in the 15-core TTN"
-status: approved
+status: done
 gpu: NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe
 count: 1
 hours: 5.5
@@ -10,6 +10,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-12T18:37:27Z
+result: failed
+finished_utc: 2026-11-13T00:20:55Z
+writeup: studies/ttn/init-scale/README.md
 ---
 
 # Init scale: activation variance, small-init plateaus, and the depth law in the 15-core TTN
@@ -156,8 +159,17 @@ A sibling review also established the basis-permutation symmetry and the slow, h
 
 ## Amendments
 
-None.
+- **2026-11-12 19:25 UTC, checks rerun with a thread cap (supervisor).** The first `studies.ttn.checks` step (job `20261112T185536-checks`) ran 27 minutes without finishing, using about 13.5 cores of CPU and none of the GPU. The same checks finish in 7–30 s elsewhere in this batch. The cause is the one the sharing-location supervisor diagnosed on an identical worker: the container's CPU quota is about 13.6 cores, but `nproc` reports 128, so torch starts ~190 threads on tiny CPU tensors and CFS throttles them. The job was killed and rerun unchanged except for `OMP_NUM_THREADS=8 MKL_NUM_THREADS=8` before the command. The same prefix goes on the later commands. It changes the thread count and no computed value. The training groups set their own thread count (`torch.set_num_threads(cpu_count // 6)` in `studies/ttn/common.py`), so the prefix only affects the parent process. The code isn't changed; the printed ms/step shows whether throttling slows training.
+- **2026-11-12 19:24 UTC, training deadline 4.25 h instead of 4.5 h (supervisor).** The first launch at 18:39 found no A100 in stock: the sibling experiments had just taken them. A second launch 10 minutes later placed the worker (at about 18:53), and the hung checks used another 27 minutes. That left 5.0 h on the worker cap at 19:23 UTC (cap about 00:23 UTC). A 4.5 h deadline would leave about 20 minutes for Part A, analysis, plotting and `orch finish`, and results that aren't published before the cap could be lost. Training runs with `--hours 4.25`, which leaves about 40 minutes. This shortens every group's horizon by about 6%. The alpha = 1 groups are expected to finish in 1–3 h, so the change mostly moves the censoring point of the small-alpha groups. The worker cap and the budget are unchanged.
+- **2026-11-12 23:48 UTC, training overran its deadline; finish at about 00:13 UTC whatever its state, and analyze on the coordinator (supervisor).** At 23:41 UTC, 4 h 18 min after starting with `--hours 4.25`, all six group processes were still training and none had saved. The deadline isn't enforced in the loop: `run_group` in `studies/ttn/common.py` turns it into a fixed step budget from a 3-step timing taken when the group starts, and `train` in `ctn/ttn.py` never checks the clock. So once six groups share the GPU, or mobility is logged during escapes, the groups run past it. A group writes its `.npz`/`.json` only when it finishes. The supervisor can't tell how far along any group is (the container blocks ptrace, so `py-spy` can't read the loop counter), and it can't tell which process is which group, so it can't pause the descriptive groups to speed up alpha = 1. Training is left alone, and the worker is finished at about 00:13 UTC, 10 minutes before its 5.5 h cap, so whatever is on disk is published and merged. `analyze.py` and `plot.py` read only saved results, so they run on the coordinator after collection rather than on the worker. A group that hasn't finished by then is lost and is reported as not run. If the alpha = 1, eta = 0.05 group is among them, the run counts as failed under the definition's criteria.
 
 ## Outcome
 
-Not run yet.
+**Failed.** No training group finished or saved before the worker had to be finished, so the run produced no answer to the training questions. Write-up: [README.md](README.md).
+
+- **Run failed (checks, CUDA, alpha = 1 eta = 0.05 group):** checks passed and CUDA was available, but the alpha = 1, eta = 0.05 group didn't run to completion. All six groups were still training 4.83 h into a 4.25 h deadline, because the loop never checks the clock. They were stopped at 00:13 UTC, before the 00:23 cap.
+- **Depth law (primary):** not evaluated; no half-times.
+- **Discretization:** not evaluated.
+- **Part A (descriptive):** at alpha = 1 the mean second moment of every layer is within 5% of 1 for r ≥ 8. At r = 4 the output mean is 1.35, with a wide spread over inits. The spread grows with depth and shrinks with r.
+- **Alpha exponent, calibration per alpha, c2-before-c3:** not evaluated.
+- **Cost and time:** about $11.70 against $12.05, on one A100-SXM4-80GB for 5.35 h against the 5.5 h cap.
