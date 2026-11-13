@@ -1,7 +1,7 @@
 ---
 name: lang-source
 title: "Selecting and combining source tokens in a TreeTN: fixed source vs two-source conjunctions whose meeting point moves through the tree"
-status: draft
+status: approved
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 10
@@ -9,6 +9,7 @@ budget_usd: 12
 disk_gb: 60
 data:
 secrets:
+approved_utc: 2026-11-13T23:50:56Z
 ---
 
 # Selecting and combining source tokens in a TreeTN: fixed source vs two-source conjunctions whose meeting point moves through the tree

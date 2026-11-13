@@ -1,7 +1,7 @@
 ---
 name: lang-parity
 title: "A tiny representation that is hard to find: parity of k bits in a TreeTN across init scales and input bias"
-status: draft
+status: approved
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 10
@@ -9,6 +9,7 @@ budget_usd: 12
 disk_gb: 60
 data:
 secrets:
+approved_utc: 2026-11-13T23:50:56Z
 ---
 
 # A tiny representation that is hard to find: parity of k bits in a TreeTN across init scales and input bias
