@@ -1,7 +1,7 @@
 ---
 name: lang-evidence
 title: "Evidence aggregation and event detection in a TreeTN: masked bigram at three meeting levels and a reserved-trigger OR"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 10
@@ -10,6 +10,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-13T23:50:56Z
+result: supported
+finished_utc: 2026-11-14T01:53:26Z
+writeup: studies/lang/lang-evidence/README.md
 ---
 
 # Evidence aggregation and event detection in a TreeTN: masked bigram at three meeting levels and a reserved-trigger OR
@@ -220,4 +223,11 @@ None.
 
 ## Outcome
 
-Not run yet.
+Ran 2026-11-13 23:52 to 2026-11-14 01:40 UTC on one A40 (EU-SE-1, $0.59/h): 1.8 h of the 10 h cap, about $1.06 of $12. All 48 planned runs finished, none collapsed, 36/36 interpreted; checks 47/47. No amendments. Write-up: [README.md](README.md).
+
+- **H1 supported.** Max tree final KL 0.00164 (9 runs, ≤ 0.02); tree32 vs tree 0 wins, 9 ties. The ties were forced: the KL tie tolerance (0.002) exceeds every masked-bigram tree/tree32 KL.
+- **H2 unresolved at n = 3.** p = 5 vs p = 8 tie on t and KL in 3/3 seeds. Both measures were at their floor. Post hoc, p = 8 reaches diagnostic-KL levels later than p = 5 in 15/15 seed–level comparisons at r = 32 and 14/15 at r = 16 (one tie), but not in the perm or chain controls.
+- **H3 (descriptive).** Tree vs perm: 9 speed ties, 9 KL ties (raw KL lower for the tree in 8/9). Pooled by meeting level, median KL is 0.00097 / 0.00113 / 0.00124 / 0.00151 for levels 1 / 2 / 3 / root (n = 1 / 4 / 5 / 8), all within the tolerance.
+- **H4 supported** (tree32): (a) 27/27 one-sided cases R² ≥ 0.9; (b) 9/9 both-neighbour bonds at or above ceiling − 0.05; (c) at the meeting node, median KL 0.21 sub-patch vs 8.83 unpatched and 3.99 random (n = 6).
+- **H5 supported** (tree32): (c) median moved 1.00 vs random 0.00 (42 node cases); (b) invariance at level ≥ 2 median 0.0008 vs 0.47 at step 0. The flag patch fails (≤ 1% moved) at the 3 nodes whose span holds leaf 15, in every run.
+- **H6 (descriptive).** All trigger arms reach final KL 0.0010–0.0029. The r = 32 trees' longer plateau is partly LR (vs tree16), but not vs the chain at the same LR.
