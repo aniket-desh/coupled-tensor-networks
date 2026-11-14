@@ -2,9 +2,10 @@
 
   PYTHONPATH=. python studies/lang/lang-parity/plot.py <results dir> <figures dir>
 
-t_grid.pdf   steps to threshold vs init noise eps, one panel per degree k, bias 0 (filled) and 0.2 (squares); one point
+t_grid.pdf   steps to threshold vs init noise eps, one panel per degree k, bias 0 (blue) and 0.2 (orange); one point
              per seed, open circles at the top = never reached within 60,000 updates (censored).
-curves.pdf   diagnostic loss vs update for every main run at bias 0, panels by k, colour by eps.
+curves.pdf   diagnostic loss vs update for every main run at bias 0, panels by k, colour by eps. Log loss axis: eps = 1
+             starts at hundreds to thousands of nats, which would flatten the other curves on a linear axis.
 probes.pdf   for the seed-0 run at k = 8 and k = 16 (bias 0) at each eps: partial-parity probe accuracy per level vs update,
              with the run's threshold step marked.
 """
@@ -41,7 +42,7 @@ def main():
                 n = f'main_k{k}_e{e:g}_b0_s{s}'
                 if n in cv:
                     Pl.curve(a, cv[n], key='diag_loss', color=Pl.COLORS[ei], lw=0.8, label=f'eps {e:g}')
-        a.set_xscale('log'), a.set_title(f'k = {k}, bias 0'), a.set_xlabel('update')
+        a.set_xscale('log'), a.set_yscale('log'), a.set_title(f'k = {k}, bias 0'), a.set_xlabel('update')
         a.axhline(math.log(2), color='gray', lw=0.6, ls=':')
     ax[0].set_ylabel('diagnostic loss [nats]')
     Pl.legend(ax[0], fontsize=7)

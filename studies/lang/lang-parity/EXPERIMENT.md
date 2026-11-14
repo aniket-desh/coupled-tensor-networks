@@ -1,7 +1,7 @@
 ---
 name: lang-parity
 title: "A tiny representation that is hard to find: parity of k bits in a TreeTN across init scales and input bias"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 10
@@ -10,6 +10,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-13T23:50:56Z
+result: supported
+finished_utc: 2026-11-14T03:00:47Z
+writeup: studies/lang/lang-parity/README.md
 ---
 
 # A tiny representation that is hard to find: parity of k bits in a TreeTN across init scales and input bias
@@ -192,4 +195,11 @@ None.
 
 ## Outcome
 
-Not run yet.
+Supported (H1–H4), with n = 3 seeds per cell. All 111 runs finished; none collapsed. Write-up: [`README.md`](README.md).
+
+- **H1 (degree):** supported at all 4 ε. No adjacent (k, 2k) pair has 2k faster in any seed (30 slower, 1 tie, 5 both censored), and k = 2 beats k = 16 in 3 of 3 seeds at every ε.
+- **H2 (ε = 0.3 vs 0.01):** supported, 6 wins in 6 informative pairs. The ε = 1.0 initial loss is a median of 762 nats.
+- **H3 (bias 0.2 vs 0, unbiased timing):** supported, 17 wins, 1 tie and 0 losses in 18 informative pairs.
+- **H4 (causal partial parity):** supported. The subspace patch moved the prediction at 203 of 203 nodes in 36 learned runs, against a random-subspace median of 0.17.
+- **H5 (order):** 21 simultaneous, 3 other, 0 bottom-up and 0 with a level never causal. The checkpoints are 1.1–1.8× apart.
+- **Cost:** one A40 for 2.97 h at $0.59/h, about $1.75, against a budget of $12 and a cap of 10 h.
