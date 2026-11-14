@@ -190,8 +190,52 @@ def schedule():
     check('checkpoint steps for 40,000 updates are common.CHECKPOINTS', T.ckpt_steps(40000) == C.CHECKPOINTS)
 
 
+def all_trees(rules, n, m, s, L):
+    """Every tree of a tiny grammar as ({level: symbols tuple}, prob)."""
+    out = [({0: (r,)}, 1.0 / n) for r in range(n)]
+    for l in range(L):
+        nxt = []
+        for tree, p in out:
+            for ks in itertools.product(range(m), repeat=len(tree[l])):
+                child = sum((rules[l][a, k].tolist() for a, k in zip(tree[l], ks)), [])
+                nxt.append(({**tree, l + 1: tuple(child)}, p / m ** len(ks)))
+        out = nxt
+    return out
+
+
+def stack_beliefs():
+    """stack_belief against direct enumeration of P(prefix, pending symbols), for every prefix of two tiny grammars
+    (binary depth 3, ternary depth 2), plus the next-token distribution it implies against P(x_t | x_<t)."""
+    for v, n, m, s, L in ((3, 3, 2, 2, 3), (3, 3, 2, 3, 2)):
+        rules = G.sample_rules(v, n, m, s, L, seed=1)
+        trees = all_trees(rules, n, m, s, L)
+        err_b = err_next = 0.0
+        for t in range(s ** L + 1):
+            nodes = G.pending_nodes(t, s, L)
+            sizes = [n if l == 0 else v for l, _ in nodes]
+            joint, nxt = {}, {}
+            for tree, p in trees:
+                pre = tree[L][:t]
+                idx = 0
+                for (l, q), k in zip(nodes, sizes):
+                    idx = idx * k + tree[l][q]
+                joint.setdefault(pre, torch.zeros(max(1, int(torch.tensor(sizes).prod())), dtype=torch.float64))[idx] += p
+                if t < s ** L:
+                    nxt.setdefault(pre, torch.zeros(v, dtype=torch.float64))[tree[L][t]] += p
+            pres = sorted(joint)
+            x = torch.tensor([list(q) + [0] * (s ** L - t) for q in pres])
+            ref = torch.stack([joint[q] / joint[q].sum() for q in pres])
+            b = G.stack_belief(x, rules, v, t)
+            err_b = max(err_b, (b - ref).abs().max().item())
+            if t < s ** L:
+                refn = torch.stack([nxt[q] / nxt[q].sum() for q in pres])
+                err_next = max(err_next, (G.next_token_from_belief(b, rules, v, t) - refn).abs().max().item())
+        check(f'stack_belief_s{s}_L{L}', err_b < 1e-12 and err_next < 1e-12,
+              f'max |b - enum| = {err_b:.1e}, max |P(next) - enum| = {err_next:.1e}, {len(trees)} trees')
+
+
 if __name__ == '__main__':
-    for f in (tiny_posteriors, parse_and_tasks, checkpoints, training_step, freezing, transfer_parts, schedule):
+    for f in (tiny_posteriors, stack_beliefs, parse_and_tasks, checkpoints, training_step, freezing, transfer_parts, schedule):
         try:
             f()
         except Exception as e:  # a crashing check is a failed check

@@ -138,3 +138,75 @@ def posterior_token(x, rules, v, position):
     cand[:, position] = torch.arange(v, device=x.device).repeat(B)
     p = likelihoods(cand, rules, v)[0][:, 0].sum(-1).reshape(B, v)  # uniform root prior cancels
     return p / p.sum(-1, keepdim=True)
+
+
+# Left-to-right belief states (for the transformer belief-geometry experiment).
+#
+# Read left to right, the RHM is a hidden Markov process whose hidden state after t tokens is the stack of pending
+# nodes: the maximal subtrees whose leaves are all at positions >= t. Their symbols are already fixed by the
+# productions chosen above them, none of their leaves has been emitted, and given their symbols the remaining tokens
+# are independent of the prefix. (For s = 2 these are the right siblings of the path from the root to leaf t - 1.)
+# The belief state is b_t = P(pending symbols | x_<t), a distribution over the joint of the stack's symbols.
+
+def pending_nodes(t, s, L):
+    """The stack after t observed tokens: [(level, position)] in left-to-right order (lowest level first for s = 2)."""
+    out = []
+
+    def visit(l, p):
+        lo, hi = p * s ** (L - l), (p + 1) * s ** (L - l)
+        if lo >= t:
+            out.append((l, p))
+        elif hi > t:
+            for j in range(s):
+                visit(l + 1, p * s + j)
+    visit(0, 0)
+    return out
+
+
+def stack_belief(x, rules, v, t):
+    """b_t (B, D) = P(symbols of pending_nodes(t) | x[:, :t]), float64, with D the product of the pending nodes'
+    vocabulary sizes and the joint flattened in pending_nodes order (row-major). x (B, >= t) long.
+
+    Upward pass in which each node returns T (B, v_node, P) = P(observed leaves under it, pending symbols under it =
+    f | node symbol), with f flattened into P. Observed leaf: one-hot, P = 1. Pending node: identity, P = v_node. A
+    partially observed node combines its children with the 1/m production prior as in `likelihoods`."""
+    s, L, B = rules[0].shape[2], len(rules), x.shape[0]
+    x = x.to('cpu')
+
+    def node(l, p):
+        lo, hi = p * s ** (L - l), (p + 1) * s ** (L - l)
+        k = rules[l].shape[0] if l < L else v
+        if lo >= t:
+            return torch.eye(k, dtype=torch.float64).expand(B, k, k)
+        if l == L:
+            return torch.nn.functional.one_hot(x[:, p], v).double().unsqueeze(-1)
+        R = rules[l]
+        _, m, _ = R.shape
+        prod_ = torch.ones(B, k, m, 1, dtype=torch.float64)
+        for j in range(s):
+            c = node(l + 1, p * s + j)[:, R[:, :, j]]  # (B, k, m, P_j)
+            prod_ = (prod_.unsqueeze(-1) * c.unsqueeze(-2)).flatten(-2)
+        return prod_.mean(2)
+
+    joint = node(0, 0).mean(1)  # uniform root prior
+    return joint / joint.sum(-1, keepdim=True)
+
+
+def leftmost_emission(rules, v, level):
+    """E (v_level, v): P(leftmost leaf under a node = c | node symbol), so P(x_t | b_t) is linear in b_t."""
+    L = len(rules)
+    E = torch.eye(v, dtype=torch.float64)
+    for l in range(L - 1, level - 1, -1):
+        R = rules[l]
+        E = E[R[:, :, 0]].mean(1)  # (v_l, v)
+    return E
+
+
+def next_token_from_belief(b, rules, v, t):
+    """P(x_t | x_<t) (B, v) from b_t: marginalize the stack onto its first (leftmost) node, push through its
+    leftmost-leaf emission."""
+    s, L = rules[0].shape[2], len(rules)
+    nodes = pending_nodes(t, s, L)
+    sizes = [rules[l].shape[0] if l < L else v for l, _ in nodes]
+    first = b.reshape(b.shape[0], sizes[0], -1).sum(-1)
+    return first @ leftmost_emission(rules, v, nodes[0][0])
