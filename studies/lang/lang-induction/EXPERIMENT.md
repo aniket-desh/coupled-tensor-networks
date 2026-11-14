@@ -221,6 +221,7 @@ An independent review returned "needs revision" (no P0). Findings and changes:
 ## Amendments
 
 - **2026-11-14 00:12 UTC, pilots out of GPU memory (covered by "If something fails").** The worker is an A40 (44.4 GiB usable; L40S and A6000 had no stock). With 6 concurrent processes, four retrieval pilot runs at r = 64/128 died with CUDA OOM during evaluation. Rather than let the remaining pilots run on at 6 at a time (more r = 128 runs would OOM and `pilot` would exit anyway), the supervisor stopped the training job and reran `run.py` into the same `--out` with `--procs 3`, as the definition prescribes. Finished pilot runs are reused; nothing else changes. The training deadline (4.5 h) still counts from the end of the pilots.
+- **2026-11-14 05:25 UTC, interpretation deadline tied to the worker's time cap.** Setup and pilots took 5,020 s instead of the planned < 1 h, so training (deadline 05:47 UTC, plus the runs already started, which finish past it) ends around 06:15 UTC, and a full 3 h of interpretation plus analysis would run into the worker's 10 h cap (09:53 UTC; it self-publishes at 09:38). The interpretation command is unchanged except that `--hours` is min(3, time left until 08:45 UTC), which leaves room for interpretation runs still in progress at its deadline, analysis, plots, pruning and `orch finish`. Interpretation keeps retrieval first within each seed, so H5 loses the least; any runs left uninterpreted are listed in `interpret_status.json` and reported under "Interpretation times out".
 
 ## Outcome
 
