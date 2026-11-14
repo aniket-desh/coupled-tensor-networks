@@ -1,0 +1,22 @@
+     0 loss 2.7769  lr 3.00e-05  0s
+   500 loss 0.3886  lr 3.00e-03  118s
+  1000 loss 0.2808  lr 3.00e-03  237s
+  1500 loss 0.3000  lr 2.99e-03  359s
+  2000 loss 0.2722  lr 2.98e-03  478s
+  2500 loss 0.3110  lr 2.98e-03  596s
+  3000 loss 0.2478  lr 2.96e-03  717s
+  3500 loss 0.2696  lr 2.95e-03  835s
+  4000 loss 0.3321  lr 2.94e-03  953s
+  4500 loss 0.2703  lr 2.92e-03  1071s
+  5000 loss 0.2542  lr 2.90e-03  1189s
+  5500 loss 0.2364  lr 2.88e-03  1309s
+  6000 loss 0.2491  lr 2.86e-03  1428s
+  6500 loss 0.2789  lr 2.83e-03  1547s
+  7000 loss 0.2414  lr 2.81e-03  1666s
+  7500 loss 0.3185  lr 2.78e-03  1788s
+  8000 loss 0.1849  lr 2.75e-03  1908s
+  8500 loss 0.2736  lr 2.72e-03  2028s
+  9000 loss 0.2568  lr 2.68e-03  2152s
+  9500 loss 0.2014  lr 2.65e-03  2269s
+ 10000 loss 0.2530  lr 2.61e-03  2386s
+wrote /workspace/coupled-tensor-networks/studies/rhm/rhm-dynamics/results/norms_last_g0_r64_lr3e-3.json
