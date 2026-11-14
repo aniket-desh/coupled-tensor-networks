@@ -10,9 +10,9 @@ section.
 |---|---|---|---|
 | `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | running (supervisor `exp-rhm-belief-geometry`) | $1.94 / $20 at 21:12 |
 | `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | running (supervisor `exp-rhm-ttn-belief-geometry`) | $1.01 / $10 at 21:12 |
-| `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | launched 21:55 after two review passes (supervisor `exp-rhm-ttn-messages`) | cap $10 |
+| `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | launched 21:40 after two review passes (supervisor `exp-rhm-ttn-messages`) | cap $10 |
 | `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | build being verified, first review in progress | not launched |
-| `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | build being verified, first review in progress | not launched |
+| `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | launched 21:42 after two review passes (supervisor `exp-rhm-belief-architectures`) | cap $10 |
 
 ## What you decided before leaving
 
@@ -62,11 +62,16 @@ section.
   Also: arms that carry verdicts train first, finished runs are analysed on the worker's CPU during training, and
   fewer predictions are saved.
 
-- 21:55. `rhm-ttn-messages` launched. Its first review found that two of its tests asked the wrong question (the
+- 21:40. `rhm-ttn-messages` launched. Its first review found that two of its tests asked the wrong question (the
   invariance test expected bonds to drop information the task needs; the "unseen combinations" test was mostly rows
   with no product in them), and that the production-table test was carried by level-1 nodes where it is trivially
   easy. All were fixed and a second reviewer cleared it. After the fixes no hypothesis passes on the short CPU pilots,
   so expect this experiment to come back mixed or negative.
+
+- 21:42. `rhm-belief-architectures` launched with 36 runs. The second review pass cleared it with one note, which was
+  taken: a pair now counts as a win for a tree only if the final probe gap is on that tree's side, so two trees that
+  end with equal scores never produce a win. The helper's calls that were confirmed: censoring is per hypothesis
+  within a grammar; the representation verdict uses t > T/2 only; a measure needs at least 9 usable pairs.
 
 ## Things to look at first
 
