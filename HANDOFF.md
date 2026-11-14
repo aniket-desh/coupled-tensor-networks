@@ -8,11 +8,11 @@ section.
 
 | Experiment | What it asks | Status | Spend / budget |
 |---|---|---|---|
-| `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | running (supervisor `exp-rhm-belief-geometry`) | $1.94 / $20 at 21:12 |
-| `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | running (supervisor `exp-rhm-ttn-belief-geometry`) | $1.01 / $10 at 21:12 |
-| `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | launched 21:40 after two review passes (supervisor `exp-rhm-ttn-messages`) | cap $10 |
-| `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | build being verified, first review in progress | not launched |
-| `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | launched 21:42 after two review passes (supervisor `exp-rhm-belief-architectures`) | cap $10 |
+| `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | running (supervisor `exp-rhm-belief-geometry`) | $3.73 / $20 at 23:41 |
+| `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | running (supervisor `exp-rhm-ttn-belief-geometry`) | $2.81 / $10 at 23:41 |
+| `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | launched 21:40 after two review passes (supervisor `exp-rhm-ttn-messages`) | $1.45 / $10 at 23:41 |
+| `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | launched 23:44 after two review passes (supervisor `exp-hmm-belief-geometry`) | cap $10 |
+| `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | launched 21:42 after two review passes (supervisor `exp-rhm-belief-architectures`) | $1.42 / $10 at 23:41 |
 
 ## What you decided before leaving
 
@@ -72,6 +72,13 @@ section.
   taken: a pair now counts as a win for a tree only if the final probe gap is on that tree's side, so two trees that
   end with equal scores never produce a win. The helper's calls that were confirmed: censoring is per hypothesis
   within a grammar; the representation verdict uses t > T/2 only; a measure needs at least 9 usable pairs.
+
+- 23:44. `hmm-belief-geometry` launched with 72 runs, about two hours later than it could have been: this session's
+  turn ended on an API error at 21:51, just before the revision went back to the reviewer, and it sat idle until 23:41.
+  The four running experiments were not affected. The second review pass cleared the revision with three notes, all
+  taken: the RRXOR cells are reported separately from the pooled verdicts (a pooled "supported" could otherwise hide
+  a failure in the one process that separates belief from prediction); a sentence that contradicted the summary script
+  was fixed; and the r = 32 tree's analyses stay out of the CPU batches that run during training.
 
 ## Things to look at first
 
