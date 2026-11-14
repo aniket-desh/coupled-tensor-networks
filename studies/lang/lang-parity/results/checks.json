@@ -1,0 +1,190 @@
+{
+ "bayes_matches_generation_fixed": {
+  "ok": true,
+  "detail": "max |z| = 3.14 over cells with expected counts >= 10"
+ },
+ "valid_fixed": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_two": {
+  "ok": true,
+  "detail": "max |z| = 3.07 over cells with expected counts >= 10"
+ },
+ "valid_two": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_mbigram": {
+  "ok": true,
+  "detail": "max |z| = 3.36 over cells with expected counts >= 10"
+ },
+ "valid_mbigram": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_trigger": {
+  "ok": true,
+  "detail": "max |z| = 3.58 over cells with expected counts >= 10"
+ },
+ "valid_trigger": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_parity": {
+  "ok": true,
+  "detail": "max |z| = 2.31 over cells with expected counts >= 10"
+ },
+ "valid_parity": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_parity_bias": {
+  "ok": true,
+  "detail": "max |z| = 2.50 over cells with expected counts >= 10"
+ },
+ "valid_parity_bias": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_mod4": {
+  "ok": true,
+  "detail": "max |z| = 2.89 over cells with expected counts >= 10"
+ },
+ "valid_mod4": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_retrieval": {
+  "ok": true,
+  "detail": "max |z| = 3.61 over cells with expected counts >= 10"
+ },
+ "valid_retrieval": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_matches_generation_multimatch": {
+  "ok": true,
+  "detail": "max |z| = 4.47 over cells with expected counts >= 10"
+ },
+ "valid_multimatch": {
+  "ok": true,
+  "detail": "0 invalid"
+ },
+ "bayes_ce_closed_form_fixed": {
+  "ok": true,
+  "detail": "0.1992 vs 0.2011"
+ },
+ "bayes_ce_closed_form_two": {
+  "ok": true,
+  "detail": "0.2014 vs 0.2011"
+ },
+ "bayes_ce_closed_form_trigger": {
+  "ok": true,
+  "detail": "0.2050 vs 0.2011"
+ },
+ "bayes_ce_closed_form_parity": {
+  "ok": true,
+  "detail": "0.1169 vs 0.1169"
+ },
+ "bayes_ce_closed_form_mod4": {
+  "ok": true,
+  "detail": "0.2010 vs 0.2011"
+ },
+ "bayes_ce_closed_form_retrieval": {
+  "ok": true,
+  "detail": "0.2508 vs 0.2537"
+ },
+ "mbigram_bayes_brute_force": {
+  "ok": true,
+  "detail": "max diff 7.77e-16"
+ },
+ "parity_no_lower_order_signal": {
+  "ok": true,
+  "detail": "max |corr| = 0.0035"
+ },
+ "summary_local_fixed": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_fixed": {
+  "ok": true,
+  "detail": "6 nodes tested"
+ },
+ "summary_local_two": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_two": {
+  "ok": true,
+  "detail": "12 nodes tested"
+ },
+ "summary_local_mbigram": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_mbigram": {
+  "ok": true,
+  "detail": "11 nodes tested"
+ },
+ "summary_local_trigger": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_trigger": {
+  "ok": true,
+  "detail": "26 nodes tested"
+ },
+ "summary_local_parity": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_parity": {
+  "ok": true,
+  "detail": "14 nodes tested"
+ },
+ "summary_local_parity_bias": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_parity_bias": {
+  "ok": true,
+  "detail": "14 nodes tested"
+ },
+ "summary_local_mod4": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_mod4": {
+  "ok": true,
+  "detail": "12 nodes tested"
+ },
+ "summary_local_retrieval": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_retrieval": {
+  "ok": true,
+  "detail": "6 nodes tested"
+ },
+ "summary_local_multimatch": {
+  "ok": true,
+  "detail": ""
+ },
+ "resample_same_multimatch": {
+  "ok": true,
+  "detail": "0 nodes tested"
+ },
+ "patch_equals_splice_tree": {
+  "ok": true,
+  "detail": "max diff 0.00e+00"
+ },
+ "patch_equals_splice_perm": {
+  "ok": true,
+  "detail": "max diff 0.00e+00"
+ },
+ "rank_fixed_source": {
+  "ok": true,
+  "detail": "across source cut 5 (expect 5), elsewhere 1 (expect 1)"
+ }
+}
