@@ -1,0 +1,3114 @@
+{
+ "health": {
+  "planned": 99,
+  "finished": 99,
+  "missing": [],
+  "collapsed": [],
+  "frac_unfinished": 0.0
+ },
+ "runs": {
+  "two_7_8_tied_s2": {
+   "name": "two_7_8_tied_s2",
+   "status": "finished",
+   "t": 360,
+   "eta_t": 0.3104673390444395,
+   "t_diag": 360,
+   "kl": 0.01614943441390991,
+   "acc": 0.95722,
+   "bayes_acc": 0.9572199583053589,
+   "loss": 0.2753604443359375,
+   "bayes_loss": 0.2599380314350128,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.807266676425934,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_chain_s2": {
+   "name": "two_7_8_chain_s2",
+   "status": "finished",
+   "t": 1480,
+   "eta_t": 1.425604579925108,
+   "t_diag": 1480,
+   "kl": 0.0040261469841003416,
+   "acc": 0.95722,
+   "bayes_acc": 0.9572199583053589,
+   "loss": 0.2638548309326172,
+   "bayes_loss": 0.2599380314350128,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.73240840435028,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tree32_s2": {
+   "name": "two_7_8_tree32_s2",
+   "status": "finished",
+   "t": 254,
+   "eta_t": 0.020449323975187877,
+   "t_diag": 254,
+   "kl": 0.0008823733103275299,
+   "acc": 0.95722,
+   "bayes_acc": 0.9572199583053589,
+   "loss": 0.26083459564208983,
+   "bayes_loss": 0.2599380314350128,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 9.310764241218568,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tree_s0": {
+   "name": "fixed_j0_tree_s0",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.00034308046579360963,
+   "acc": 0.95694,
+   "bayes_acc": 0.9569399952888489,
+   "loss": 0.26157809173583985,
+   "bayes_loss": 0.2613465487957001,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.998108458518981,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tied_s0": {
+   "name": "fixed_j0_tied_s0",
+   "status": "finished",
+   "t": 93,
+   "eta_t": 0.04371,
+   "t_diag": 93,
+   "kl": 0.0007259965705871582,
+   "acc": 0.95694,
+   "bayes_acc": 0.9569399952888489,
+   "loss": 0.2620712908935547,
+   "bayes_loss": 0.2613465487957001,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.687913119792938,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_chain_s0": {
+   "name": "fixed_j0_chain_s0",
+   "status": "finished",
+   "t": 60,
+   "eta_t": 0.0183,
+   "t_diag": 60,
+   "kl": 0.0007685958850383759,
+   "acc": 0.95694,
+   "bayes_acc": 0.9569399952888489,
+   "loss": 0.2621045397949219,
+   "bayes_loss": 0.2613465487957001,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.345654320716857,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tree32_s0": {
+   "name": "fixed_j0_tree32_s0",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.008049995202713522,
+   "t_diag": 130,
+   "kl": 0.0005804271197319031,
+   "acc": 0.95694,
+   "bayes_acc": 0.9569399952888489,
+   "loss": 0.26194158355712893,
+   "bayes_loss": 0.2613465487957001,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 9.703666269779205,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_tree_s0": {
+   "name": "fixed_j7_tree_s0",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.000449190948009491,
+   "acc": 0.95612,
+   "bayes_acc": 0.956119954586029,
+   "loss": 0.2657575897216797,
+   "bayes_loss": 0.265471488237381,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.792019832134248,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_tied_s0": {
+   "name": "fixed_j7_tied_s0",
+   "status": "finished",
+   "t": 100,
+   "eta_t": 0.0505,
+   "t_diag": 100,
+   "kl": 0.0009051543474197387,
+   "acc": 0.95612,
+   "bayes_acc": 0.956119954586029,
+   "loss": 0.2661945785522461,
+   "bayes_loss": 0.265471488237381,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.667663633823395,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_chain_s0": {
+   "name": "fixed_j7_chain_s0",
+   "status": "finished",
+   "t": 810,
+   "eta_t": 0.7598328255484357,
+   "t_diag": 810,
+   "kl": 0.001913288540840149,
+   "acc": 0.95612,
+   "bayes_acc": 0.956119954586029,
+   "loss": 0.2669247302246094,
+   "bayes_loss": 0.265471488237381,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.301431977748873,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_tree_s0": {
+   "name": "fixed_j8_tree_s0",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.0003723713219165802,
+   "acc": 0.95582,
+   "bayes_acc": 0.9558199644088745,
+   "loss": 0.26730321472167967,
+   "bayes_loss": 0.2669806182384491,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.367304134368895,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_tied_s0": {
+   "name": "fixed_j8_tied_s0",
+   "status": "finished",
+   "t": 110,
+   "eta_t": 0.06049999840183755,
+   "t_diag": 110,
+   "kl": 0.0007786792850494385,
+   "acc": 0.95582,
+   "bayes_acc": 0.9558199644088745,
+   "loss": 0.26762585693359375,
+   "bayes_loss": 0.2669806182384491,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.425513613224028,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_chain_s0": {
+   "name": "fixed_j8_chain_s0",
+   "status": "finished",
+   "t": 910,
+   "eta_t": 0.8595092807354239,
+   "t_diag": 910,
+   "kl": 0.002685823698043823,
+   "acc": 0.95582,
+   "bayes_acc": 0.9558199644088745,
+   "loss": 0.26899050659179685,
+   "bayes_loss": 0.2669806182384491,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.749496066570284,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_tree_s0": {
+   "name": "fixed_j15_tree_s0",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.0004326848018169403,
+   "acc": 0.95696,
+   "bayes_acc": 0.9569599628448486,
+   "loss": 0.26147943908691407,
+   "bayes_loss": 0.2612459361553192,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.567812275886537,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_tied_s0": {
+   "name": "fixed_j15_tied_s0",
+   "status": "finished",
+   "t": 100,
+   "eta_t": 0.0505,
+   "t_diag": 100,
+   "kl": 0.0008055911016464233,
+   "acc": 0.95696,
+   "bayes_acc": 0.9569599628448486,
+   "loss": 0.26211328063964845,
+   "bayes_loss": 0.2612459361553192,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.459163808822632,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_chain_s0": {
+   "name": "fixed_j15_chain_s0",
+   "status": "finished",
+   "t": 56,
+   "eta_t": 0.015960000000000002,
+   "t_diag": 56,
+   "kl": 0.0005591793340444565,
+   "acc": 0.95696,
+   "bayes_acc": 0.9569599628448486,
+   "loss": 0.2616524200439453,
+   "bayes_loss": 0.2612459361553192,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.190285360813142,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tree_s0": {
+   "name": "two_0_1_tree_s0",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0006371084153652192,
+   "acc": 0.95536,
+   "bayes_acc": 0.9553599953651428,
+   "loss": 0.27013083709716795,
+   "bayes_loss": 0.2692945897579193,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.276392602920533,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tied_s0": {
+   "name": "two_0_1_tied_s0",
+   "status": "finished",
+   "t": 170,
+   "eta_t": 0.12049937254269828,
+   "t_diag": 170,
+   "kl": 0.0010616556107997893,
+   "acc": 0.95536,
+   "bayes_acc": 0.9553599953651428,
+   "loss": 0.27077535186767576,
+   "bayes_loss": 0.2692945897579193,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.537499248981476,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_chain_s0": {
+   "name": "two_0_1_chain_s0",
+   "status": "finished",
+   "t": 150,
+   "eta_t": 0.1004997733139403,
+   "t_diag": 150,
+   "kl": 0.0018213455533981323,
+   "acc": 0.95536,
+   "bayes_acc": 0.9553599953651428,
+   "loss": 0.27159121887207033,
+   "bayes_loss": 0.2692945897579193,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.9546865940094,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tree32_s0": {
+   "name": "two_0_1_tree32_s0",
+   "status": "finished",
+   "t": 230,
+   "eta_t": 0.018049594072371597,
+   "t_diag": 230,
+   "kl": 0.0007864338672161102,
+   "acc": 0.95536,
+   "bayes_acc": 0.9553599953651428,
+   "loss": 0.2702744116210937,
+   "bayes_loss": 0.2692945897579193,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 8.945635759830475,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_tree_s0": {
+   "name": "two_1_2_tree_s0",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0005388344633579255,
+   "acc": 0.9561,
+   "bayes_acc": 0.9560999870300293,
+   "loss": 0.26600783081054685,
+   "bayes_loss": 0.26557210087776184,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 8.673425137996674,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_tied_s0": {
+   "name": "two_1_2_tied_s0",
+   "status": "finished",
+   "t": 320,
+   "eta_t": 0.27048023348520184,
+   "t_diag": 320,
+   "kl": 0.0014412690353393554,
+   "acc": 0.9561,
+   "bayes_acc": 0.9560999870300293,
+   "loss": 0.2668649890136719,
+   "bayes_loss": 0.26557210087776184,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.91698647737503,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_chain_s0": {
+   "name": "two_1_2_chain_s0",
+   "status": "finished",
+   "t": 290,
+   "eta_t": 0.24048728079281984,
+   "t_diag": 290,
+   "kl": 0.002162505877017975,
+   "acc": 0.9561,
+   "bayes_acc": 0.9560999870300293,
+   "loss": 0.26737535247802735,
+   "bayes_loss": 0.26557210087776184,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.521628522872923,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_tree_s0": {
+   "name": "two_3_4_tree_s0",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0007849467349052429,
+   "acc": 0.95472,
+   "bayes_acc": 0.9547199606895447,
+   "loss": 0.27316781768798826,
+   "bayes_loss": 0.27251410484313965,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.240783369541168,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_tied_s0": {
+   "name": "two_3_4_tied_s0",
+   "status": "finished",
+   "t": 330,
+   "eta_t": 0.28047740708023644,
+   "t_diag": 330,
+   "kl": 0.0054498499584198,
+   "acc": 0.95472,
+   "bayes_acc": 0.9547199606895447,
+   "loss": 0.2779150219726563,
+   "bayes_loss": 0.27251410484313965,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.770581769943238,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_chain_s0": {
+   "name": "two_3_4_chain_s0",
+   "status": "finished",
+   "t": 480,
+   "eta_t": 0.430397856319918,
+   "t_diag": 480,
+   "kl": 0.002031211447715759,
+   "acc": 0.95472,
+   "bayes_acc": 0.9547199606895447,
+   "loss": 0.2745638525390625,
+   "bayes_loss": 0.27251410484313965,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.72134609222412,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tree_s0": {
+   "name": "two_7_8_tree_s0",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0008775463128089905,
+   "acc": 0.95448,
+   "bayes_acc": 0.954479992389679,
+   "loss": 0.27450679656982424,
+   "bayes_loss": 0.2737213969230652,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.090711188316345,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tied_s0": {
+   "name": "two_7_8_tied_s0",
+   "status": "finished",
+   "t": 340,
+   "eta_t": 0.29047432334333506,
+   "t_diag": 340,
+   "kl": 0.007672355270385742,
+   "acc": 0.95448,
+   "bayes_acc": 0.954479992389679,
+   "loss": 0.2823661395263672,
+   "bayes_loss": 0.2737213969230652,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.101838278770447,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_chain_s0": {
+   "name": "two_7_8_chain_s0",
+   "status": "finished",
+   "t": 950,
+   "eta_t": 0.8993551349466989,
+   "t_diag": 950,
+   "kl": 0.0032582439613342284,
+   "acc": 0.95448,
+   "bayes_acc": 0.954479992389679,
+   "loss": 0.27710981018066405,
+   "bayes_loss": 0.2737213969230652,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.836930763721465,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tree32_s0": {
+   "name": "two_7_8_tree32_s0",
+   "status": "finished",
+   "t": 280,
+   "eta_t": 0.02304891899573343,
+   "t_diag": 280,
+   "kl": 0.001072581980228424,
+   "acc": 0.95448,
+   "bayes_acc": 0.954479992389679,
+   "loss": 0.2746816314697266,
+   "bayes_loss": 0.2737213969230652,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 9.382571542263031,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_tree_s0": {
+   "name": "two_0_8_tree_s0",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0007326242792606354,
+   "acc": 0.95602,
+   "bayes_acc": 0.9560199975967407,
+   "loss": 0.2669882275390625,
+   "bayes_loss": 0.2659745514392853,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.017750644683836,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_tied_s0": {
+   "name": "two_0_8_tied_s0",
+   "status": "finished",
+   "t": 160,
+   "eta_t": 0.11049960629297136,
+   "t_diag": 160,
+   "kl": 0.0007942239701747894,
+   "acc": 0.95602,
+   "bayes_acc": 0.9560199975967407,
+   "loss": 0.267074775390625,
+   "bayes_loss": 0.2659745514392853,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.411168801784516,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_chain_s0": {
+   "name": "two_0_8_chain_s0",
+   "status": "finished",
+   "t": 2400,
+   "eta_t": 2.3279216088996946,
+   "t_diag": 2400,
+   "kl": 0.023523370819091796,
+   "acc": 0.95602,
+   "bayes_acc": 0.9560199975967407,
+   "loss": 0.2880031201171875,
+   "bayes_loss": 0.2659745514392853,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.062682449817657,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_tree_s0": {
+   "name": "two_0_15_tree_s0",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.000779902857542038,
+   "acc": 0.95776,
+   "bayes_acc": 0.9577599763870239,
+   "loss": 0.25779112060546877,
+   "bayes_loss": 0.25722160935401917,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.049967515468598,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_tied_s0": {
+   "name": "two_0_15_tied_s0",
+   "status": "finished",
+   "t": 356,
+   "eta_t": 0.3064688261402244,
+   "t_diag": 356,
+   "kl": 0.01201360424041748,
+   "acc": 0.95776,
+   "bayes_acc": 0.9577599763870239,
+   "loss": 0.2680189215087891,
+   "bayes_loss": 0.25722160935401917,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.56515040397644,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_chain_s0": {
+   "name": "two_0_15_chain_s0",
+   "status": "finished",
+   "t": 140,
+   "eta_t": 0.09049988482036289,
+   "t_diag": 140,
+   "kl": 0.0019299805545806884,
+   "acc": 0.95776,
+   "bayes_acc": 0.9577599763870239,
+   "loss": 0.2592887341308594,
+   "bayes_loss": 0.25722160935401917,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.845431590080263,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tree_s1": {
+   "name": "fixed_j0_tree_s1",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.00044368367433547976,
+   "acc": 0.9557,
+   "bayes_acc": 0.9556999802589417,
+   "loss": 0.26833850036621093,
+   "bayes_loss": 0.26758429408073425,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 8.407271087169647,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tied_s1": {
+   "name": "fixed_j0_tied_s1",
+   "status": "finished",
+   "t": 110,
+   "eta_t": 0.06049999840183755,
+   "t_diag": 110,
+   "kl": 0.000856624253988266,
+   "acc": 0.9557,
+   "bayes_acc": 0.9556999802589417,
+   "loss": 0.2686607659912109,
+   "bayes_loss": 0.26758429408073425,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.009068298339844,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_chain_s1": {
+   "name": "fixed_j0_chain_s1",
+   "status": "finished",
+   "t": 56,
+   "eta_t": 0.015960000000000002,
+   "t_diag": 56,
+   "kl": 0.0011309818160533905,
+   "acc": 0.9557,
+   "bayes_acc": 0.9556999802589417,
+   "loss": 0.2690226879882813,
+   "bayes_loss": 0.26758429408073425,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.276873528957367,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tree32_s1": {
+   "name": "fixed_j0_tree32_s1",
+   "status": "finished",
+   "t": 140,
+   "eta_t": 0.00904998848203629,
+   "t_diag": 140,
+   "kl": 0.0005977017474174499,
+   "acc": 0.9557,
+   "bayes_acc": 0.9556999802589417,
+   "loss": 0.2682500915527344,
+   "bayes_loss": 0.26758429408073425,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 8.31993533372879,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_tree_s1": {
+   "name": "fixed_j7_tree_s1",
+   "status": "finished",
+   "t": 66,
+   "eta_t": 0.02211,
+   "t_diag": 66,
+   "kl": 0.0006565448391437531,
+   "acc": 0.95662,
+   "bayes_acc": 0.9566199779510498,
+   "loss": 0.2637869421386719,
+   "bayes_loss": 0.26295629143714905,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 8.2714369058609,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_tied_s1": {
+   "name": "fixed_j7_tied_s1",
+   "status": "finished",
+   "t": 100,
+   "eta_t": 0.0505,
+   "t_diag": 100,
+   "kl": 0.0009783584046363831,
+   "acc": 0.95662,
+   "bayes_acc": 0.9566199779510498,
+   "loss": 0.2642722784423828,
+   "bayes_loss": 0.26295629143714905,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.818927228450775,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_chain_s1": {
+   "name": "fixed_j7_chain_s1",
+   "status": "finished",
+   "t": 800,
+   "eta_t": 0.7498606289268378,
+   "t_diag": 800,
+   "kl": 0.002578502540588379,
+   "acc": 0.95662,
+   "bayes_acc": 0.9566199779510498,
+   "loss": 0.26556416168212893,
+   "bayes_loss": 0.26295629143714905,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.761057138442993,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_tree_s1": {
+   "name": "fixed_j8_tree_s1",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.00035881132304668424,
+   "acc": 0.95578,
+   "bayes_acc": 0.9557799696922302,
+   "loss": 0.26762768859863284,
+   "bayes_loss": 0.2671818435192108,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 8.354843258857727,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_tied_s1": {
+   "name": "fixed_j8_tied_s1",
+   "status": "finished",
+   "t": 110,
+   "eta_t": 0.06049999840183755,
+   "t_diag": 110,
+   "kl": 0.0006867834424972534,
+   "acc": 0.95578,
+   "bayes_acc": 0.9557799696922302,
+   "loss": 0.268170959777832,
+   "bayes_loss": 0.2671818435192108,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.397496497631073,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_chain_s1": {
+   "name": "fixed_j8_chain_s1",
+   "status": "finished",
+   "t": 800,
+   "eta_t": 0.7498606289268378,
+   "t_diag": 800,
+   "kl": 0.002037385721206665,
+   "acc": 0.95578,
+   "bayes_acc": 0.9557799696922302,
+   "loss": 0.2690903369140625,
+   "bayes_loss": 0.2671818435192108,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.261086928844453,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_tree_s1": {
+   "name": "fixed_j15_tree_s1",
+   "status": "finished",
+   "t": 70,
+   "eta_t": 0.02485,
+   "t_diag": 70,
+   "kl": 0.00031760196805000304,
+   "acc": 0.95718,
+   "bayes_acc": 0.9571799635887146,
+   "loss": 0.26044796325683595,
+   "bayes_loss": 0.26013925671577454,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.664612889289856,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_tied_s1": {
+   "name": "fixed_j15_tied_s1",
+   "status": "finished",
+   "t": 100,
+   "eta_t": 0.0505,
+   "t_diag": 100,
+   "kl": 0.0006816311407089234,
+   "acc": 0.95718,
+   "bayes_acc": 0.9571799635887146,
+   "loss": 0.26113129425048826,
+   "bayes_loss": 0.26013925671577454,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.572045409679411,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_chain_s1": {
+   "name": "fixed_j15_chain_s1",
+   "status": "finished",
+   "t": 60,
+   "eta_t": 0.0183,
+   "t_diag": 60,
+   "kl": 0.0005798265331983566,
+   "acc": 0.95718,
+   "bayes_acc": 0.9571799635887146,
+   "loss": 0.26081825103759765,
+   "bayes_loss": 0.26013925671577454,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.15891169309616,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tree_s1": {
+   "name": "two_0_1_tree_s1",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0006826826906204224,
+   "acc": 0.95378,
+   "bayes_acc": 0.9537799954414368,
+   "loss": 0.278069270324707,
+   "bayes_loss": 0.2772427201271057,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.635843241214753,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tied_s1": {
+   "name": "two_0_1_tied_s1",
+   "status": "finished",
+   "t": 180,
+   "eta_t": 0.13049906084852966,
+   "t_diag": 180,
+   "kl": 0.001412813730239868,
+   "acc": 0.95378,
+   "bayes_acc": 0.9537799954414368,
+   "loss": 0.27849557739257813,
+   "bayes_loss": 0.2772427201271057,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.707538998126983,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_chain_s1": {
+   "name": "two_0_1_chain_s1",
+   "status": "finished",
+   "t": 150,
+   "eta_t": 0.1004997733139403,
+   "t_diag": 150,
+   "kl": 0.0018692024612426757,
+   "acc": 0.95378,
+   "bayes_acc": 0.9537799954414368,
+   "loss": 0.2793556362915039,
+   "bayes_loss": 0.2772427201271057,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.29447102546692,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tree32_s1": {
+   "name": "two_0_1_tree32_s1",
+   "status": "finished",
+   "t": 250,
+   "eta_t": 0.020049375458242986,
+   "t_diag": 250,
+   "kl": 0.0008344306027889252,
+   "acc": 0.95378,
+   "bayes_acc": 0.9537799954414368,
+   "loss": 0.2782630288696289,
+   "bayes_loss": 0.2772427201271057,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 9.246472215652465,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_tree_s1": {
+   "name": "two_1_2_tree_s1",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0006414743709564209,
+   "acc": 0.9569,
+   "bayes_acc": 0.9569000005722046,
+   "loss": 0.26226583679199217,
+   "bayes_loss": 0.2615477442741394,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.732769429683685,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_tied_s1": {
+   "name": "two_1_2_tied_s1",
+   "status": "finished",
+   "t": 290,
+   "eta_t": 0.24048728079281984,
+   "t_diag": 290,
+   "kl": 0.0015357750749588012,
+   "acc": 0.9569,
+   "bayes_acc": 0.9569000005722046,
+   "loss": 0.26336791442871094,
+   "bayes_loss": 0.2615477442741394,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.544642472267151,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_chain_s1": {
+   "name": "two_1_2_chain_s1",
+   "status": "finished",
+   "t": 300,
+   "eta_t": 0.2504851591324575,
+   "t_diag": 300,
+   "kl": 0.001725796298980713,
+   "acc": 0.9569,
+   "bayes_acc": 0.9569000005722046,
+   "loss": 0.2631345999145508,
+   "bayes_loss": 0.2615477442741394,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.07017593383789,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_tree_s1": {
+   "name": "two_3_4_tree_s1",
+   "status": "finished",
+   "t": 140,
+   "eta_t": 0.09049988482036289,
+   "t_diag": 140,
+   "kl": 0.0006332708930969238,
+   "acc": 0.95608,
+   "bayes_acc": 0.9560799598693848,
+   "loss": 0.2662206185913086,
+   "bayes_loss": 0.2656727135181427,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.3623415350914,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_tied_s1": {
+   "name": "two_3_4_tied_s1",
+   "status": "finished",
+   "t": 300,
+   "eta_t": 0.2504851591324575,
+   "t_diag": 300,
+   "kl": 0.0015652446675300598,
+   "acc": 0.95608,
+   "bayes_acc": 0.9560799598693848,
+   "loss": 0.2673713494873047,
+   "bayes_loss": 0.2656727135181427,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.143031013011933,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_chain_s1": {
+   "name": "two_3_4_chain_s1",
+   "status": "finished",
+   "t": 550,
+   "eta_t": 0.5003302795950321,
+   "t_diag": 550,
+   "kl": 0.00183826824426651,
+   "acc": 0.95608,
+   "bayes_acc": 0.9560799598693848,
+   "loss": 0.26754435302734375,
+   "bayes_loss": 0.2656727135181427,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 24.092377960681915,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tree_s1": {
+   "name": "two_7_8_tree_s1",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0005474213808774948,
+   "acc": 0.9566,
+   "bayes_acc": 0.9565999507904053,
+   "loss": 0.2639402178955078,
+   "bayes_loss": 0.2630568742752075,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.718368470668793,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tied_s1": {
+   "name": "two_7_8_tied_s1",
+   "status": "finished",
+   "t": 320,
+   "eta_t": 0.27048023348520184,
+   "t_diag": 320,
+   "kl": 0.018931182403564454,
+   "acc": 0.9566,
+   "bayes_acc": 0.9565999507904053,
+   "loss": 0.2831156118774414,
+   "bayes_loss": 0.2630568742752075,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.208824801445006,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_chain_s1": {
+   "name": "two_7_8_chain_s1",
+   "status": "finished",
+   "t": 980,
+   "eta_t": 0.9292295908353866,
+   "t_diag": 980,
+   "kl": 0.0037887018013000487,
+   "acc": 0.9566,
+   "bayes_acc": 0.9565999507904053,
+   "loss": 0.26715405212402343,
+   "bayes_loss": 0.2630568742752075,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.866791248321533,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tree32_s1": {
+   "name": "two_7_8_tree32_s1",
+   "status": "finished",
+   "t": 260,
+   "eta_t": 0.021049241564098497,
+   "t_diag": 260,
+   "kl": 0.0008947810029983521,
+   "acc": 0.9566,
+   "bayes_acc": 0.9565999507904053,
+   "loss": 0.2642020260620117,
+   "bayes_loss": 0.2630568742752075,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 9.238440287113189,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_tree_s1": {
+   "name": "two_0_8_tree_s1",
+   "status": "finished",
+   "t": 140,
+   "eta_t": 0.09049988482036289,
+   "t_diag": 140,
+   "kl": 0.0007064577579498291,
+   "acc": 0.9535,
+   "bayes_acc": 0.953499972820282,
+   "loss": 0.2791564227294922,
+   "bayes_loss": 0.27865123748779297,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.523293197154999,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_tied_s1": {
+   "name": "two_0_8_tied_s1",
+   "status": "finished",
+   "t": 190,
+   "eta_t": 0.1404986599960683,
+   "t_diag": 190,
+   "kl": 0.0011390687310695647,
+   "acc": 0.9535,
+   "bayes_acc": 0.953499972820282,
+   "loss": 0.2794054479980469,
+   "bayes_loss": 0.27865123748779297,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.339196670055388,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_chain_s1": {
+   "name": "two_0_8_chain_s1",
+   "status": "finished",
+   "t": 2550,
+   "eta_t": 2.4732328692848315,
+   "t_diag": 2550,
+   "kl": 0.021292783508300783,
+   "acc": 0.9535,
+   "bayes_acc": 0.953499972820282,
+   "loss": 0.299458596496582,
+   "bayes_loss": 0.27865123748779297,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.6686350107193,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_tree_s1": {
+   "name": "two_0_15_tree_s1",
+   "status": "finished",
+   "t": 120,
+   "eta_t": 0.07049998614926378,
+   "t_diag": 120,
+   "kl": 0.000664000952243805,
+   "acc": 0.9563,
+   "bayes_acc": 0.9562999606132507,
+   "loss": 0.26535001037597655,
+   "bayes_loss": 0.26456600427627563,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.271200096607208,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_tied_s1": {
+   "name": "two_0_15_tied_s1",
+   "status": "finished",
+   "t": 320,
+   "eta_t": 0.27048023348520184,
+   "t_diag": 320,
+   "kl": 0.011785700454711914,
+   "acc": 0.9563,
+   "bayes_acc": 0.9562999606132507,
+   "loss": 0.27593927490234377,
+   "bayes_loss": 0.26456600427627563,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.768162822723388,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_chain_s1": {
+   "name": "two_0_15_chain_s1",
+   "status": "finished",
+   "t": 140,
+   "eta_t": 0.09049988482036289,
+   "t_diag": 140,
+   "kl": 0.00667101767539978,
+   "acc": 0.9563,
+   "bayes_acc": 0.9562999606132507,
+   "loss": 0.2703218701171875,
+   "bayes_loss": 0.26456600427627563,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 24.61725825071335,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tree_s2": {
+   "name": "fixed_j0_tree_s2",
+   "status": "finished",
+   "t": 70,
+   "eta_t": 0.02485,
+   "t_diag": 70,
+   "kl": 0.00041288415789604186,
+   "acc": 0.95746,
+   "bayes_acc": 0.9574599862098694,
+   "loss": 0.25925164489746094,
+   "bayes_loss": 0.2587307095527649,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 10.224486148357393,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tied_s2": {
+   "name": "fixed_j0_tied_s2",
+   "status": "finished",
+   "t": 100,
+   "eta_t": 0.0505,
+   "t_diag": 100,
+   "kl": 0.0009070484101772309,
+   "acc": 0.95746,
+   "bayes_acc": 0.9574599862098694,
+   "loss": 0.2596625909423828,
+   "bayes_loss": 0.2587307095527649,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.817659389972688,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_chain_s2": {
+   "name": "fixed_j0_chain_s2",
+   "status": "finished",
+   "t": 90,
+   "eta_t": 0.04095,
+   "t_diag": 90,
+   "kl": 0.0011068751299381256,
+   "acc": 0.95746,
+   "bayes_acc": 0.9574599862098694,
+   "loss": 0.25986787139892575,
+   "bayes_loss": 0.2587307095527649,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.697176218032837,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j0_tree32_s2": {
+   "name": "fixed_j0_tree32_s2",
+   "status": "finished",
+   "t": 140,
+   "eta_t": 0.00904998848203629,
+   "t_diag": 140,
+   "kl": 0.0005842379176616669,
+   "acc": 0.95746,
+   "bayes_acc": 0.9574599862098694,
+   "loss": 0.25935730224609377,
+   "bayes_loss": 0.2587307095527649,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 9.790694725513458,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_tree_s2": {
+   "name": "fixed_j7_tree_s2",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.00035276355147361756,
+   "acc": 0.9553,
+   "bayes_acc": 0.955299973487854,
+   "loss": 0.26981524810791013,
+   "bayes_loss": 0.2695964574813843,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.847187733650207,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_tied_s2": {
+   "name": "fixed_j7_tied_s2",
+   "status": "finished",
+   "t": 100,
+   "eta_t": 0.0505,
+   "t_diag": 100,
+   "kl": 0.0007621858835220337,
+   "acc": 0.9553,
+   "bayes_acc": 0.955299973487854,
+   "loss": 0.2703065637207031,
+   "bayes_loss": 0.2695964574813843,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.734902274608611,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j7_chain_s2": {
+   "name": "fixed_j7_chain_s2",
+   "status": "finished",
+   "t": 1070,
+   "eta_t": 1.0187986663644077,
+   "t_diag": 1070,
+   "kl": 0.002189960346221924,
+   "acc": 0.9553,
+   "bayes_acc": 0.955299973487854,
+   "loss": 0.2719896292114258,
+   "bayes_loss": 0.2695964574813843,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.051906478405,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_tree_s2": {
+   "name": "fixed_j8_tree_s2",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.000314671128988266,
+   "acc": 0.9564,
+   "bayes_acc": 0.9563999772071838,
+   "loss": 0.26418725952148436,
+   "bayes_loss": 0.2640629708766937,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.775271153450012,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_tied_s2": {
+   "name": "fixed_j8_tied_s2",
+   "status": "finished",
+   "t": 93,
+   "eta_t": 0.04371,
+   "t_diag": 93,
+   "kl": 0.0006324056589603424,
+   "acc": 0.9564,
+   "bayes_acc": 0.9563999772071838,
+   "loss": 0.26463895935058596,
+   "bayes_loss": 0.2640629708766937,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.930607748031617,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j8_chain_s2": {
+   "name": "fixed_j8_chain_s2",
+   "status": "finished",
+   "t": 1090,
+   "eta_t": 1.0386912762418505,
+   "t_diag": 1090,
+   "kl": 0.0024261984491348266,
+   "acc": 0.9564,
+   "bayes_acc": 0.9563999772071838,
+   "loss": 0.2666186346435547,
+   "bayes_loss": 0.2640629708766937,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 21.767546665668487,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_tree_s2": {
+   "name": "fixed_j15_tree_s2",
+   "status": "finished",
+   "t": 70,
+   "eta_t": 0.02485,
+   "t_diag": 70,
+   "kl": 0.0006200170993804931,
+   "acc": 0.95538,
+   "bayes_acc": 0.9553799629211426,
+   "loss": 0.27014679809570313,
+   "bayes_loss": 0.26919400691986084,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 10.18152163028717,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_tied_s2": {
+   "name": "fixed_j15_tied_s2",
+   "status": "finished",
+   "t": 93,
+   "eta_t": 0.04371,
+   "t_diag": 93,
+   "kl": 0.0010648699116706849,
+   "acc": 0.95538,
+   "bayes_acc": 0.9553799629211426,
+   "loss": 0.27043927734375,
+   "bayes_loss": 0.26919400691986084,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.60163768529892,
+   "steps": 20000,
+   "strata": null
+  },
+  "fixed_j15_chain_s2": {
+   "name": "fixed_j15_chain_s2",
+   "status": "finished",
+   "t": 79,
+   "eta_t": 0.0316,
+   "t_diag": 79,
+   "kl": 0.001087824206352234,
+   "acc": 0.95538,
+   "bayes_acc": 0.9553799629211426,
+   "loss": 0.27048837829589845,
+   "bayes_loss": 0.26919400691986084,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.270177805423735,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tree_s2": {
+   "name": "two_0_1_tree_s2",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0005702044749259948,
+   "acc": 0.95518,
+   "bayes_acc": 0.9551799893379211,
+   "loss": 0.27094026794433596,
+   "bayes_loss": 0.27020010352134705,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.256366598606109,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tied_s2": {
+   "name": "two_0_1_tied_s2",
+   "status": "finished",
+   "t": 170,
+   "eta_t": 0.12049937254269828,
+   "t_diag": 170,
+   "kl": 0.0010980065810680388,
+   "acc": 0.95518,
+   "bayes_acc": 0.9551799893379211,
+   "loss": 0.2710934176635742,
+   "bayes_loss": 0.27020010352134705,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.415246415138245,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_chain_s2": {
+   "name": "two_0_1_chain_s2",
+   "status": "finished",
+   "t": 270,
+   "eta_t": 0.22049089783641684,
+   "t_diag": 270,
+   "kl": 0.002206388921737671,
+   "acc": 0.95518,
+   "bayes_acc": 0.9551799893379211,
+   "loss": 0.27247157104492187,
+   "bayes_loss": 0.27020010352134705,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.516366624832155,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_1_tree32_s2": {
+   "name": "two_0_1_tree32_s2",
+   "status": "finished",
+   "t": 240,
+   "eta_t": 0.019049492587258857,
+   "t_diag": 240,
+   "kl": 0.0007647284162044525,
+   "acc": 0.95518,
+   "bayes_acc": 0.9551799893379211,
+   "loss": 0.27098581726074217,
+   "bayes_loss": 0.27020010352134705,
+   "collapsed": false,
+   "lr": 0.0001,
+   "params": 471040,
+   "ms": 8.900432860851287,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_tree_s2": {
+   "name": "two_1_2_tree_s2",
+   "status": "finished",
+   "t": 140,
+   "eta_t": 0.09049988482036289,
+   "t_diag": 140,
+   "kl": 0.0005303006279468536,
+   "acc": 0.95616,
+   "bayes_acc": 0.9561599493026733,
+   "loss": 0.2656958044433594,
+   "bayes_loss": 0.26527029275894165,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.745373272895813,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_tied_s2": {
+   "name": "two_1_2_tied_s2",
+   "status": "finished",
+   "t": 340,
+   "eta_t": 0.29047432334333506,
+   "t_diag": 340,
+   "kl": 0.0012534386682510376,
+   "acc": 0.95616,
+   "bayes_acc": 0.9561599493026733,
+   "loss": 0.2665051623535156,
+   "bayes_loss": 0.26527029275894165,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 10.298949337005617,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_1_2_chain_s2": {
+   "name": "two_1_2_chain_s2",
+   "status": "finished",
+   "t": 589,
+   "eta_t": 0.5392821693638901,
+   "t_diag": 589,
+   "kl": 0.0016548151636123656,
+   "acc": 0.95616,
+   "bayes_acc": 0.9561599493026733,
+   "loss": 0.26677490478515625,
+   "bayes_loss": 0.26527029275894165,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.590084624290466,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_tree_s2": {
+   "name": "two_3_4_tree_s2",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0008891785216331482,
+   "acc": 0.95688,
+   "bayes_acc": 0.9568799734115601,
+   "loss": 0.26261734985351565,
+   "bayes_loss": 0.26164835691452026,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.917516446113586,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_tied_s2": {
+   "name": "two_3_4_tied_s2",
+   "status": "finished",
+   "t": 340,
+   "eta_t": 0.29047432334333506,
+   "t_diag": 340,
+   "kl": 0.0022013834547996523,
+   "acc": 0.95688,
+   "bayes_acc": 0.9568799734115601,
+   "loss": 0.26400429260253905,
+   "bayes_loss": 0.26164835691452026,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 9.85162295103073,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_3_4_chain_s2": {
+   "name": "two_3_4_chain_s2",
+   "status": "finished",
+   "t": 860,
+   "eta_t": 0.8096816750013142,
+   "t_diag": 860,
+   "kl": 0.0027944435596466066,
+   "acc": 0.95688,
+   "bayes_acc": 0.9568799734115601,
+   "loss": 0.2645789923095703,
+   "bayes_loss": 0.26164835691452026,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.534634935855863,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_7_8_tree_s2": {
+   "name": "two_7_8_tree_s2",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0006237710547447204,
+   "acc": 0.95722,
+   "bayes_acc": 0.9572199583053589,
+   "loss": 0.2604358135986328,
+   "bayes_loss": 0.2599380314350128,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.227107191085816,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_tree_s2": {
+   "name": "two_0_8_tree_s2",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.0006014391946792603,
+   "acc": 0.95824,
+   "bayes_acc": 0.9582399725914001,
+   "loss": 0.25535863220214844,
+   "bayes_loss": 0.2548069655895233,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 8.790765345096588,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_tied_s2": {
+   "name": "two_0_8_tied_s2",
+   "status": "finished",
+   "t": 180,
+   "eta_t": 0.13049906084852966,
+   "t_diag": 180,
+   "kl": 0.0009753539443016052,
+   "acc": 0.95824,
+   "bayes_acc": 0.9582399725914001,
+   "loss": 0.2557397235107422,
+   "bayes_loss": 0.2548069655895233,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.85025371313095,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_8_chain_s2": {
+   "name": "two_0_8_chain_s2",
+   "status": "finished",
+   "t": 2950,
+   "eta_t": 2.8576879998522853,
+   "t_diag": 2950,
+   "kl": 0.025987847137451173,
+   "acc": 0.95824,
+   "bayes_acc": 0.9582399725914001,
+   "loss": 0.2793597344970703,
+   "bayes_loss": 0.2548069655895233,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 23.15074540376663,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_tree_s2": {
+   "name": "two_0_15_tree_s2",
+   "status": "finished",
+   "t": 130,
+   "eta_t": 0.08049995202713521,
+   "t_diag": 130,
+   "kl": 0.00081725732088089,
+   "acc": 0.95772,
+   "bayes_acc": 0.9577199816703796,
+   "loss": 0.25814353576660154,
+   "bayes_loss": 0.2574228048324585,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 61440,
+   "ms": 9.22195624113083,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_tied_s2": {
+   "name": "two_0_15_tied_s2",
+   "status": "finished",
+   "t": 360,
+   "eta_t": 0.3104673390444395,
+   "t_diag": 360,
+   "kl": 0.012571163787841797,
+   "acc": 0.95772,
+   "bayes_acc": 0.9577199816703796,
+   "loss": 0.2681323291015625,
+   "bayes_loss": 0.2574228048324585,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 14464,
+   "ms": 8.626002848148346,
+   "steps": 20000,
+   "strata": null
+  },
+  "two_0_15_chain_s2": {
+   "name": "two_0_15_chain_s2",
+   "status": "finished",
+   "t": 230,
+   "eta_t": 0.18049594072371597,
+   "t_diag": 230,
+   "kl": 0.0017894147014617919,
+   "acc": 0.95772,
+   "bayes_acc": 0.9577199816703796,
+   "loss": 0.25926816040039063,
+   "bayes_loss": 0.2574228048324585,
+   "collapsed": false,
+   "lr": 0.001,
+   "params": 59982,
+   "ms": 22.696308434009552,
+   "steps": 20000,
+   "strata": null
+  }
+ },
+ "H1_symmetry": {
+  "fixed": {
+   "medians": {
+    "j0": 79.0,
+    "j7": 79.0,
+    "j8": 79.0,
+    "j15": 70.0
+   },
+   "spread": 9.0,
+   "seed_range": 13.0,
+   "max_gap": 9,
+   "ok": true
+  },
+  "root_pairs": {
+   "medians": {
+    "two_7_8": 130.0,
+    "two_0_8": 130.0,
+    "two_0_15": 130.0
+   },
+   "spread": 0.0,
+   "seed_range": 10.0,
+   "max_gap": 10,
+   "ok": true
+  },
+  "verdict": "holds"
+ },
+ "H2_chain_distance": {
+  "wins": 0,
+  "losses": 0,
+  "ties": 3,
+  "dropped": 0,
+  "both_censored": 0,
+  "n": 3,
+  "detail": [
+   [
+    "fixed_j15_chain_s0",
+    "fixed_j0_chain_s0",
+    0
+   ],
+   [
+    "fixed_j15_chain_s1",
+    "fixed_j0_chain_s1",
+    0
+   ],
+   [
+    "fixed_j15_chain_s2",
+    "fixed_j0_chain_s2",
+    0
+   ]
+  ],
+  "medians_eta": {
+   "j0": 0.0183,
+   "j7": 0.7598328255484357,
+   "j8": 0.8595092807354239,
+   "j15": 0.0183
+  },
+  "medians": {
+   "j0": 60.0,
+   "j7": 810.0,
+   "j8": 910.0,
+   "j15": 60.0
+  },
+  "verdict": "not supported"
+ },
+ "H3_tree_lca_level": {
+  "primary_level1_vs_level3": {
+   "wins": 0,
+   "losses": 0,
+   "ties": 3,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 3,
+   "detail": [
+    [
+     "two_0_1_tree_s0",
+     "two_3_4_tree_s0",
+     0
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_3_4_tree_s1",
+     0
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_3_4_tree_s2",
+     0
+    ]
+   ]
+  },
+  "verdict": "unresolved at n = 3 (no direction in 3 of 3 seeds)",
+  "level1_vs_root_confounded": {
+   "wins": 0,
+   "losses": 0,
+   "ties": 3,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 3,
+   "detail": [
+    [
+     "two_0_1_tree_s0",
+     "two_0_8_tree_s0",
+     0
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_7_8_tree_s1",
+     0
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_0_8_tree_s2",
+     0
+    ]
+   ],
+   "direction": "no consistent difference"
+  },
+  "spearman_level_vs_t": {
+   "rho": -0.14234267774809045,
+   "p": 0.5731383338237979
+  },
+  "medians_by_level": {
+   "1": 130.0,
+   "2": 130.0,
+   "3": 130.0,
+   "4": 130.0
+  },
+  "final_kl_by_level": {
+   "1": 0.0006371084153652192,
+   "2": 0.0005388344633579255,
+   "3": 0.0007849467349052429,
+   "4": 0.0007064577579498291
+  }
+ },
+ "H4_root_pairs": {
+  "two_7_8": {
+   "tree": {
+    "t": 130.0,
+    "kl": 0.0006237710547447204
+   },
+   "tied": {
+    "t": 340.0,
+    "kl": 0.01614943441390991
+   },
+   "chain": {
+    "t": 980.0,
+    "kl": 0.0037887018013000487
+   }
+  },
+  "two_0_8": {
+   "tree": {
+    "t": 130.0,
+    "kl": 0.0007064577579498291
+   },
+   "tied": {
+    "t": 180.0,
+    "kl": 0.0009753539443016052
+   },
+   "chain": {
+    "t": 2550.0,
+    "kl": 0.023523370819091796
+   }
+  },
+  "two_0_15": {
+   "tree": {
+    "t": 130.0,
+    "kl": 0.000779902857542038
+   },
+   "tied": {
+    "t": 356.0,
+    "kl": 0.01201360424041748
+   },
+   "chain": {
+    "t": 140.0,
+    "kl": 0.0019299805545806884
+   }
+  },
+  "chain_0_15_vs_7_8": {
+   "wins": 0,
+   "losses": 3,
+   "ties": 0,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 3,
+   "detail": [
+    [
+     "two_7_8_chain_s0",
+     "two_0_15_chain_s0",
+     -1
+    ],
+    [
+     "two_7_8_chain_s1",
+     "two_0_15_chain_s1",
+     -1
+    ],
+    [
+     "two_7_8_chain_s2",
+     "two_0_15_chain_s2",
+     -1
+    ]
+   ]
+  }
+ },
+ "desc_tree_vs_chain": {
+  "speed": {
+   "wins": 21,
+   "losses": 3,
+   "ties": 6,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 30,
+   "detail": [
+    [
+     "fixed_j0_tree_s0",
+     "fixed_j0_chain_s0",
+     -1
+    ],
+    [
+     "fixed_j0_tree_s1",
+     "fixed_j0_chain_s1",
+     -1
+    ],
+    [
+     "fixed_j0_tree_s2",
+     "fixed_j0_chain_s2",
+     1
+    ],
+    [
+     "fixed_j7_tree_s0",
+     "fixed_j7_chain_s0",
+     1
+    ],
+    [
+     "fixed_j7_tree_s1",
+     "fixed_j7_chain_s1",
+     1
+    ],
+    [
+     "fixed_j7_tree_s2",
+     "fixed_j7_chain_s2",
+     1
+    ],
+    [
+     "fixed_j8_tree_s0",
+     "fixed_j8_chain_s0",
+     1
+    ],
+    [
+     "fixed_j8_tree_s1",
+     "fixed_j8_chain_s1",
+     1
+    ],
+    [
+     "fixed_j8_tree_s2",
+     "fixed_j8_chain_s2",
+     1
+    ],
+    [
+     "fixed_j15_tree_s0",
+     "fixed_j15_chain_s0",
+     -1
+    ],
+    [
+     "fixed_j15_tree_s1",
+     "fixed_j15_chain_s1",
+     0
+    ],
+    [
+     "fixed_j15_tree_s2",
+     "fixed_j15_chain_s2",
+     0
+    ],
+    [
+     "two_0_1_tree_s0",
+     "two_0_1_chain_s0",
+     0
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_0_1_chain_s1",
+     0
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_0_1_chain_s2",
+     1
+    ],
+    [
+     "two_1_2_tree_s0",
+     "two_1_2_chain_s0",
+     1
+    ],
+    [
+     "two_1_2_tree_s1",
+     "two_1_2_chain_s1",
+     1
+    ],
+    [
+     "two_1_2_tree_s2",
+     "two_1_2_chain_s2",
+     1
+    ],
+    [
+     "two_3_4_tree_s0",
+     "two_3_4_chain_s0",
+     1
+    ],
+    [
+     "two_3_4_tree_s1",
+     "two_3_4_chain_s1",
+     1
+    ],
+    [
+     "two_3_4_tree_s2",
+     "two_3_4_chain_s2",
+     1
+    ],
+    [
+     "two_7_8_tree_s0",
+     "two_7_8_chain_s0",
+     1
+    ],
+    [
+     "two_7_8_tree_s1",
+     "two_7_8_chain_s1",
+     1
+    ],
+    [
+     "two_7_8_tree_s2",
+     "two_7_8_chain_s2",
+     1
+    ],
+    [
+     "two_0_8_tree_s0",
+     "two_0_8_chain_s0",
+     1
+    ],
+    [
+     "two_0_8_tree_s1",
+     "two_0_8_chain_s1",
+     1
+    ],
+    [
+     "two_0_8_tree_s2",
+     "two_0_8_chain_s2",
+     1
+    ],
+    [
+     "two_0_15_tree_s0",
+     "two_0_15_chain_s0",
+     0
+    ],
+    [
+     "two_0_15_tree_s1",
+     "two_0_15_chain_s1",
+     0
+    ],
+    [
+     "two_0_15_tree_s2",
+     "two_0_15_chain_s2",
+     1
+    ]
+   ]
+  },
+  "speed_cumulative_lr": {
+   "wins": 22,
+   "losses": 3,
+   "ties": 5,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 30,
+   "detail": [
+    [
+     "fixed_j0_tree_s0",
+     "fixed_j0_chain_s0",
+     -1
+    ],
+    [
+     "fixed_j0_tree_s1",
+     "fixed_j0_chain_s1",
+     -1
+    ],
+    [
+     "fixed_j0_tree_s2",
+     "fixed_j0_chain_s2",
+     1
+    ],
+    [
+     "fixed_j7_tree_s0",
+     "fixed_j7_chain_s0",
+     1
+    ],
+    [
+     "fixed_j7_tree_s1",
+     "fixed_j7_chain_s1",
+     1
+    ],
+    [
+     "fixed_j7_tree_s2",
+     "fixed_j7_chain_s2",
+     1
+    ],
+    [
+     "fixed_j8_tree_s0",
+     "fixed_j8_chain_s0",
+     1
+    ],
+    [
+     "fixed_j8_tree_s1",
+     "fixed_j8_chain_s1",
+     1
+    ],
+    [
+     "fixed_j8_tree_s2",
+     "fixed_j8_chain_s2",
+     1
+    ],
+    [
+     "fixed_j15_tree_s0",
+     "fixed_j15_chain_s0",
+     -1
+    ],
+    [
+     "fixed_j15_tree_s1",
+     "fixed_j15_chain_s1",
+     0
+    ],
+    [
+     "fixed_j15_tree_s2",
+     "fixed_j15_chain_s2",
+     0
+    ],
+    [
+     "two_0_1_tree_s0",
+     "two_0_1_chain_s0",
+     0
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_0_1_chain_s1",
+     0
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_0_1_chain_s2",
+     1
+    ],
+    [
+     "two_1_2_tree_s0",
+     "two_1_2_chain_s0",
+     1
+    ],
+    [
+     "two_1_2_tree_s1",
+     "two_1_2_chain_s1",
+     1
+    ],
+    [
+     "two_1_2_tree_s2",
+     "two_1_2_chain_s2",
+     1
+    ],
+    [
+     "two_3_4_tree_s0",
+     "two_3_4_chain_s0",
+     1
+    ],
+    [
+     "two_3_4_tree_s1",
+     "two_3_4_chain_s1",
+     1
+    ],
+    [
+     "two_3_4_tree_s2",
+     "two_3_4_chain_s2",
+     1
+    ],
+    [
+     "two_7_8_tree_s0",
+     "two_7_8_chain_s0",
+     1
+    ],
+    [
+     "two_7_8_tree_s1",
+     "two_7_8_chain_s1",
+     1
+    ],
+    [
+     "two_7_8_tree_s2",
+     "two_7_8_chain_s2",
+     1
+    ],
+    [
+     "two_0_8_tree_s0",
+     "two_0_8_chain_s0",
+     1
+    ],
+    [
+     "two_0_8_tree_s1",
+     "two_0_8_chain_s1",
+     1
+    ],
+    [
+     "two_0_8_tree_s2",
+     "two_0_8_chain_s2",
+     1
+    ],
+    [
+     "two_0_15_tree_s0",
+     "two_0_15_chain_s0",
+     0
+    ],
+    [
+     "two_0_15_tree_s1",
+     "two_0_15_chain_s1",
+     1
+    ],
+    [
+     "two_0_15_tree_s2",
+     "two_0_15_chain_s2",
+     1
+    ]
+   ]
+  },
+  "quality": {
+   "wins": 9,
+   "losses": 0,
+   "ties": 21,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 30,
+   "detail": [
+    [
+     "fixed_j0_tree_s0",
+     "fixed_j0_chain_s0",
+     0
+    ],
+    [
+     "fixed_j0_tree_s1",
+     "fixed_j0_chain_s1",
+     0
+    ],
+    [
+     "fixed_j0_tree_s2",
+     "fixed_j0_chain_s2",
+     0
+    ],
+    [
+     "fixed_j7_tree_s0",
+     "fixed_j7_chain_s0",
+     0
+    ],
+    [
+     "fixed_j7_tree_s1",
+     "fixed_j7_chain_s1",
+     0
+    ],
+    [
+     "fixed_j7_tree_s2",
+     "fixed_j7_chain_s2",
+     0
+    ],
+    [
+     "fixed_j8_tree_s0",
+     "fixed_j8_chain_s0",
+     1
+    ],
+    [
+     "fixed_j8_tree_s1",
+     "fixed_j8_chain_s1",
+     0
+    ],
+    [
+     "fixed_j8_tree_s2",
+     "fixed_j8_chain_s2",
+     1
+    ],
+    [
+     "fixed_j15_tree_s0",
+     "fixed_j15_chain_s0",
+     0
+    ],
+    [
+     "fixed_j15_tree_s1",
+     "fixed_j15_chain_s1",
+     0
+    ],
+    [
+     "fixed_j15_tree_s2",
+     "fixed_j15_chain_s2",
+     0
+    ],
+    [
+     "two_0_1_tree_s0",
+     "two_0_1_chain_s0",
+     0
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_0_1_chain_s1",
+     0
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_0_1_chain_s2",
+     0
+    ],
+    [
+     "two_1_2_tree_s0",
+     "two_1_2_chain_s0",
+     0
+    ],
+    [
+     "two_1_2_tree_s1",
+     "two_1_2_chain_s1",
+     0
+    ],
+    [
+     "two_1_2_tree_s2",
+     "two_1_2_chain_s2",
+     0
+    ],
+    [
+     "two_3_4_tree_s0",
+     "two_3_4_chain_s0",
+     0
+    ],
+    [
+     "two_3_4_tree_s1",
+     "two_3_4_chain_s1",
+     0
+    ],
+    [
+     "two_3_4_tree_s2",
+     "two_3_4_chain_s2",
+     0
+    ],
+    [
+     "two_7_8_tree_s0",
+     "two_7_8_chain_s0",
+     1
+    ],
+    [
+     "two_7_8_tree_s1",
+     "two_7_8_chain_s1",
+     1
+    ],
+    [
+     "two_7_8_tree_s2",
+     "two_7_8_chain_s2",
+     1
+    ],
+    [
+     "two_0_8_tree_s0",
+     "two_0_8_chain_s0",
+     1
+    ],
+    [
+     "two_0_8_tree_s1",
+     "two_0_8_chain_s1",
+     1
+    ],
+    [
+     "two_0_8_tree_s2",
+     "two_0_8_chain_s2",
+     1
+    ],
+    [
+     "two_0_15_tree_s0",
+     "two_0_15_chain_s0",
+     0
+    ],
+    [
+     "two_0_15_tree_s1",
+     "two_0_15_chain_s1",
+     1
+    ],
+    [
+     "two_0_15_tree_s2",
+     "two_0_15_chain_s2",
+     0
+    ]
+   ]
+  }
+ },
+ "desc_tree_vs_tied": {
+  "speed": {
+   "wins": 27,
+   "losses": 0,
+   "ties": 3,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 30,
+   "detail": [
+    [
+     "fixed_j0_tree_s0",
+     "fixed_j0_tied_s0",
+     0
+    ],
+    [
+     "fixed_j0_tree_s1",
+     "fixed_j0_tied_s1",
+     1
+    ],
+    [
+     "fixed_j0_tree_s2",
+     "fixed_j0_tied_s2",
+     1
+    ],
+    [
+     "fixed_j7_tree_s0",
+     "fixed_j7_tied_s0",
+     1
+    ],
+    [
+     "fixed_j7_tree_s1",
+     "fixed_j7_tied_s1",
+     1
+    ],
+    [
+     "fixed_j7_tree_s2",
+     "fixed_j7_tied_s2",
+     1
+    ],
+    [
+     "fixed_j8_tree_s0",
+     "fixed_j8_tied_s0",
+     1
+    ],
+    [
+     "fixed_j8_tree_s1",
+     "fixed_j8_tied_s1",
+     1
+    ],
+    [
+     "fixed_j8_tree_s2",
+     "fixed_j8_tied_s2",
+     0
+    ],
+    [
+     "fixed_j15_tree_s0",
+     "fixed_j15_tied_s0",
+     1
+    ],
+    [
+     "fixed_j15_tree_s1",
+     "fixed_j15_tied_s1",
+     1
+    ],
+    [
+     "fixed_j15_tree_s2",
+     "fixed_j15_tied_s2",
+     1
+    ],
+    [
+     "two_0_1_tree_s0",
+     "two_0_1_tied_s0",
+     1
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_0_1_tied_s1",
+     1
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_0_1_tied_s2",
+     1
+    ],
+    [
+     "two_1_2_tree_s0",
+     "two_1_2_tied_s0",
+     1
+    ],
+    [
+     "two_1_2_tree_s1",
+     "two_1_2_tied_s1",
+     1
+    ],
+    [
+     "two_1_2_tree_s2",
+     "two_1_2_tied_s2",
+     1
+    ],
+    [
+     "two_3_4_tree_s0",
+     "two_3_4_tied_s0",
+     1
+    ],
+    [
+     "two_3_4_tree_s1",
+     "two_3_4_tied_s1",
+     1
+    ],
+    [
+     "two_3_4_tree_s2",
+     "two_3_4_tied_s2",
+     1
+    ],
+    [
+     "two_7_8_tree_s0",
+     "two_7_8_tied_s0",
+     1
+    ],
+    [
+     "two_7_8_tree_s1",
+     "two_7_8_tied_s1",
+     1
+    ],
+    [
+     "two_7_8_tree_s2",
+     "two_7_8_tied_s2",
+     1
+    ],
+    [
+     "two_0_8_tree_s0",
+     "two_0_8_tied_s0",
+     0
+    ],
+    [
+     "two_0_8_tree_s1",
+     "two_0_8_tied_s1",
+     1
+    ],
+    [
+     "two_0_8_tree_s2",
+     "two_0_8_tied_s2",
+     1
+    ],
+    [
+     "two_0_15_tree_s0",
+     "two_0_15_tied_s0",
+     1
+    ],
+    [
+     "two_0_15_tree_s1",
+     "two_0_15_tied_s1",
+     1
+    ],
+    [
+     "two_0_15_tree_s2",
+     "two_0_15_tied_s2",
+     1
+    ]
+   ]
+  },
+  "speed_cumulative_lr": {
+   "wins": 30,
+   "losses": 0,
+   "ties": 0,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 30,
+   "detail": [
+    [
+     "fixed_j0_tree_s0",
+     "fixed_j0_tied_s0",
+     1
+    ],
+    [
+     "fixed_j0_tree_s1",
+     "fixed_j0_tied_s1",
+     1
+    ],
+    [
+     "fixed_j0_tree_s2",
+     "fixed_j0_tied_s2",
+     1
+    ],
+    [
+     "fixed_j7_tree_s0",
+     "fixed_j7_tied_s0",
+     1
+    ],
+    [
+     "fixed_j7_tree_s1",
+     "fixed_j7_tied_s1",
+     1
+    ],
+    [
+     "fixed_j7_tree_s2",
+     "fixed_j7_tied_s2",
+     1
+    ],
+    [
+     "fixed_j8_tree_s0",
+     "fixed_j8_tied_s0",
+     1
+    ],
+    [
+     "fixed_j8_tree_s1",
+     "fixed_j8_tied_s1",
+     1
+    ],
+    [
+     "fixed_j8_tree_s2",
+     "fixed_j8_tied_s2",
+     1
+    ],
+    [
+     "fixed_j15_tree_s0",
+     "fixed_j15_tied_s0",
+     1
+    ],
+    [
+     "fixed_j15_tree_s1",
+     "fixed_j15_tied_s1",
+     1
+    ],
+    [
+     "fixed_j15_tree_s2",
+     "fixed_j15_tied_s2",
+     1
+    ],
+    [
+     "two_0_1_tree_s0",
+     "two_0_1_tied_s0",
+     1
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_0_1_tied_s1",
+     1
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_0_1_tied_s2",
+     1
+    ],
+    [
+     "two_1_2_tree_s0",
+     "two_1_2_tied_s0",
+     1
+    ],
+    [
+     "two_1_2_tree_s1",
+     "two_1_2_tied_s1",
+     1
+    ],
+    [
+     "two_1_2_tree_s2",
+     "two_1_2_tied_s2",
+     1
+    ],
+    [
+     "two_3_4_tree_s0",
+     "two_3_4_tied_s0",
+     1
+    ],
+    [
+     "two_3_4_tree_s1",
+     "two_3_4_tied_s1",
+     1
+    ],
+    [
+     "two_3_4_tree_s2",
+     "two_3_4_tied_s2",
+     1
+    ],
+    [
+     "two_7_8_tree_s0",
+     "two_7_8_tied_s0",
+     1
+    ],
+    [
+     "two_7_8_tree_s1",
+     "two_7_8_tied_s1",
+     1
+    ],
+    [
+     "two_7_8_tree_s2",
+     "two_7_8_tied_s2",
+     1
+    ],
+    [
+     "two_0_8_tree_s0",
+     "two_0_8_tied_s0",
+     1
+    ],
+    [
+     "two_0_8_tree_s1",
+     "two_0_8_tied_s1",
+     1
+    ],
+    [
+     "two_0_8_tree_s2",
+     "two_0_8_tied_s2",
+     1
+    ],
+    [
+     "two_0_15_tree_s0",
+     "two_0_15_tied_s0",
+     1
+    ],
+    [
+     "two_0_15_tree_s1",
+     "two_0_15_tied_s1",
+     1
+    ],
+    [
+     "two_0_15_tree_s2",
+     "two_0_15_tied_s2",
+     1
+    ]
+   ]
+  },
+  "quality": {
+   "wins": 7,
+   "losses": 0,
+   "ties": 23,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 30,
+   "detail": [
+    [
+     "fixed_j0_tree_s0",
+     "fixed_j0_tied_s0",
+     0
+    ],
+    [
+     "fixed_j0_tree_s1",
+     "fixed_j0_tied_s1",
+     0
+    ],
+    [
+     "fixed_j0_tree_s2",
+     "fixed_j0_tied_s2",
+     0
+    ],
+    [
+     "fixed_j7_tree_s0",
+     "fixed_j7_tied_s0",
+     0
+    ],
+    [
+     "fixed_j7_tree_s1",
+     "fixed_j7_tied_s1",
+     0
+    ],
+    [
+     "fixed_j7_tree_s2",
+     "fixed_j7_tied_s2",
+     0
+    ],
+    [
+     "fixed_j8_tree_s0",
+     "fixed_j8_tied_s0",
+     0
+    ],
+    [
+     "fixed_j8_tree_s1",
+     "fixed_j8_tied_s1",
+     0
+    ],
+    [
+     "fixed_j8_tree_s2",
+     "fixed_j8_tied_s2",
+     0
+    ],
+    [
+     "fixed_j15_tree_s0",
+     "fixed_j15_tied_s0",
+     0
+    ],
+    [
+     "fixed_j15_tree_s1",
+     "fixed_j15_tied_s1",
+     0
+    ],
+    [
+     "fixed_j15_tree_s2",
+     "fixed_j15_tied_s2",
+     0
+    ],
+    [
+     "two_0_1_tree_s0",
+     "two_0_1_tied_s0",
+     0
+    ],
+    [
+     "two_0_1_tree_s1",
+     "two_0_1_tied_s1",
+     0
+    ],
+    [
+     "two_0_1_tree_s2",
+     "two_0_1_tied_s2",
+     0
+    ],
+    [
+     "two_1_2_tree_s0",
+     "two_1_2_tied_s0",
+     0
+    ],
+    [
+     "two_1_2_tree_s1",
+     "two_1_2_tied_s1",
+     0
+    ],
+    [
+     "two_1_2_tree_s2",
+     "two_1_2_tied_s2",
+     0
+    ],
+    [
+     "two_3_4_tree_s0",
+     "two_3_4_tied_s0",
+     1
+    ],
+    [
+     "two_3_4_tree_s1",
+     "two_3_4_tied_s1",
+     0
+    ],
+    [
+     "two_3_4_tree_s2",
+     "two_3_4_tied_s2",
+     0
+    ],
+    [
+     "two_7_8_tree_s0",
+     "two_7_8_tied_s0",
+     1
+    ],
+    [
+     "two_7_8_tree_s1",
+     "two_7_8_tied_s1",
+     1
+    ],
+    [
+     "two_7_8_tree_s2",
+     "two_7_8_tied_s2",
+     1
+    ],
+    [
+     "two_0_8_tree_s0",
+     "two_0_8_tied_s0",
+     0
+    ],
+    [
+     "two_0_8_tree_s1",
+     "two_0_8_tied_s1",
+     0
+    ],
+    [
+     "two_0_8_tree_s2",
+     "two_0_8_tied_s2",
+     0
+    ],
+    [
+     "two_0_15_tree_s0",
+     "two_0_15_tied_s0",
+     1
+    ],
+    [
+     "two_0_15_tree_s1",
+     "two_0_15_tied_s1",
+     1
+    ],
+    [
+     "two_0_15_tree_s2",
+     "two_0_15_tied_s2",
+     1
+    ]
+   ]
+  }
+ },
+ "capacity_tree32_vs_tree": {
+  "quality": {
+   "wins": 0,
+   "losses": 0,
+   "ties": 9,
+   "dropped": 0,
+   "both_censored": 0,
+   "n": 9,
+   "detail": [
+    [
+     "fixed_j0_tree32_s0",
+     "fixed_j0_tree_s0",
+     0
+    ],
+    [
+     "fixed_j0_tree32_s1",
+     "fixed_j0_tree_s1",
+     0
+    ],
+    [
+     "fixed_j0_tree32_s2",
+     "fixed_j0_tree_s2",
+     0
+    ],
+    [
+     "two_0_1_tree32_s0",
+     "two_0_1_tree_s0",
+     0
+    ],
+    [
+     "two_0_1_tree32_s1",
+     "two_0_1_tree_s1",
+     0
+    ],
+    [
+     "two_0_1_tree32_s2",
+     "two_0_1_tree_s2",
+     0
+    ],
+    [
+     "two_7_8_tree32_s0",
+     "two_7_8_tree_s0",
+     0
+    ],
+    [
+     "two_7_8_tree32_s1",
+     "two_7_8_tree_s1",
+     0
+    ],
+    [
+     "two_7_8_tree32_s2",
+     "two_7_8_tree_s2",
+     0
+    ]
+   ]
+  },
+  "kl": {
+   "fixed_j0_tree": 0.00041288415789604186,
+   "fixed_j0_tree32": 0.0005842379176616669,
+   "two_0_1_tree": 0.0006371084153652192,
+   "two_0_1_tree32": 0.0007864338672161102,
+   "two_7_8_tree": 0.0006237710547447204,
+   "two_7_8_tree32": 0.0008947810029983521
+  }
+ },
+ "H5_mechanism": {
+  "tree": {
+   "a_source_retained": {
+    "frac": 1.0,
+    "n": 108,
+    "ok": true
+   },
+   "b_conjunction": {
+    "frac_f_decodable": 1.0,
+    "n": 18,
+    "median_gain_over_step0_at_lca": 0.607,
+    "ok": true
+   },
+   "c_causal": {
+    "mean_sub_moved": 1.0,
+    "mean_rand_moved": 0.3272988188112921,
+    "n": 9,
+    "ok": true
+   },
+   "d_distractor": {
+    "median_change": 0.0,
+    "n": 123,
+    "ok": false
+   },
+   "runs_interpreted": 30,
+   "verdict": "consistent",
+   "H6_distractor_verdict": "not supported"
+  },
+  "tied": {
+   "a_source_retained": {
+    "frac": 1.0,
+    "n": 108,
+    "ok": true
+   },
+   "b_conjunction": {
+    "frac_f_decodable": 1.0,
+    "n": 18,
+    "median_gain_over_step0_at_lca": 0.6256666666666667,
+    "ok": true
+   },
+   "c_causal": {
+    "mean_sub_moved": 1.0,
+    "mean_rand_moved": 0.3299954257453882,
+    "n": 9,
+    "ok": true
+   },
+   "d_distractor": {
+    "median_change": -0.1343333333333333,
+    "n": 123,
+    "ok": false
+   },
+   "runs_interpreted": 30,
+   "verdict": "consistent",
+   "H6_distractor_verdict": "not supported"
+  },
+  "tree32": {
+   "a_source_retained": {
+    "frac": 1.0,
+    "n": 27,
+    "ok": true
+   },
+   "b_conjunction": {
+    "frac_f_decodable": 1.0,
+    "n": 9,
+    "median_gain_over_step0_at_lca": 0.0,
+    "ok": false
+   },
+   "c_causal": {
+    "mean_sub_moved": 1.0,
+    "mean_rand_moved": 0.054435421909322664,
+    "n": 3,
+    "ok": true
+   },
+   "d_distractor": {
+    "median_change": 0.0,
+    "n": 33,
+    "ok": false
+   },
+   "runs_interpreted": 9,
+   "verdict": "partly consistent",
+   "H6_distractor_verdict": "not supported"
+  },
+  "verdict": "consistent"
+ },
+ "H6_distractor": {
+  "verdict": "not supported",
+  "median_change": 0.0,
+  "n": 123
+ }
+}
