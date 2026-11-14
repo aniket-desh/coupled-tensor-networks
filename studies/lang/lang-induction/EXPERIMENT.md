@@ -1,7 +1,7 @@
 ---
 name: lang-induction
 title: "Storing associations before the query: key-value retrieval and multi-match induction in a TreeTN across bond dimension 16-128"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA L40S,NVIDIA A40
 count: 1
 hours: 10
@@ -10,6 +10,9 @@ disk_gb: 120
 data:
 secrets:
 approved_utc: 2026-11-13T23:52:39Z
+result: supported
+finished_utc: 2026-11-14T06:36:48Z
+writeup: studies/lang/lang-induction/README.md
 ---
 
 # Storing associations before the query: key-value retrieval and multi-match induction in a TreeTN across bond dimension 16-128
@@ -225,4 +228,12 @@ An independent review returned "needs revision" (no P0). Findings and changes:
 
 ## Outcome
 
-Not run yet.
+Recorded as `supported` (orch takes one label); the verdicts split by hypothesis. Write-up: [README.md](README.md).
+
+- **H1 supported.** Retrieval KL at r = 128 is 0.0037 against 0.28–0.34 at r = 16, in 3/3 seeds. The smallest stable width is r = 64 (median 0.0041), which passes the convergence rule on its 0.002-nat clause while still falling 23–28%. No collapses at any width.
+- **H2 not supported.** All 3 seeds learned at r = 16 and all are graded near > mid > far (near − mid 0.027–0.031, above the 0.02 allowed). The mid − far gap closes at r = 128 in 3/3.
+- **H3 supported.** The tree beats perm on KL in 6/6 (width, seed) pairs, and is faster in 6/6.
+- **H4 partly supported (r = 128 still improving).** r = 128 beats r = 16 in 3/3 (0.056 against 0.66). The median at r = 128 is 0.056 > 0.01, but KL fell 8–9% over the last 10,000 updates. The width rule gives "unresolved (still improving)".
+- **H5 (descriptive).** 3 dict first (all r = 128), 6 together, 3 loss first, 0 no gain. Among r ≤ 32 runs: 3 together, 3 loss first.
+- **Health.** 48/48 runs finished, 0 collapsed, 36/36 interpreted, 47/47 checks passed.
+- **Cost and time.** 6.56 h on an A40 at $0.59/h ≈ $3.87, against the 10 h and $12 caps.
