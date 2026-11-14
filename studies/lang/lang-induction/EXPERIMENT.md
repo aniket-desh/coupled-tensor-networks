@@ -220,7 +220,7 @@ An independent review returned "needs revision" (no P0). Findings and changes:
 
 ## Amendments
 
-None.
+- **2026-11-14 00:12 UTC, pilots out of GPU memory (covered by "If something fails").** The worker is an A40 (44.4 GiB usable; L40S and A6000 had no stock). With 6 concurrent processes, four retrieval pilot runs at r = 64/128 died with CUDA OOM during evaluation. Rather than let the remaining pilots run on at 6 at a time (more r = 128 runs would OOM and `pilot` would exit anyway), the supervisor stopped the training job and reran `run.py` into the same `--out` with `--procs 3`, as the definition prescribes. Finished pilot runs are reused; nothing else changes. The training deadline (4.5 h) still counts from the end of the pilots.
 
 ## Outcome
 
