@@ -1,7 +1,7 @@
 ---
 name: lang-source
 title: "Selecting and combining source tokens in a TreeTN: fixed source vs two-source conjunctions whose meeting point moves through the tree"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA A40,NVIDIA GeForce RTX 4090,NVIDIA L40S
 count: 1
 hours: 10
@@ -10,6 +10,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-13T23:50:56Z
+result: not-supported
+finished_utc: 2026-11-14T02:48:29Z
+writeup: studies/lang/lang-source/README.md
 ---
 
 # Selecting and combining source tokens in a TreeTN: fixed source vs two-source conjunctions whose meeting point moves through the tree
@@ -218,8 +221,17 @@ An independent review returned "needs revision". Findings and changes:
 
 ## Amendments
 
-None.
+None. Every step ran as written. The one contingency that applied was a grid-edge learning rate: the tree32 pilot picked 1e-4, the bottom of the grid, and the run proceeded as "If something fails" says.
 
 ## Outcome
 
-Not run yet.
+Result: **not supported**. The two directional predictions (H2, H6) failed, H3 is unresolved, and the control and the consistency check passed. Write-up: [README.md](README.md).
+
+- **H1 (symmetry control):** holds. The tree's median t was 79, 79, 79 and 70 at j = 0, 7, 8 and 15 (spread 9, against a seed range of 13), and 130 at all three root pairs.
+- **H2 (chain distance):** not supported. j = 15 against j = 0 tied in 3 of 3 seeds (median t 60 and 60). Middle positions took 810–910 (not predicted).
+- **H3 (tree meeting level):** unresolved at n = 3. Level 1 against level 3 tied in 3 of 3 seeds (t 130 against 130–140). Level 1 against the root (confounded) also tied in 3 of 3. Spearman ρ = −0.14.
+- **H4 (descriptive):** the tree took 130 at every root pair. The chain took 980 at (7,8), 2,550 at (0,8) and 140 at (0,15), so it was faster at (0,15) than at (7,8) in 3 of 3 seeds.
+- **H5 (mechanism):** consistent. (a) 108/108 cases, (b) 18/18 cases with a median gain of 0.61, (c) sub-patch 1.00 against random 0.33.
+- **H6 (distractor):** not supported. The median change was 0.00 over 123 cases.
+- **Health:** 99/99 runs finished, 0 collapsed, 0 censored, and 69/69 were interpreted.
+- **Cost:** A40, 2 h 47 m, about $1.64, against a 10 h cap and a $12 budget.
