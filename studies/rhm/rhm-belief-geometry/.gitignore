@@ -1,0 +1,3 @@
+# Probe projections for plot.py: 2.1 GB in total, kept on disk but out of git (see SUPERVISOR.md).
+results/*/proj_ckpt*.npz
+__pycache__/

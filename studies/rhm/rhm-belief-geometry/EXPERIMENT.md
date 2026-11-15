@@ -298,7 +298,30 @@ experiment-reviewer, first pass: "needs revision".
 
 ## Amendments
 
-None.
+- **2026-11-14 22:58 UTC, analysis run with at most one large grammar on the GPU at a time** (covered by "If
+  something fails: out of memory in analysis"). The worker is an RTX PRO 4500 Blackwell with 32 GB, because the
+  A6000 was out of stock. Two concurrent v16 analyses need 13 + 18 GB of GPU memory, so `v16m2s2L4_s0` and `_s2` failed
+  with CUDA out of memory. The analysis step was stopped and restarted as two serial queues: one with the 33 runs whose
+  sequences have T ≥ 16, one at a time, and one with the 18 runs of the T ≤ 9 grammars (v3m2s2L3, v3m3s3L2,
+  v6m3s3L2, v8m2s2L3, v8m4s2L3, v8m6s2L3), whose activations are small, alongside it. Runs that already have an
+  `analysis.json` are kept. Same script, same 60,000 sequences, same seeds; only the scheduling changed.
+- **23:13 UTC, a third queue for the end of the large list.** Serially, a v16 analysis took 10 minutes, which put the
+  end of the large queue near 01:55, too close to the 02:31 cap. A third serial queue (step `analyze3`) takes the
+  last 12 runs of the large list in reverse order (v8m2s2L4, v3m2s2L5, v3m3s3L3, v3m2s2L4). These are v ≤ 8 grammars
+  with small activations, so they share the GPU with one v16 run. It skips any run that already has a log from the
+  restarted analysis or a result. Runs that fail with out-of-memory get one serial retry.
+- **23:50 UTC, outcome of that queue and one more batch.** v8m2s2L4_s1 and _s2 failed with CUDA out of memory next
+  to a v16m8 analysis, which peaks near 22 GB. The serial queue retries them alone when it reaches them, because it
+  skips only runs with a result. A fourth serial queue (step `analyze4`) waits until the last v16m8 analysis is done
+  (v16m2 peaks lower), then takes v8m4s2L4 and v8m2s2L5 in reverse seed order. The serial queue reaches those runs
+  only after about 01:00, and it would rerun any of them that fail.
+- **01:13 UTC, one more out-of-memory failure, rerun alone.** v16m2s2L4_s0 failed with CUDA out of memory next to a
+  queue-4 v8m4s2L4 analysis (14 GB), so the first summary had 50 of 51 runs and censored v16m2s2L4. The run was
+  analyzed again alone (step `analyze5`), then `summary.py` and `plot.py` were run again on all 51 results.
+- **01:27 UTC, results collected without the automatic merge.** The probe projections (`proj_ckpt*.npz`) total 2.1 GB
+  rather than the expected < 200 MB; 30 of them exceed 20 MB, and the other 72 add up to about 600 MB. They are on disk
+  in `results/` but kept out of git by this folder's `.gitignore`, so `plot.py` can still redraw every figure. The
+  analysis JSONs, distance samples, summary and figures (108 MB) are committed.
 
 ## Outcome
 
