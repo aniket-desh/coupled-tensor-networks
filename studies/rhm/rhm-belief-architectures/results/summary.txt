@@ -1,0 +1,139 @@
+H_A, chain state h_t. A1 affine on ea; A2 projective and A3 softmax-of-affine on pa (D_t <= 64); each with the
+identity-init chain and the token readout under the same probe; scr = the affine probe on a scrambled target
+run                    excess | #ea affine  init tokens  ceil   scr A1 | #pa  proj  init tokens A2 |  soft  init tokens A3 | affine(pa) | distinct beliefs
+v16m4s2L4_chain_s0     0.0618 |  11  0.535 0.047 0.160 0.786 0.308  n |   4  0.676 0.055 0.119  n |  0.873 0.055 0.302  Y |  0.667     | [248, 140, 318, 16, 253, 207, 953, 63, 482, 60, 49]
+v16m4s2L4_chain_s1     0.0683 |  11  0.518 0.032 0.144 0.793 0.294  n |   4  0.656 0.038-1.324  n |  0.841 0.036 0.272  Y |  0.649     | [232, 147, 343, 16, 248, 225, 1036, 65, 530, 60, 52]
+v16m4s2L4_chain_s2     0.0631 |  11  0.530 0.036 0.145 0.801 0.290  n |   4  0.666 0.039-14.399  n |  0.867 0.038 0.276  Y |  0.658     | [238, 148, 356, 16, 254, 212, 943, 65, 476, 71, 66]
+v4m2s2L5_chain_s0      0.0020 |  22  0.982 0.212 0.549 0.605 0.950  Y |  21  0.988 0.240 0.630  Y |  0.998 0.277 0.769  Y |  0.981     | [8, 20, 9, 11, 11, 14, 3, 9, 9, 24, 12, 18, 18, 27, 6, 13, 12, 22, 6, 5, 5, 6]
+v4m2s2L5_chain_s1      0.0026 |  22  0.985 0.187 0.494 0.612 0.960  Y |  21  0.991 0.227 0.570  Y |  0.998 0.265 0.800  Y |  0.985     | [13, 28, 10, 24, 14, 25, 4, 14, 11, 30, 11, 24, 14, 26, 6, 17, 12, 27, 8, 14, 6, 8]
+v4m2s2L5_chain_s2      0.0028 |  22  0.975 0.200 0.459 0.634 0.958  Y |  21  0.986 0.261 0.549  Y |  0.999 0.298 0.831  Y |  0.974     | [13, 26, 11, 23, 14, 15, 4, 13, 13, 23, 11, 23, 18, 20, 6, 18, 17, 22, 6, 12, 5, 4]
+v8m2s2L4_chain_s0      0.0016 |   7  0.961 0.239 0.524 0.707 0.918  Y |   6  0.969 0.254 0.596  Y |  1.000 0.384 0.975  n |  0.961     | [37, 24, 43, 10, 25, 11, 10]
+v8m2s2L4_chain_s1      0.0013 |   7  0.965 0.307 0.453 0.763 0.931  Y |   6  0.975 0.327 0.514  Y |  1.000 0.522 0.861  Y |  0.965     | [34, 26, 50, 12, 23, 9, 8]
+v8m2s2L4_chain_s2      0.0015 |   7  0.966 0.248 0.502 0.784 0.938  Y |   6  0.977 0.274 0.571  Y |  1.000 0.402 0.922  n |  0.966     | [32, 24, 41, 10, 30, 7, 7]
+v8m4s2L4_chain_s0      0.0293 |  11  0.691 0.061 0.161 0.919 0.434  n |   9  0.699 0.025 0.073  n |  0.854 0.049 0.191  Y |  0.686     | [62, 53, 193, 8, 64, 59, 356, 37, 254, 42, 44]
+v8m4s2L4_chain_s1      0.0262 |  11  0.732 0.088 0.188 0.912 0.456  n |   9  0.743 0.080 0.204  n |  0.889 0.089 0.249  Y |  0.729     | [64, 52, 175, 8, 64, 63, 316, 37, 231, 49, 45]
+v8m4s2L4_chain_s2      0.0235 |  11  0.774 0.075 0.194 0.919 0.512  n |   9  0.785 0.085 0.130  n |  0.917 0.077 0.240  Y |  0.771     | [56, 56, 144, 7, 49, 51, 246, 30, 190, 39, 40]
+
+Common positions (eb): the arm's probe (bilinear top bonds for the trees, the state for the chain), final and at
+identity init, for t <= T/2 (lo) and t > T/2 (hi), with controls on all of eb (addup = upper bound on any affine
+probe on two bonds with disjoint inputs, shown where it covers all eb positions)
+run                    excess | #lo  probe  init | #hi  probe  init |  all   affine tokens  ceil   scr  addup | #ebt probe tokprod
+v16m4s2L4_chain_s0     0.0618 |   3  0.488 0.045 |   7  0.545 0.047 |  0.537 0.537 0.161 0.786 0.305   -   |   0    -     -  
+v16m4s2L4_chain_s1     0.0683 |   3  0.484 0.034 |   7  0.525 0.032 |  0.520 0.520 0.144 0.792 0.285   -   |   0    -     -  
+v16m4s2L4_chain_s2     0.0631 |   3  0.489 0.034 |   7  0.540 0.035 |  0.533 0.533 0.146 0.802 0.275   -   |   0    -     -  
+v16m4s2L4_perm_s0      0.0956 |   3  0.272 0.069 |   7  0.455 0.051 |  0.429 0.233 0.161 0.786 0.276   -   |   2  0.230 0.082
+v16m4s2L4_perm_s1      0.1569 |   3  0.257 0.094 |   7  0.364 0.061 |  0.349 0.156 0.144 0.792 0.195   -   |   0    -     -  
+v16m4s2L4_perm_s2      0.1308 |   3  0.261 0.103 |   7  0.426 0.045 |  0.402 0.227 0.146 0.802 0.235   -   |   0    -     -  
+v16m4s2L4_tree_s0      0.0048 |   3  0.509 0.028 |   7  0.687 0.044 |  0.662 0.414 0.161 0.786 0.614   -   |   1  0.999 0.277
+v16m4s2L4_tree_s1      0.0059 |   3  0.498 0.026 |   7  0.667 0.033 |  0.644 0.394 0.144 0.792 0.608   -   |   1  0.999 0.227
+v16m4s2L4_tree_s2      0.0052 |   3  0.504 0.025 |   7  0.684 0.036 |  0.659 0.404 0.146 0.802 0.622   -   |   1  0.999 0.245
+v4m2s2L5_chain_s0      0.0020 |   3  0.988 0.240 |  15  0.979 0.197 |  0.980 0.980 0.553 0.622 0.937   -   |   0    -     -  
+v4m2s2L5_chain_s1      0.0026 |   4  0.988 0.223 |  15  0.983 0.180 |  0.984 0.984 0.506 0.630 0.954   -   |   0    -     -  
+v4m2s2L5_chain_s2      0.0028 |   4  0.990 0.279 |  15  0.969 0.183 |  0.973 0.973 0.465 0.637 0.951   -   |   0    -     -  
+v4m2s2L5_perm_s0       0.0013 |   3  0.999 0.841 |  15  0.976 0.704 |  0.979 0.732 0.553 0.622 0.960 0.979 |  13  0.980 0.772
+v4m2s2L5_perm_s1       0.0027 |   4  0.959 0.709 |  15  0.896 0.560 |  0.907 0.595 0.506 0.630 0.848 0.971 |  15  0.890 0.676
+v4m2s2L5_perm_s2       0.0040 |   4  0.951 0.702 |  15  0.923 0.548 |  0.927 0.594 0.465 0.637 0.902 0.971 |  14  0.917 0.657
+v4m2s2L5_tree_s0       0.0008 |   3  0.964 0.423 |  15  0.997 0.582 |  0.994 0.891 0.553 0.622 0.983   -   |  11  0.999 0.549
+v4m2s2L5_tree_s1       0.0007 |   4  0.951 0.301 |  15  0.995 0.496 |  0.988 0.865 0.506 0.630 0.972   -   |  11  0.996 0.565
+v4m2s2L5_tree_s2       0.0008 |   4  0.965 0.365 |  15  0.999 0.501 |  0.994 0.832 0.465 0.637 0.986   -   |  11  0.999 0.555
+v8m2s2L4_chain_s0      0.0016 |   0    -     -   |   5  0.961 0.239 |  0.961 0.961 0.546 0.735 0.910   -   |   0    -     -  
+v8m2s2L4_chain_s1      0.0013 |   0    -     -   |   4  0.971 0.313 |  0.971 0.971 0.491 0.899 0.941   -   |   0    -     -  
+v8m2s2L4_chain_s2      0.0015 |   0    -     -   |   3  0.969 0.294 |  0.969 0.969 0.597 0.887 0.936   -   |   0    -     -  
+v8m2s2L4_perm_s0       0.0014 |   0    -     -   |   5  0.972 0.709 |  0.972 0.653 0.546 0.735 0.969 0.875 |   0    -     -  
+v8m2s2L4_perm_s1       0.0013 |   0    -     -   |   4  0.971 0.707 |  0.971 0.678 0.491 0.899 0.966 0.971 |   0    -     -  
+v8m2s2L4_perm_s2       0.0029 |   0    -     -   |   3  0.915 0.715 |  0.915 0.671 0.597 0.887 0.892 0.938 |   0    -     -  
+v8m2s2L4_tree_s0       0.0010 |   0    -     -   |   5  0.997 0.615 |  0.997 0.797 0.546 0.735 0.997 0.827 |   0    -     -  
+v8m2s2L4_tree_s1       0.0010 |   0    -     -   |   4  0.998 0.526 |  0.998 0.827 0.491 0.899 0.998 0.870 |   0    -     -  
+v8m2s2L4_tree_s2       0.0013 |   0    -     -   |   3  0.997 0.624 |  0.997 0.832 0.597 0.887 0.994 0.882 |   0    -     -  
+v8m4s2L4_chain_s0      0.0293 |   2  0.726 0.054 |   7  0.676 0.061 |  0.682 0.682 0.163 0.922 0.354   -   |   0    -     -  
+v8m4s2L4_chain_s1      0.0262 |   2  0.765 0.083 |   7  0.720 0.086 |  0.725 0.725 0.190 0.915 0.386   -   |   0    -     -  
+v8m4s2L4_chain_s2      0.0235 |   2  0.791 0.071 |   7  0.767 0.073 |  0.770 0.770 0.196 0.921 0.449   -   |   0    -     -  
+v8m4s2L4_perm_s0       0.0696 |   2  0.200 0.131 |   7  0.473 0.160 |  0.439 0.192 0.163 0.922 0.183 0.938 |   7  0.348 0.208
+v8m4s2L4_perm_s1       0.0502 |   2  0.486 0.236 |   7  0.557 0.193 |  0.549 0.252 0.190 0.915 0.293 0.928 |   7  0.467 0.288
+v8m4s2L4_perm_s2       0.0390 |   2  0.516 0.210 |   7  0.667 0.186 |  0.649 0.339 0.196 0.921 0.402 0.908 |   7  0.521 0.182
+v8m4s2L4_tree_s0       0.0024 |   2  0.707 0.058 |   7  0.850 0.111 |  0.832 0.573 0.163 0.922 0.732   -   |   5  0.865 0.110
+v8m4s2L4_tree_s1       0.0021 |   2  0.721 0.076 |   7  0.872 0.141 |  0.854 0.599 0.190 0.915 0.759   -   |   5  0.881 0.137
+v8m4s2L4_tree_s2       0.0021 |   2  0.746 0.101 |   7  0.901 0.165 |  0.883 0.640 0.196 0.921 0.781   -   |   5  0.909 0.155
+
+Belief split (descriptive; fits on few distinct beliefs, so a weak test either way)
+run                    #pos affine bilin  span   init
+v16m4s2L4_chain_s0      10  0.067   -   0.863-0.026
+v16m4s2L4_chain_s1      10 -0.004   -   0.898-0.022
+v16m4s2L4_chain_s2      10  0.011   -   0.921-0.022
+v16m4s2L4_perm_s0       10 -0.095-0.250 0.863-0.042
+v16m4s2L4_perm_s1       10 -0.115-0.369 0.898-0.034
+v16m4s2L4_perm_s2       10 -0.110-0.192 0.921-0.039
+v16m4s2L4_tree_s0       10 -0.159-1.154 0.863-0.031
+v16m4s2L4_tree_s1       10 -0.189-1.421 0.898-0.033
+v16m4s2L4_tree_s2       10 -0.143-1.231 0.921-0.028
+v4m2s2L5_chain_s0        4 -0.657   -   0.804-0.086
+v4m2s2L5_chain_s1        7 -0.183   -   0.579-0.117
+v4m2s2L5_chain_s2        6 -0.366   -   0.523-0.292
+v4m2s2L5_perm_s0         4 -0.519-0.543 0.804-13.762
+v4m2s2L5_perm_s1         7 -0.639-1.940 0.579-0.471
+v4m2s2L5_perm_s2         6 -1.397-3.908 0.523-3.688
+v4m2s2L5_tree_s0         4 -0.784-0.641 0.804-28.829
+v4m2s2L5_tree_s1         7 -4.841-2.048 0.579-50.683
+v4m2s2L5_tree_s2         6 -1.282-6.765 0.523-10.297
+v8m2s2L4_chain_s0        4 -0.830   -   0.268-0.182
+v8m2s2L4_chain_s1        4 -0.741   -   0.306-3.027
+v8m2s2L4_chain_s2        4 -0.685   -   0.457-0.152
+v8m2s2L4_perm_s0         4 -0.820-1.090 0.268-2.574
+v8m2s2L4_perm_s1         4 -0.581-1.408 0.306-1.079
+v8m2s2L4_perm_s2         4 -0.560-0.775 0.457-0.829
+v8m2s2L4_tree_s0         4 -1.463-1.380 0.268-1.861
+v8m2s2L4_tree_s1         4 -2.288-1.633 0.306-902.469
+v8m2s2L4_tree_s2         4 -2.855-5.198 0.457-1.997
+v8m4s2L4_chain_s0       10  0.272   -   0.961-0.007
+v8m4s2L4_chain_s1       10  0.296   -   0.954-0.001
+v8m4s2L4_chain_s2       10  0.228   -   0.961-0.024
+v8m4s2L4_perm_s0        10  0.012-0.053 0.961-0.014
+v8m4s2L4_perm_s1        10  0.012-0.064 0.954 0.018
+v8m4s2L4_perm_s2        10 -0.064-0.305 0.961-0.032
+v8m4s2L4_tree_s0        10 -0.229-1.587 0.961 0.004
+v8m4s2L4_tree_s1        10 -0.607-2.028 0.954 0.020
+v8m4s2L4_tree_s2        10 -0.468-0.909 0.961-0.018
+
+H_A (the chain's state carries the belief): inconclusive (fewer than 3 learned, testable grammars): 2 of 2 learned, testable grammars v4m2s2L5 [affine Y, projective Y, softmax Y], v8m2s2L4 [affine Y, projective Y, softmax n]
+  censored grammars (a chain run missing or unfinished): none; chain not learned: ['v16m4s2L4', 'v8m4s2L4']
+H_B (aligned against permuted tree): not supported
+  learning (excess loss; pairs where the aligned tree learned): 9-0-3 of 12 (aligned-permuted-tie), by grammar {'v16m4s2L4': 3, 'v4m2s2L5': 2, 'v8m2s2L4': 1, 'v8m4s2L4': 3}, sign p 0.002, to neither; median gap 0.020 nats
+  representation (t > T/2, both learned, gap minus identity-init gap): 6-0-0 of 6 (aligned-permuted-tie), by grammar {'v4m2s2L5': 3, 'v8m2s2L4': 3}, sign p 0.016, to untestable; median adjusted gap 0.153
+  the same for t <= T/2: 1-0-2 of 3 (aligned-permuted-tie), by grammar {'v4m2s2L5': 1}, sign p 0.500, to untestable
+  the same for all of eb: 6-0-0 of 6 (aligned-permuted-tie), by grammar {'v4m2s2L5': 3, 'v8m2s2L4': 3}, sign p 0.016, to untestable
+  pair               excess: aligned permuted gap    | t > T/2: aligned permuted gap  init gap adjusted | permuted learned
+  v16m4s2L4_s0                0.005  0.096   0.091 |           0.687  0.455   0.232 -0.007   0.239  | no
+  v16m4s2L4_s1                0.006  0.157   0.151 |           0.667  0.364   0.303 -0.028   0.331  | no
+  v16m4s2L4_s2                0.005  0.131   0.126 |           0.684  0.426   0.258 -0.009   0.268  | no
+  v4m2s2L5_s0                 0.001  0.001   0.001 |           0.997  0.976   0.021 -0.122   0.143  | yes
+  v4m2s2L5_s1                 0.001  0.003   0.002 |           0.995  0.896   0.099 -0.064   0.162  | yes
+  v4m2s2L5_s2                 0.001  0.004   0.003 |           0.999  0.923   0.077 -0.047   0.124  | yes
+  v8m2s2L4_s0                 0.001  0.001   0.000 |           0.997  0.972   0.026 -0.093   0.119  | yes
+  v8m2s2L4_s1                 0.001  0.001   0.000 |           0.998  0.971   0.027 -0.181   0.208  | yes
+  v8m2s2L4_s2                 0.001  0.003   0.002 |           0.997  0.915   0.082 -0.091   0.174  | yes
+  v8m4s2L4_s0                 0.002  0.070   0.067 |           0.850  0.473   0.377 -0.049   0.425  | no
+  v8m4s2L4_s1                 0.002  0.050   0.048 |           0.872  0.557   0.314 -0.053   0.367  | no
+  v8m4s2L4_s2                 0.002  0.039   0.037 |           0.901  0.667   0.234 -0.021   0.256  | no
+  censored grammars (a run of either arm missing or unfinished): none
+descriptive (aligned tree against chain): not supported
+  learning (excess loss; pairs where the aligned tree learned): 9-0-3 of 12 (aligned-chain-tie), by grammar {'v16m4s2L4': 3, 'v4m2s2L5': 3, 'v8m2s2L4': 0, 'v8m4s2L4': 3}, sign p 0.002, to neither; median gap 0.012 nats
+  representation (t > T/2, both learned, gap minus identity-init gap): 0-0-6 of 6 (aligned-chain-tie), by grammar {'v4m2s2L5': 0, 'v8m2s2L4': 0}, sign p -, to untestable; median adjusted gap -0.302
+  the same for t <= T/2: 0-3-0 of 3 (aligned-chain-tie), by grammar {'v4m2s2L5': -3}, sign p 0.125, to untestable
+  the same for all of eb: 0-0-6 of 6 (aligned-chain-tie), by grammar {'v4m2s2L5': 0, 'v8m2s2L4': 0}, sign p -, to untestable
+  pair               excess: aligned chain    gap    | t > T/2: aligned chain    gap  init gap adjusted | chain learned
+  v16m4s2L4_s0                0.005  0.062   0.057 |           0.687  0.545   0.142 -0.003   0.145  | no
+  v16m4s2L4_s1                0.006  0.068   0.062 |           0.667  0.525   0.142  0.002   0.140  | no
+  v16m4s2L4_s2                0.005  0.063   0.058 |           0.684  0.540   0.145  0.000   0.144  | no
+  v4m2s2L5_s0                 0.001  0.002   0.001 |           0.997  0.979   0.019  0.385  -0.366  | yes
+  v4m2s2L5_s1                 0.001  0.003   0.002 |           0.995  0.983   0.012  0.316  -0.303  | yes
+  v4m2s2L5_s2                 0.001  0.003   0.002 |           0.999  0.969   0.030  0.318  -0.288  | yes
+  v8m2s2L4_s0                 0.001  0.002   0.001 |           0.997  0.961   0.037  0.376  -0.339  | yes
+  v8m2s2L4_s1                 0.001  0.001   0.000 |           0.998  0.971   0.027  0.213  -0.186  | yes
+  v8m2s2L4_s2                 0.001  0.002   0.000 |           0.997  0.969   0.028  0.330  -0.301  | yes
+  v8m4s2L4_s0                 0.002  0.029   0.027 |           0.850  0.676   0.173  0.050   0.123  | no
+  v8m4s2L4_s1                 0.002  0.026   0.024 |           0.872  0.720   0.152  0.055   0.097  | no
+  v8m4s2L4_s2                 0.002  0.024   0.021 |           0.901  0.767   0.135  0.092   0.043  | no
+  censored grammars (a run of either arm missing or unfinished): none
+not learned (excess loss >= 0.02 in some seed), among complete cells: v16m4s2L4_perm [0.096, 0.157, 0.131], v16m4s2L4_chain [0.062, 0.068, 0.063], v8m4s2L4_perm [0.07, 0.05, 0.039], v8m4s2L4_chain [0.029, 0.026, 0.024]
+incomplete cells: none
+run failed: no
