@@ -1,7 +1,7 @@
 ---
 name: rhm-belief-geometry
 title: Belief-state geometry of the RHM in a transformer's residual stream
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA RTX PRO 4500 Blackwell,NVIDIA RTX PRO 4500 Blackwell Server Edition,NVIDIA RTX 6000 Ada Generation,NVIDIA A100 80GB PCIe,NVIDIA A100-SXM4-80GB
 count: 1
 hours: 8
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-14T18:29:39Z
+result: supported
+finished_utc: 2026-11-15T01:37:51Z
+writeup: studies/rhm/rhm-belief-geometry/README.md
 ---
 
 # Belief-state geometry of the RHM in a transformer's residual stream
@@ -325,4 +328,17 @@ experiment-reviewer, first pass: "needs revision".
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Result: **supported**. Write-up: [README.md](README.md).
+
+- **Run failed?** No. The checks passed (28/28, and `check_probe.py`), CUDA was present, 51 of 51 runs finished
+  training and analysis, and shuffled-label pooled R² was ≤ 0.001 in every run.
+- **Learned:** 16 of 17 grammars. v16m8s2L4 was not learned (excess 0.040 nats/token in all seeds); every other run
+  has excess ≤ 0.0010.
+- **Testable:** 13 grammars; v3m2s2L3, v3m3s3L2, v6m3s3L2 and v8m2s2L3 are figure-only. Learned and testable: 12.
+- **H1 per grammar:** 10 of 12 pass in all three seeds. v3m2s2L6 fails (L4 R² 0.52, 0.79, 0.84), and v16m4s2L4 fails
+  (0.68 to 0.72). The margin over random init and the token readout is ≥ 0.22 everywhere.
+- **H1 overall:** supported (10/12 = 83% ≥ 75%).
+- **H2 (descriptive):** 383 of 414 eligible cases with a lookup next-token ceiling < 0.9 have R²(L4) > ceiling + 0.05.
+  The ceiling is a lookup estimate, so this count may be inflated (see the write-up).
+- **Cost and time:** the worker (RTX PRO 4500, $0.72/h) ran 6.92 h, from 18:30 to 01:25 UTC, for about $4.98. The
+  budget was $20 and the cap 8 h.
