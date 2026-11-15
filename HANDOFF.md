@@ -160,6 +160,14 @@ and $4.39.
 - Not learned: v16m4s2L4 at r = 16. The supervisor moved the cut-off for starting training runs so that all 60 ran
   (its decision 4, before your 01:50 message authorized such moves); the r = 16 verdicts depend on that.
 
+- **Follow-up, done 02:45: the transformer and the tree side by side** (seed 0, tree at r = 32, not pre-registered,
+  not fact-checked): [studies/rhm/rhm-ttn-belief-geometry/followups/README.md](studies/rhm/rhm-ttn-belief-geometry/followups/README.md)
+  with `compare.pdf`. In the second half of the sequence the tree's bilinear probe scores at least as high as the
+  transformer's last-layer affine probe in all 9 grammars (median R² 0.87–1.00 against 0.72–0.99) and the tree's
+  affine probe is lower in all 9 (0.34–0.86). In the first half the transformer's affine probe is higher in 4 of 5
+  grammars. The bilinear probe has 1,088 parameters against the transformer's 129, so this is not evidence that the
+  tree represents the belief better.
+
 ### `rhm-belief-architectures` (aligned tree, permuted tree, chain), finished 2026-11-15 02:17
 
 Write-up: [studies/rhm/rhm-belief-architectures/README.md](studies/rhm/rhm-belief-architectures/README.md); note:
@@ -195,5 +203,5 @@ and $3.04. Recorded as **inconclusive**.
   - the projection files (`results/*/proj_ckpt*.npz`, 2.1 GB) are on disk but kept out of git by a `.gitignore` in the
     experiment folder.
 
-- Follow-ups planned once results exist: the transformer-vs-TTN overlay figure; the scrambled-target control and the
-  belief split on the transformer's checkpoints; the projective probe on the TTN checkpoints.
+- Follow-ups: the transformer-vs-TTN overlay and the transformer's scrambled-target and belief-split controls are
+  done (see Results). Still open: the projective probe on the TTN checkpoints.
