@@ -1,8 +1,9 @@
 """Figures from saved message-passing results only.
 
-    PYTHONPATH=. python studies/rhm/rhm-ttn-messages/msg_plot.py RESULTS_DIR FIGURES_DIR
+    PYTHONPATH=. python studies/rhm/rhm-ttn-messages/msg_plot.py RESULTS_DIR FIGURES_DIR [PNG_DIR]
 
 RESULTS_DIR holds one folder per run (<config>_r<r>_s<seed>/ with analysis.json and arrays_ckpt*.npz).
+With PNG_DIR, every figure is also saved there as a 200-dpi PNG of the same name (for NOTE.md, where PDFs don't render).
 
 Per (grammar, width), seed 0, node 0 of each tree level:
   prodtable_<cell>.pdf  the production table: the grammar's (parent symbol of each child pair; gray = no production),
@@ -29,7 +30,17 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / 'rhm-belief-geometry'))
 import plot as PL  # noqa: E402
 from matplotlib.colors import ListedColormap  # noqa: E402
-from plotting import CATEGORICAL, plt, save, steps_x  # noqa: E402
+from plotting import CATEGORICAL, plt, steps_x  # noqa: E402
+from plotting import save as save_pdf  # noqa: E402
+
+PNG_DIR = None  # set in main() from the optional third argument
+
+
+def save(fig, out):
+    if PNG_DIR is not None:
+        PNG_DIR.mkdir(parents=True, exist_ok=True)
+        fig.savefig(PNG_DIR / (Path(out).stem + '.png'), dpi=200, bbox_inches='tight')
+    save_pdf(fig, out)
 
 BLUE, ORANGE, GREEN, PINK, VIOLET = CATEGORICAL[0], CATEGORICAL[1], CATEGORICAL[2], CATEGORICAL[4], CATEGORICAL[6]
 
@@ -226,8 +237,10 @@ def training(runs, out):
 
 
 def main():
+    global PNG_DIR
     runs = PL.load(sys.argv[1])
     fig_dir = Path(sys.argv[2])
+    PNG_DIR = Path(sys.argv[3]) if len(sys.argv) > 3 else None
     for r, a in runs.items():
         if r.endswith('_s0'):
             prodtable(a, fig_dir / f'prodtable_{cell(r)}.pdf')

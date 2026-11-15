@@ -1,7 +1,7 @@
 ---
 name: rhm-ttn-messages
 title: Do a tree tensor network's bonds and merges implement the RHM's message passing?
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA RTX PRO 4500 Blackwell,NVIDIA RTX PRO 4500 Blackwell Server Edition,NVIDIA RTX 6000 Ada Generation
 count: 1
 hours: 8
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-14T21:40:06Z
+result: not-supported
+finished_utc: 2026-11-15T05:18:53Z
+writeup: studies/rhm/rhm-ttn-messages/README.md
 ---
 
 # Do a tree tensor network's bonds and merges implement the RHM's message passing?
@@ -454,8 +457,39 @@ P2s judged addressed in the definition and in the code, no new P0; "ready to run
 
 ## Amendments
 
-None.
+- **2026-11-15 00:42 UTC, by the supervising session (nobody was available to ask): more analyses in parallel.**
+  - Reason: the analysis is three times slower than estimated. The first two runs (`v16m4s2L4`, r = 16) were still on
+    their last checkpoint 25 minutes after the step started, against the estimated 5–10 minutes per run. At that rate
+    30 analyses two at a time take about 6 h and end after the 8 h cap (05:40 UTC).
+  - Change: the number of analyses running at once is raised from 2 to 6, by signalling the running `xargs`
+    (`SIGUSR1`), so nothing is restarted. Each analysis used 3.6 GB of the GPU's 32 GB and about 1.3 of 256 cores. The
+    analysis set, the code, the seeds and the criteria are unchanged; only wall time is affected. An out-of-memory
+    failure would be rerun alone, as "If something fails" already says.
+  - Also found: the analysis command does not run r = 32 first. Both globs go to one `ls`, which sorts all its
+    arguments, so the order is by grammar name with r = 16 before r = 32. It matters only if analyses are left
+    unfinished at the cut-off; if that looks likely, the remaining runs will be restarted in the intended order
+    (r = 32 first) and recorded here.
+- **2026-11-15 01:50 UTC, authorized by the user (relayed by the planning session): budget and cut-offs relaxed, and a
+  research note added.**
+  - The budget ceiling is $15 instead of $10.
+  - The time-based cut-offs under "If something fails" (no new training runs after 4.5 h, no new analyses after
+    7.25 h) may be moved so that every planned run is trained and analysed. Training had already finished (all 30
+    runs, at 2.6 h). The 7.25 h cut-off for starting analyses is lifted: analyses keep starting until all 30 are done.
+  - The worker's hard time cap was 8 h (05:40 UTC). The planning session extended it to 10:00 UTC on 2026-11-15 and
+    confirmed that at about 02:20 UTC (worst case $8.88 at $0.72/h, inside the $15 ceiling). The cut-off for starting
+    analyses therefore moves from 04:55 UTC to 09:00 UTC, which leaves an hour for the summary, the figures and
+    `orch finish`.
+  - Added outputs: `NOTE.md`, a research note with the mathematics in LaTeX and the key figures embedded as PNGs
+    (`figures/png/<name>.png`, about 200 dpi, next to the unchanged PDFs), fact-checked like the README.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Result: **not supported** (recorded 2026-11-15). The tree does not implement the grammar's message passing; its bonds are close to a function of the extended message. Detail in [README.md](README.md); the mathematics in [NOTE.md](NOTE.md).
+
+- **Run not failed:** checks passed (28 of 28, and all 38 lines of `msg_check.py`), CUDA present, 30 of 30 runs trained and analysed, shuffled-label R² at most 0.011.
+- **Learned:** 9 of 10 cells; `v16m4s2L4` at r = 16 did not learn (excess loss 0.043–0.057) and is not judged. No cell is censored.
+- **H1 (bonds hold the partially observed messages):** not supported at either width, 0 of 5 cells at r = 32 and 0 of 4 at r = 16; per-cell median R² 0.08–0.75 against 0.8.
+- **H2 (a bond keeps what the task needs and little else):** supported at both widths, 4 of 5 cells at r = 32 and 3 of 4 at r = 16; ve 0.81–0.96 in the passing runs, identity init 0.08–0.41.
+- **H3 (the cores reproduce the production rules):** partly supported at r = 32 (2 of 5 cells), not supported at r = 16 (1 of 4).
+- **H4 (the merge is the grammar's update):** not supported at either width, 0 of 5 and 0 of 4 cells; per-cell median R² on the both-informative pairs 0.17–0.58 against 0.8.
+- **Cost and runtime:** about $5.26 and 7 h 18 m on one RTX PRO 4500 Blackwell at $0.72/h, inside the original $10 budget and 8 h cap (raised to $15 and 10:00 UTC during the run, see Amendments).
