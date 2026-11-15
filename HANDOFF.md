@@ -10,7 +10,7 @@ section.
 |---|---|---|---|
 | `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | **finished 01:38. H1 supported: 10 of 12 grammars** | $4.98 / $20 |
 | `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | **finished 02:15. H2 supported (7 of 8 cells at each width); H1 partly supported (2 of 6)** | $4.39 / $15 |
-| `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | launched 21:40 after two review passes (supervisor `exp-rhm-ttn-messages`) | $1.45 / $10 at 23:41 |
+| `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | **finished 05:35. Not supported: the tree does not implement the grammar's message passing (H1 and H4 fail in every cell; H2 supported)** | $5.26 / $15 |
 | `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | launched 23:44 after two review passes (supervisor `exp-hmm-belief-geometry`) | cap $10 |
 | `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | **finished 02:17. Inconclusive: chain hypothesis could not be judged (2 learned grammars, 3 needed); alignment hypothesis not supported by its rule (9 wins, 0 losses, 3 ties)** | $3.04 / $15 |
 
@@ -38,7 +38,7 @@ section.
 |---|---|---|---|---|
 | `rhm-belief-geometry` | yes | yes (43) | yes (18) | yes: 6 images resolve; math passes a lint for GitHub's known pitfalls (173 inline spans, 12 display blocks) but was not seen rendered, since this machine has no renderer; fact-checked, 16 of about 170 claims reworded |
 | `rhm-ttn-belief-geometry` | yes | yes (30) | yes (8) | yes: 7 images resolve; math passes the lint (164 inline spans, 13 display blocks), not seen rendered; fact-checked by its supervisor (17 statements changed) |
-| `rhm-ttn-messages` | pending | pending | pending | pending |
+| `rhm-ttn-messages` | yes | yes (24) | yes (5) | yes: 5 images resolve; math passes the lint (137 inline spans, 12 display blocks), not seen rendered; three fact-check passes by its supervisor |
 | `rhm-belief-architectures` | yes | yes (15) | yes (5) | yes: 5 images resolve; math passes the lint (127 inline spans, 7 display blocks), not seen rendered. Its 7 display equations were written as single-line `$$ … $$`; at 02:30 this session put the delimiters on their own lines, the more robust form, with no change to the content |
 | `hmm-belief-geometry` | pending | pending | pending | pending |
 
@@ -192,6 +192,27 @@ and $3.04. Recorded as **inconclusive**.
   usable pairs (median adjusted gap 0.153), below the 9 pairs needed to count.
 - A choice for you: the log label is "inconclusive"; the supervisor notes it is one command away from
   "not-supported" if you prefer that reading.
+
+### `rhm-ttn-messages` (does the tree implement the grammar's message passing?), finished 2026-11-15 05:35
+
+Write-up: [studies/rhm/rhm-ttn-messages/README.md](studies/rhm/rhm-ttn-messages/README.md); note:
+[NOTE.md](studies/rhm/rhm-ttn-messages/NOTE.md); supervisor's report:
+[SUPERVISOR.md](studies/rhm/rhm-ttn-messages/SUPERVISOR.md). All 30 runs trained and were analysed; 7 h 18 m and
+$5.26. Recorded as **not supported**.
+
+- **H1 (bonds hold the partially observed likelihood messages): not supported**, 0 of 5 cells at r = 32 and 0 of 4 at
+  r = 16. Per-cell median R² 0.08–0.75 against the 0.8 bar.
+- **H2 (a bond keeps what the task needs from its subtree and little else): supported**, 4 of 5 cells at r = 32 and 3
+  of 4 at r = 16. The fraction of bond variance explained is 0.81–0.96 in the 25 passing runs, against 0.08–0.41 at
+  identity init. Any code that identifies the extended message can pass this, so it does not show message passing.
+- **H3 (the learned cores reproduce the production rules): partly supported** at r = 32 (2 of 5 cells), not supported
+  at r = 16 (1 of 4).
+- **H4 (the merge is the grammar's message update): not supported**, 0 of 9 cells. Per-cell median R² 0.17–0.58 on
+  the pairs where both children are informative, against 0.8.
+- **Exploratory, added after the run:** zeroing the invalid child pairs in the saved read-out tables recovers 37–79%
+  of H4's shortfall at r = 32. So a large part of the gap is that the tree does not suppress child pairs the grammar
+  forbids.
+- Not learned: v16m4s2L4 at r = 16, as in the tree belief experiment.
 
 ## Things to look at first
 
