@@ -1,7 +1,7 @@
 ---
 name: rhm-ttn-belief-geometry
 title: Belief-state geometry of the RHM in a tree tensor network's bond states
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA RTX PRO 4500 Blackwell,NVIDIA RTX PRO 4500 Blackwell Server Edition,NVIDIA RTX 6000 Ada Generation
 count: 1
 hours: 8
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-14T19:47:03Z
+result: supported
+finished_utc: 2026-11-15T02:15:19Z
+writeup: studies/rhm/rhm-ttn-belief-geometry/README.md
 ---
 
 # Belief-state geometry of the RHM in a tree tensor network's bond states
@@ -316,8 +319,90 @@ experiment-reviewer, first pass: "needs revision", no P0.
 
 ## Amendments
 
-None.
+- **2026-11-14 20:15 UTC, supervisor: analysis of finished runs starts while training continues.** Training is 2–3
+  times slower than estimated: with four runs sharing the GPU (100% utilization), a T = 16, r = 32 run took 17 minutes
+  (36 ms per update) and the first T = 32, r = 32 runs log 132 ms per update, about an hour each. Training alone is
+  then projected at about 5 h, which leaves no slack for a 2 h analysis inside the 8 h cap. So the definition's
+  analysis command is run in batches during training, restricted to runs that have a `result.json` and no
+  `analysis.json` yet, still two at a time, with the same script and arguments. Nothing about the method changes: each
+  analysis reads only its own finished run. The reasons are to use the idle CPU for the belief targets and to find an
+  analysis failure while there is still time to fix it. The summary and figures still run once, at the end. The 5 h
+  rule (no new training runs after 00:47 UTC) stands.
+- **2026-11-14 20:30 UTC, supervisor: the analyses that run during training run on the CPU.** The first concurrent
+  batch (20:11–20:23) analyzed `v8m4s2L4_r32_s0` on the GPU in 6 minutes, and the three `v16m4s2L4_r32` analyses died
+  with CUDA out of memory: an analysis with 4,096-entry beliefs holds 11–14 GB on the GPU, and four T = 32, r = 32
+  training runs hold 26 of its 31 GB. No training run was affected. Until training ends, the batches therefore run
+  with `CUDA_VISIBLE_DEVICES=` (the script then uses the CPU; the worker has 24 cores, of which training uses 4, and
+  62 GB of RAM), two at a time. The fits are float64 least squares either way; only the tree's float32 forward pass
+  and the BLAS differ. To check that this does not move the numbers, `v8m4s2L4_r32_s0` is analyzed again on the CPU
+  into a scratch folder and compared with its GPU result; the comparison is reported in the write-up. Runs still
+  unanalyzed when training ends are analyzed on the GPU with the definition's command (`-P 1` for the grammars whose
+  analysis does not fit twice, as "If something fails" allows).
+  - Result of the check (20:36 UTC): the CPU and GPU analyses of `v8m4s2L4_r32_s0` agree. All non-metric fields are
+    identical, pooled R² values differ by at most 1e-6, and the largest difference among 2,885 metric values is
+    6.5e-4, on an RMSE of 4.65.
+- **2026-11-14 22:25 UTC, supervisor: the `v8m2s2L5` analyses run on the GPU, one at a time, during training.** Their
+  belief targets (about 13 GB of RAM each) are too large to analyze two at a time on the CPU within the worker's 62 GB,
+  and one at a time on the CPU they would take about an hour each. Once the last four-way T = 32, r = 32 training wave
+  ends (about 22:35 UTC) training holds at most 13 GB of the GPU's 31 GB, which leaves room for one analysis. The
+  device each run was analyzed on is recorded in `runs/rhm-ttn-belief-geometry/analyze_devices.txt`.
+- **2026-11-14 23:25 UTC, supervisor: one analysis was killed for memory; the v = 16 grammars move to the GPU queue.**
+  The CPU analysis of `v16m2s2L4_r32_s1` was killed by the container's 62 GB memory limit at its last checkpoint,
+  while a second v = 16 analysis (12 GB) and the GPU analysis of `v8m2s2L5_r32_s1` (16 GB of host RAM) were running.
+  No training run was affected. As "If something fails" prescribes, it is rerun alone. From here the CPU loop takes
+  only the grammars with small belief targets (v = 3, 4, 8 at T ≤ 16, and v = 3, 4 at T = 32), two at a time, and the
+  v = 16 and `v8m2s2L5` runs are analyzed on the GPU one at a time.
+- **2026-11-15 00:00 UTC, supervisor: the cutoff for starting training runs moves from 5 h (00:47 UTC) to 01:30 UTC,
+  with a hard stop for training at 02:10 UTC.** The time cap (8 h, 03:47 UTC) and the budget are unchanged.
+  - Why the rule would misfire: the r = 16 runs take 20–27 ms per update at T = 16 and about 64 ms at T = 32 with the
+    GPU shared five ways, so 11 and 32 minutes each. At 00:47 about 16 runs would not have started (`v8m2s2L5` seed 2
+    and all of `v16m2s2L4`, `v8m2s2L4`, `v3m2s2L4`, `v8m4s2L3`, `v3m2s2L3` at r = 16). That leaves 44 runs, under the
+    51 the definition requires, and six of ten r = 16 cells censored.
+  - Why moving it is safe: the rule reserved 3 h after training for a 2 h analysis. The analysis has run alongside
+    training since 20:11 (34 runs trained, 29 analyzed at 23:55), so what is left after training is the last few
+    analyses, the summary and the figures. Projected: all runs started by about 01:35 and trained by about 01:45, the
+    last analyses done by about 02:30, figures by 02:45, worker finished by about 03:00.
+  - Guards: no new training run after 01:30; any training run still going at 02:10 is stopped and reported as
+    censored; at 03:00 the summary and figures are made from whatever is analyzed, and the worker is finished.
+  - What happened: every run had started by 01:28:31 and finished training by 01:30:48 UTC (5.72 h), so neither guard
+    was used. Sixteen runs wrote their first checkpoint after 00:47: `v8m2s2L5_r16_s2` and all three seeds of
+    `v16m2s2L4`, `v8m2s2L4`, `v3m2s2L4`, `v8m4s2L3` and `v3m2s2L3` at r = 16. `results/run_times.tsv` lists the times,
+    so the outcome under the original 5 h rule can be recovered by treating those runs as censored.
+- **2026-11-15 01:50 UTC, the user, relayed by the planning session:** the budget ceiling is raised to $15, and the
+  definition's time-based cutoffs may be moved so that every planned run is trained and analyzed, each such change to
+  be recorded here as authorized by the user on 2026-11-15 01:50 UTC. The worker's time cap is unchanged.
+  - The one cutoff that was moved is the entry above. The supervisor decided it at 00:00 UTC, before this message
+    arrived; it is the kind of change the message authorizes, and no other cutoff was moved afterwards. The extra
+    budget was not needed (the worker cost about $4.39).
+  - The same message adds two outputs: a research note `NOTE.md` with its figures embedded as PNGs, and PNG copies of
+    those figures in `figures/png/`, made by `ttn_figures_png.py` with the plotting functions of `ttn_plot.py`.
+- **2026-11-15 01:50 UTC, supervisor: the projection files are kept in the data folder.** The definition expected
+  `results/<run>/proj_ckpt*.npz` to total under 250 MB. They total 2.9 GB (6 to 137 MB per run), too large for git, so
+  after the figures were made they were moved to `runs/rhm-ttn-belief-geometry/proj/<run>/`. `results/` keeps
+  `analysis.json` per run, the summary, `analyze_devices.txt` and `run_times.tsv`. To remake the geometry and triangle
+  figures, copy the projection files back next to the `analysis.json` files, or pass the folder to
+  `ttn_figures_png.py`.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Result recorded: **supported**, which refers to H2; H1 is partly supported. Write-up: [README.md](README.md). Research
+note: [NOTE.md](NOTE.md). Supervisor report: [SUPERVISOR.md](SUPERVISOR.md).
+
+- **Run failed?** No. The checks passed (28/28, `check_probe.py`, `ttn_check.py` 8/8), CUDA was present, 60 of 60 runs
+  finished training and analysis, and shuffled-label pooled R² was between −0.014 and 0.004 in every run.
+- **Learned:** 19 of 20 cells. `v16m4s2L4` at r = 16 was not learned (excess 0.043 to 0.057 nats/token); the other 57
+  runs have excess 0.0001 to 0.0097. No cell is censored.
+- **H1 per cell:** 2 of 6 learned, testable cells pass at each width (`v3m2s2L5`, `v4m2s2L5`: affine R² 0.84 to 0.99).
+  The other four at each width miss the 0.8 threshold (0.43 to 0.77) while keeping the 0.1 margin over both baselines.
+- **H1 overall:** partly supported at r = 16 and at r = 32 (2 of 6).
+- **H2 per cell:** 7 of 8 learned, testable cells pass at each width (bilinear R² 0.85 to 1.00, and 0.19 to 0.46 above
+  the additive ceiling where that ceiling is below 0.8). `v16m4s2L4` at r = 32 (0.67 to 0.69) and `v8m4s2L4` at r = 16
+  (0.68 to 0.73) miss the 0.8 threshold.
+- **H2 overall:** supported at r = 16 and at r = 32 (7 of 8).
+- **Descriptive:** the scrambled target is fit about as well as the belief (bilinear selectivity −0.02 to 0.07 per
+  cell), and the belief split is below zero in every run that has such positions, so the probes show identification
+  of the belief state and give little evidence of its geometry (none outside the m = 4 grammars). The belief split
+  carries the reviewer's caveat.
+- **Cost and runtime:** about $4.39 and 6 h 06 m on one RTX PRO 4500 Blackwell, against a $10 budget (raised to $15 by
+  the user, not needed) and an 8 h cap. Training took 5.7 h against an estimated 1.5 to 2.5 h; see Amendments for the
+  cutoff that was moved because of it.
