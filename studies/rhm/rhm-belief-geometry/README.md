@@ -74,7 +74,7 @@ networks, with the next-token ceiling and the token readout as horizontal lines.
   with more synonyms at v = 16, L = 4: 0.89, 0.68 and 0.43 for m = 2, 4, 8. At v = 8, L = 3 the m = 4 and m = 6
   grammars are both ≥ 0.92, but they have only 3 eligible positions each.
 - **Below the next-token ceiling.** In v8m4s2L3, v8m6s2L3, v8m4s2L4 and v16m4s2L4, the exact next-token distribution
-  predicts the belief better than the last-layer probe does (ceiling 0.79 to 1.00, against 0.68 to 0.97), while the
+  predicts the belief better than the last-layer probe does (ceiling 0.79 to 1.00, against 0.68 to 0.98), while the
   network's output is near Bayes (excess ≤ 0.0011 nats/token). This suggests that the last layer holds the belief in
   a form that the unembedding and softmax decode, but that is not fully affine in the belief.
 
@@ -135,7 +135,7 @@ The exact commands, the criteria and every amendment are in [`EXPERIMENT.md`](EX
   distributions to mean beliefs. On the prefix split it falls back to the global mean for any test distribution that
   never occurs among the fit prefixes. When many distinct distributions occur, this understates what a smooth function
   of the next-token distribution could do, so the H2 count (383 of 414) may be inflated. That count is also uneven:
-  146 of the 414 cases come from v3m2s2L6, and 6 from the unlearned v16m8s2L4. A kernel or nearest-neighbour
+  148 of the 414 cases (146 of the 383 passes) come from v3m2s2L6, and 6 from the unlearned v16m8s2L4. A kernel or nearest-neighbour
   regression from P(x_t | x_<t) to b_t on the same split would settle it. That is a CPU job of minutes on the saved
   data plus the belief computation.
 - **Seed versus grammar.** Each seed draws a new grammar and a new initialization together. So the large spread at

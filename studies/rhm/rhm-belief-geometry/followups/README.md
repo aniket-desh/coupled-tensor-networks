@@ -127,7 +127,7 @@ sequences, so the held-out sets are not identical.
 The experiment's H1 stands as stated: the last layer linearly determines the belief on unseen prefixes, far better
 than a random-init network or a token readout. What this follow-up adds is that, in these five runs, "linearly
 determines the belief" is mostly "linearly separates a small set of belief states": 3 to 64 at 60 of the 63 positions,
-with a median of 16. The Simplex claim that the residual stream holds the belief *geometry* needs evidence that a
+with a median of 14.5 (16 over all 63). The Simplex claim that the residual stream holds the belief *geometry* needs evidence that a
 state-identity code cannot produce, and on these runs that evidence is weak: a pooled gap of 0.015 to 0.15 over a
 scrambled target, and little extrapolation to unseen beliefs.
 
