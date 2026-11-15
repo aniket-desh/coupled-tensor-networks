@@ -15,7 +15,7 @@ Each example has 16 iid uniform tokens over V = 8 symbols. The target is either 
 - **chain:** a shared-core MPS with output at the right end, at width 39 so its parameter count is close to the tree's (59,982 parameters).
 - **tree32:** the untied tree at r = 32 (471,040 parameters), run on three conditions as a capacity check.
 
-Every arm starts from the identity init and trains with Adam on fresh batches of 256 for 20,000 updates. Arms with the same condition and seed see the same data stream and the same process instance, so comparisons are paired. The learning rate was piloted per arm on `two_3_4` with seed 9, which no evaluation run uses. The pilot picked 1e-3 for tree, tied and chain, and 1e-4 for tree32 ([`lr.json`](../../../runs/lang-source/lr.json)).
+Every arm starts from the identity init and trains with Adam on fresh batches of 256 for 20,000 updates. Arms with the same condition and seed see the same data stream and the same process instance, so comparisons are paired. The learning rate was piloted per arm on `two_3_4` with seed 9, which no evaluation run uses. The pilot picked 1e-3 for tree, tied and chain, and 1e-4 for tree32 ([`lr.json`](results/lr.json)).
 
 The time to threshold t is the first logged update at which diagnostic accuracy (20,000 fixed examples) reaches 0.9 × Bayes accuracy. "Faster" means the gap exceeds the logging interval and the ratio exceeds 1.25. Final quality is KL to the Bayes posterior on 50,000 test examples. Interpretation fits held-out linear probes on whitened bonds (6,000 examples) at every checkpoint, for the 69 tree, tied and tree32 runs. The full method and rules are in [`EXPERIMENT.md`](EXPERIMENT.md).
 
