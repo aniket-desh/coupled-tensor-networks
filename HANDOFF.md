@@ -8,7 +8,7 @@ section.
 
 | Experiment | What it asks | Status | Spend / budget |
 |---|---|---|---|
-| `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | running (supervisor `exp-rhm-belief-geometry`) | $3.73 / $20 at 23:41 |
+| `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | **finished 01:38. H1 supported: 10 of 12 grammars** | $4.98 / $20 |
 | `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | running (supervisor `exp-rhm-ttn-belief-geometry`) | $2.81 / $10 at 23:41 |
 | `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | launched 21:40 after two review passes (supervisor `exp-rhm-ttn-messages`) | $1.45 / $10 at 23:41 |
 | `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | launched 23:44 after two review passes (supervisor `exp-hmm-belief-geometry`) | cap $10 |
@@ -80,11 +80,43 @@ section.
   a failure in the one process that separates belief from prediction); a sentence that contradicted the summary script
   was fixed; and the r = 32 tree's analyses stay out of the CPU batches that run during training.
 
+## Results
+
+### `rhm-belief-geometry` (transformer), finished 2026-11-15 01:38
+
+Write-up: [studies/rhm/rhm-belief-geometry/README.md](studies/rhm/rhm-belief-geometry/README.md). Supervisor's report:
+[SUPERVISOR.md](studies/rhm/rhm-belief-geometry/SUPERVISOR.md). All 51 runs trained and were analysed; 6.92 h and
+$4.98 against 8 h and $20.
+
+- **H1 (the last layer holds the belief on prefixes the probe never saw): supported**, 10 of 12 learned and testable
+  grammars (the rule needs 75%).
+  - Passing grammars: last-layer R² 0.87–0.98 (median over 3 seeds), against 0.19–0.63 for the random-init network
+    and 0.19–0.51 for the linear token readout. The margin over the better control is at least 0.22 in every run.
+  - Failing: v16m4s2L4 (R² 0.68–0.72 in all three seeds) and the depth-6 grammar v3m2s2L6 (0.52–0.84, passing in 1 of
+    3 seeds). Both fail on the 0.8 bar, not on the margin.
+  - Not learned: v16m8s2L4 (0.040 nats/token excess loss after 50,000 updates). Four small grammars are figure-only,
+    as planned: a random-init network fits them too.
+- **H2 (more than the next-token output; descriptive):** in 383 of 414 eligible cases with a next-token ceiling below
+  0.9 the probe beats the ceiling by more than 0.05. The exceptions are almost all in the m ≥ 4 grammars (8 of 37
+  there). The write-up flags that the ceiling is a lookup estimate, so this count may be inflated.
+- **Not yet applied to this run:** the scrambled-target control and the belief split, which the later reviews showed
+  are needed to tell "identifies the belief state" from "holds its geometry". They are on the follow-up list below.
+
 ## Things to look at first
 
-Nothing finished yet. Dashboards: ports 8010 and 8011 on the coordinator.
+- [studies/rhm/rhm-belief-geometry/figures/geometry_v8m4s2L4.pdf](studies/rhm/rhm-belief-geometry/figures/geometry_v8m4s2L4.pdf):
+  the Simplex-style panel (true beliefs, probes, shuffled and random-init controls, raw PCA) at four positions.
+- `triangles_*.pdf` in the same folder for the six v = 3 grammars; `summary.pdf`, `positions.pdf`, `training.pdf`.
+- Dashboards: ports 8010 and 8011 on the coordinator.
 
 ## Open items
+
+- From the transformer run's supervisor, for you to decide:
+  - an unmerged results branch remains (`results/20261114-183036-rhm-belief-geometry-dl1dad9eotnowo`, about 590 MB of
+    projection files; everything useful is already in the folder), and a duplicate 1.5 GB copy of the large
+    projection files sits in `.orch/incoming/`. Neither was deleted;
+  - the projection files (`results/*/proj_ckpt*.npz`, 2.1 GB) are on disk but kept out of git by a `.gitignore` in the
+    experiment folder.
 
 - Follow-ups planned once results exist: the transformer-vs-TTN overlay figure; the scrambled-target control and the
   belief split on the transformer's checkpoints; the projective probe on the TTN checkpoints.
