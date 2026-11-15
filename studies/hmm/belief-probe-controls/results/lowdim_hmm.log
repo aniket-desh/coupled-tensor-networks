@@ -1,0 +1,24 @@
+hmm mess3_transformer_s0: t=12 k=2 belief model 0.970 init 0.870 oracle 1.000
+hmm mess3_transformer_s1: t=12 k=2 belief model 0.968 init 0.859 oracle 1.000
+hmm mess3_transformer_s2: t=12 k=2 belief model 0.973 init 0.856 oracle 1.000
+hmm mess3_chain_s0: t=11 k=2 belief model 0.990 init 0.421 oracle 1.000
+hmm mess3_chain_s1: t=11 k=2 belief model 0.994 init 0.467 oracle 1.000
+hmm mess3_chain_s2: t=11 k=2 belief model 0.986 init 0.467 oracle 1.000
+hmm mess3_tree_s0: t=8 k=2 belief model 0.993 init 0.574 oracle 1.000
+hmm mess3_tree_s1: t=8 k=2 belief model 0.993 init 0.405 oracle 1.000
+hmm mess3_tree_s2: t=8 k=2 belief model 0.993 init 0.610 oracle 1.000
+hmm mess3_tree8_s0: t=7 k=2 belief model 0.989 init -0.036 oracle 1.000
+hmm mess3_tree8_s1: t=7 k=2 belief model 0.990 init 0.687 oracle 1.000
+hmm mess3_tree8_s2: t=7 k=2 belief model 0.991 init 0.340 oracle 1.000
+hmm rrxor_transformer_s0: t=15 k=4 belief model 0.427 init 0.078 oracle 1.000
+hmm rrxor_transformer_s1: t=15 k=4 belief model 0.433 init 0.077 oracle 1.000
+hmm rrxor_transformer_s2: t=15 k=4 belief model 0.486 init 0.077 oracle 1.000
+hmm rrxor_chain_s0: t=13 k=4 belief model 0.956 init 0.032 oracle 1.000
+hmm rrxor_chain_s1: t=13 k=4 belief model 0.949 init 0.036 oracle 1.000
+hmm rrxor_chain_s2: t=13 k=4 belief model 0.965 init 0.053 oracle 1.000
+hmm rrxor_tree_s0: no eligible position
+hmm rrxor_tree_s1: no eligible position
+hmm rrxor_tree_s2: no eligible position
+hmm rrxor_tree8_s0: no eligible position
+hmm rrxor_tree8_s1: no eligible position
+hmm rrxor_tree8_s2: no eligible position

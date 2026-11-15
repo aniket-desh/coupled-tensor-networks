@@ -1,0 +1,12 @@
+rhm-transformer v16m2s2L4_s0: t=12 k=4 belief model 0.419 init 0.039 oracle 0.558
+rhm-transformer v16m2s2L4_s1: t=12 k=4 belief model 0.560 init 0.043 oracle 0.678
+rhm-transformer v16m2s2L4_s2: t=12 k=4 belief model 0.497 init 0.041 oracle 0.626
+rhm-transformer v16m4s2L4_s0: t=10 k=4 belief model 0.085 init 0.022 oracle 0.135
+rhm-transformer v16m4s2L4_s1: t=10 k=4 belief model 0.088 init 0.017 oracle 0.144
+rhm-transformer v16m4s2L4_s2: t=10 k=4 belief model 0.082 init 0.014 oracle 0.146
+rhm-transformer v16m8s2L4_s0: t=10 k=4 belief model 0.154 init 0.012 oracle 0.204
+rhm-transformer v16m8s2L4_s1: t=10 k=4 belief model 0.153 init 0.015 oracle 0.199
+rhm-transformer v16m8s2L4_s2: t=10 k=4 belief model 0.139 init 0.009 oracle 0.191
+rhm-transformer v8m2s2L5_s0: t=20 k=4 belief model 0.329 init 0.069 oracle 0.491
+rhm-transformer v8m2s2L5_s1: t=20 k=4 belief model 0.293 init 0.038 oracle 0.426
+rhm-transformer v8m2s2L5_s2: t=20 k=4 belief model 0.296 init 0.076 oracle 0.510

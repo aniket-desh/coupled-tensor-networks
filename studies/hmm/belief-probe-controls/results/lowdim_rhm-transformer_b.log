@@ -1,0 +1,167 @@
+rhm-transformer v3m2s2L3_s0: no eligible position
+rhm-transformer v3m2s2L3_s2: no eligible position
+rhm-transformer v3m2s2L4_s1: t=13 k=4 belief model 0.527 init 0.387 oracle 0.909
+rhm-transformer v3m2s2L5_s0: t=21 k=4 belief model 0.458 init 0.201 oracle 0.641
+rhm-transformer v3m2s2L5_s2: t=21 k=4 belief model 0.412 init 0.281 oracle 0.690
+Traceback (most recent call last):
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 230, in <module>
+    main()
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 215, in main
+    d = run(family, name)
+        ^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 181, in run
+    fs = {'model': at(ckpts[-1]), 'init': at(ckpts[0])}
+                   ^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 165, in at
+    L4 = torch.cat([model(M.inputs(x[i:i + 4096].to(DEV), V), resid=True)[1][-1].float()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/rhm/rhm-belief-geometry/model.py", line 33, in forward
+    h = b(h)
+        ^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/lm/models.py", line 56, in forward
+    return h + self.mlp(self.ln2(h))
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 816, in forward
+    return F.gelu(input, approximate=self.approximate)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 512.00 MiB. GPU 0 has a total capacity of 31.37 GiB of which 128.94 MiB is free. Process 16965 has 12.70 GiB memory in use. Process 17015 has 13.32 GiB memory in use. Including non-PyTorch memory, this process has 5.21 GiB memory in use. Of the allocated memory 4.51 GiB is allocated by PyTorch, and 395.81 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+FAILED rhm-transformer v3m2s2L6_s1
+rhm-transformer v3m3s3L2_s0: no eligible position
+rhm-transformer v3m3s3L2_s2: no eligible position
+rhm-transformer v3m3s3L3_s1: t=20 k=4 belief model 0.498 init 0.205 oracle 0.788
+Traceback (most recent call last):
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 230, in <module>
+    main()
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 215, in main
+    d = run(family, name)
+        ^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 181, in run
+    fs = {'model': at(ckpts[-1]), 'init': at(ckpts[0])}
+                   ^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 165, in at
+    L4 = torch.cat([model(M.inputs(x[i:i + 4096].to(DEV), V), resid=True)[1][-1].float()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/rhm/rhm-belief-geometry/model.py", line 33, in forward
+    h = b(h)
+        ^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/lm/models.py", line 56, in forward
+    return h + self.mlp(self.ln2(h))
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 816, in forward
+    return F.gelu(input, approximate=self.approximate)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 256.00 MiB. GPU 0 has a total capacity of 31.37 GiB of which 30.94 MiB is free. Process 17015 has 13.32 GiB memory in use. Process 17283 has 12.72 GiB memory in use. Including non-PyTorch memory, this process has 5.28 GiB memory in use. Of the allocated memory 4.76 GiB is allocated by PyTorch, and 206.83 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+FAILED rhm-transformer v4m2s2L5_s0
+Traceback (most recent call last):
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 230, in <module>
+    main()
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 215, in main
+    d = run(family, name)
+        ^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 181, in run
+    fs = {'model': at(ckpts[-1]), 'init': at(ckpts[0])}
+                   ^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/hmm/belief-probe-controls/lowdim.py", line 165, in at
+    L4 = torch.cat([model(M.inputs(x[i:i + 4096].to(DEV), V), resid=True)[1][-1].float()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/rhm/rhm-belief-geometry/model.py", line 33, in forward
+    h = b(h)
+        ^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/studies/lm/models.py", line 56, in forward
+    return h + self.mlp(self.ln2(h))
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coupled-tensor-networks/.venv/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 816, in forward
+    return F.gelu(input, approximate=self.approximate)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 256.00 MiB. GPU 0 has a total capacity of 31.37 GiB of which 30.94 MiB is free. Process 17015 has 13.32 GiB memory in use. Process 17283 has 12.72 GiB memory in use. Including non-PyTorch memory, this process has 5.28 GiB memory in use. Of the allocated memory 4.76 GiB is allocated by PyTorch, and 206.83 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+FAILED rhm-transformer v4m2s2L5_s2
+rhm-transformer v6m3s3L2_s1: no eligible position
+rhm-transformer v8m2s2L3_s0: no eligible position
+rhm-transformer v8m2s2L3_s2: no eligible position
+rhm-transformer v8m2s2L4_s1: t=12 k=4 belief model 0.718 init 0.066 oracle 0.846
+rhm-transformer v8m4s2L3_s0: t=6 k=4 belief model 0.494 init 0.037 oracle 0.749
+rhm-transformer v8m4s2L3_s2: t=6 k=4 belief model 0.449 init 0.080 oracle 0.819
+rhm-transformer v8m4s2L4_s1: t=10 k=4 belief model 0.271 init 0.078 oracle 0.377
+rhm-transformer v8m6s2L3_s0: t=6 k=4 belief model 0.404 init 0.021 oracle 0.769
+rhm-transformer v8m6s2L3_s2: t=6 k=4 belief model 0.512 init 0.053 oracle 0.790

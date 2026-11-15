@@ -1,0 +1,19 @@
+rhm-transformer v3m2s2L3_s1: no eligible position
+rhm-transformer v3m2s2L4_s0: t=13 k=4 belief model 0.333 init 0.188 oracle 0.947
+rhm-transformer v3m2s2L4_s2: t=13 k=4 belief model 0.506 init 0.426 oracle 0.893
+rhm-transformer v3m2s2L5_s1: t=21 k=4 belief model 0.484 init 0.305 oracle 0.638
+rhm-transformer v3m2s2L6_s0: t=37 k=4 belief model 0.402 init 0.289 oracle 0.634
+rhm-transformer v3m2s2L6_s2: t=37 k=4 belief model 0.590 init 0.166 oracle 0.699
+rhm-transformer v3m3s3L2_s1: no eligible position
+rhm-transformer v3m3s3L3_s0: t=20 k=4 belief model 0.385 init 0.156 oracle 0.705
+rhm-transformer v3m3s3L3_s2: t=20 k=4 belief model 0.601 init 0.213 oracle 0.792
+rhm-transformer v4m2s2L5_s1: t=21 k=4 belief model 0.367 init 0.360 oracle 0.541
+rhm-transformer v6m3s3L2_s0: no eligible position
+rhm-transformer v6m3s3L2_s2: no eligible position
+rhm-transformer v8m2s2L3_s1: no eligible position
+rhm-transformer v8m2s2L4_s0: t=12 k=4 belief model 0.746 init 0.055 oracle 0.863
+rhm-transformer v8m2s2L4_s2: t=12 k=4 belief model 0.647 init 0.026 oracle 0.935
+rhm-transformer v8m4s2L3_s1: t=6 k=4 belief model 0.507 init 0.056 oracle 0.725
+rhm-transformer v8m4s2L4_s0: t=10 k=4 belief model 0.274 init 0.040 oracle 0.364
+rhm-transformer v8m4s2L4_s2: t=10 k=4 belief model 0.239 init 0.055 oracle 0.433
+rhm-transformer v8m6s2L3_s1: t=6 k=4 belief model 0.308 init 0.038 oracle 0.750

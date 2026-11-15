@@ -1,0 +1,147 @@
+[
+ {
+  "name": "mess3: row-stochastic kernel and stationary start",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "rrxor: row-stochastic kernel and stationary start",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "z1r: row-stochastic kernel and stationary start",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "coins3: row-stochastic kernel and stationary start",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "factored: row-stochastic kernel and stationary start",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "coupled: row-stochastic kernel and stationary start",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "mess3(0.05, 0.85): T^(0) is the printed matrix, T^(1), T^(2) its permutations",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "rrxor: 36 distinct belief states from the stationary start",
+  "ok": true,
+  "note": "36 states"
+ },
+ {
+  "name": "mess3: filtering vs enumeration of hidden paths (n = 4)",
+  "ok": true,
+  "note": "max |eta - enum| 2.2e-16, |P(next) - enum| 1.1e-15, 81 sequences, total prob 1.000000000000"
+ },
+ {
+  "name": "rrxor: filtering vs enumeration of hidden paths (n = 5)",
+  "ok": true,
+  "note": "max |eta - enum| 1.1e-16, |P(next) - enum| 2.2e-16, 28 sequences, total prob 1.000000000000"
+ },
+ {
+  "name": "z1r: filtering vs enumeration of hidden paths (n = 5)",
+  "ok": true,
+  "note": "max |eta - enum| 0.0e+00, |P(next) - enum| 0.0e+00, 10 sequences, total prob 1.000000000000"
+ },
+ {
+  "name": "coins3: filtering vs enumeration of hidden paths (n = 5)",
+  "ok": true,
+  "note": "max |eta - enum| 1.1e-16, |P(next) - enum| 2.2e-16, 32 sequences, total prob 1.000000000000"
+ },
+ {
+  "name": "factored: filtering vs enumeration of hidden paths (n = 2)",
+  "ok": true,
+  "note": "max |eta - enum| 0.0e+00, |P(next) - enum| 3.3e-16, 81 sequences, total prob 1.000000000000"
+ },
+ {
+  "name": "coupled: filtering vs enumeration of hidden paths (n = 2)",
+  "ok": true,
+  "note": "max |eta - enum| 0.0e+00, |P(next) - enum| 2.2e-16, 81 sequences, total prob 1.000000000000"
+ },
+ {
+  "name": "mess3: sampler frequencies of the first three tokens",
+  "ok": true,
+  "note": "max |emp - exact| 1.2e-03 (tolerance 4.6e-03)"
+ },
+ {
+  "name": "rrxor: sampler frequencies of the first three tokens",
+  "ok": true,
+  "note": "max |emp - exact| 1.7e-03 (tolerance 4.6e-03)"
+ },
+ {
+  "name": "z1r: sampler frequencies of the first three tokens",
+  "ok": true,
+  "note": "max |emp - exact| 7.9e-04 (tolerance 4.6e-03)"
+ },
+ {
+  "name": "coins3: sampler frequencies of the first three tokens",
+  "ok": true,
+  "note": "max |emp - exact| 1.5e-03 (tolerance 5.2e-03)"
+ },
+ {
+  "name": "factored: sampler frequencies of the first three tokens",
+  "ok": true,
+  "note": "max |emp - exact| 4.7e-04 (tolerance 1.1e-03)"
+ },
+ {
+  "name": "coupled: sampler frequencies of the first three tokens",
+  "ok": true,
+  "note": "max |emp - exact| 5.7e-04 (tolerance 2.1e-03)"
+ },
+ {
+  "name": "factored: joint belief = outer product of the factors' own beliefs",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "coupled: joint belief is not a product; factor A alone is still mess3(0.05, 0.85)",
+  "ok": true,
+  "note": "max |joint - product| 0.084"
+ },
+ {
+  "name": "coins3: belief = posterior over the coin from the counts",
+  "ok": true,
+  "note": ""
+ },
+ {
+  "name": "mess3: optimal short-context predictors",
+  "ok": true,
+  "note": "|16-token context - Bayes| 2.2e-16; excess with 1, 2, 3 tokens of context 0.0545, 0.0162, 0.0033; |one-token predictor - enum| 2.2e-16"
+ },
+ {
+  "name": "rrxor: optimal short-context predictors",
+  "ok": true,
+  "note": "|16-token context - Bayes| 1.1e-16; excess with 1, 2, 3 tokens of context 0.1366, 0.0869, 0.0808; |one-token predictor - enum| 5.6e-17"
+ },
+ {
+  "name": "z1r: optimal short-context predictors",
+  "ok": true,
+  "note": "|16-token context - Bayes| 5.6e-17; excess with 1, 2, 3 tokens of context 0.3401, 0.1876, -0.0000; |one-token predictor - enum| 0.0e+00"
+ },
+ {
+  "name": "coins3: optimal short-context predictors",
+  "ok": true,
+  "note": "|16-token context - Bayes| 1.1e-16; excess with 1, 2, 3 tokens of context 0.0517, 0.0363, 0.0259; |one-token predictor - enum| 0.0e+00"
+ },
+ {
+  "name": "factored: optimal short-context predictors",
+  "ok": true,
+  "note": "|16-token context - Bayes| 4.4e-16; excess with 1, 2, 3 tokens of context 0.0572, 0.0172, 0.0040"
+ },
+ {
+  "name": "coupled: optimal short-context predictors",
+  "ok": true,
+  "note": "|16-token context - Bayes| 4.4e-16; excess with 1, 2, 3 tokens of context 0.0610, 0.0143, 0.0027"
+ }
+]

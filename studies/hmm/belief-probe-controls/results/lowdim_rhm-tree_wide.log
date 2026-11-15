@@ -1,0 +1,9 @@
+rhm-tree v16m2s2L4_r32_s0: t=8 k=4 belief model 0.613 init 0.027 oracle 0.692
+rhm-tree v16m2s2L4_r32_s1: t=8 k=4 belief model 0.574 init 0.028 oracle 0.642
+rhm-tree v16m2s2L4_r32_s2: t=8 k=4 belief model 0.557 init 0.022 oracle 0.633
+rhm-tree v16m4s2L4_r32_s0: t=7 k=4 belief model 0.083 init 0.002 oracle 0.131
+rhm-tree v16m4s2L4_r32_s1: t=7 k=4 belief model 0.071 init 0.003 oracle 0.118
+rhm-tree v16m4s2L4_r32_s2: t=7 k=4 belief model 0.073 init 0.003 oracle 0.117
+rhm-tree v8m2s2L5_r32_s0: t=13 k=4 belief model 0.136 init 0.023 oracle 0.188
+rhm-tree v8m2s2L5_r32_s1: t=13 k=4 belief model 0.110 init 0.009 oracle 0.154
+rhm-tree v8m2s2L5_r32_s2: t=13 k=4 belief model 0.155 init 0.014 oracle 0.231

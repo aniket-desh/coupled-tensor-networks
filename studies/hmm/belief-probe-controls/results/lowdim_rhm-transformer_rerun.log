@@ -1,0 +1,3 @@
+rhm-transformer v3m2s2L6_s1: t=37 k=4 belief model 0.432 init 0.326 oracle 0.558
+rhm-transformer v4m2s2L5_s0: t=21 k=4 belief model 0.302 init 0.287 oracle 0.675
+rhm-transformer v4m2s2L5_s2: t=21 k=4 belief model 0.322 init 0.308 oracle 0.536

@@ -1,0 +1,11 @@
+rhm-tree v3m2s2L3_r32_s0: no eligible position
+rhm-tree v3m2s2L3_r32_s2: no eligible position
+rhm-tree v3m2s2L4_r32_s1: no eligible position
+rhm-tree v3m2s2L5_r32_s0: t=13 k=4 belief model 0.346 init 0.029 oracle 0.628
+rhm-tree v3m2s2L5_r32_s2: t=13 k=4 belief model 0.358 init 0.035 oracle 0.732
+rhm-tree v4m2s2L5_r32_s1: t=13 k=4 belief model 0.305 init 0.051 oracle 0.511
+rhm-tree v8m2s2L4_r32_s0: no eligible position
+rhm-tree v8m2s2L4_r32_s2: no eligible position
+rhm-tree v8m4s2L3_r32_s1: no eligible position
+rhm-tree v8m4s2L4_r32_s0: t=7 k=4 belief model 0.259 init 0.011 oracle 0.346
+rhm-tree v8m4s2L4_r32_s2: t=7 k=4 belief model 0.323 init 0.013 oracle 0.406

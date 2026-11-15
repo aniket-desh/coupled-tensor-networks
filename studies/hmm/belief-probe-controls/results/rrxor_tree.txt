@@ -1,0 +1,13 @@
+(a) rrxor_tree8_s0 t=13: R2 0.673 (saved 0.673), 31 of 31129 rows out of range carry 0.007 of the SSE (max |bhat| 2.1); without them 0.675; affine 0.673
+(a) rrxor_tree8_s0 t=14: R2 0.734 (saved 0.734), 60 of 29995 rows out of range carry 0.298 of the SSE (max |bhat| 7.8); without them 0.813; affine 0.759
+(a) rrxor_tree8_s0 t=15: R2 0.792 (saved 0.792), 0 of 30549 rows out of range carry 0.000 of the SSE (max |bhat| 1.8); without them 0.792; affine 0.723
+(a) rrxor_tree8_s1 t=13: R2 0.715 (saved 0.715), 0 of 31129 rows out of range carry 0.000 of the SSE (max |bhat| 1.7); without them 0.715; affine 0.715
+(a) rrxor_tree8_s1 t=14: R2 0.777 (saved 0.777), 60 of 29995 rows out of range carry 0.072 of the SSE (max |bhat| 2.9); without them 0.793; affine 0.721
+(a) rrxor_tree8_s1 t=15: R2 0.807 (saved 0.807), 0 of 30549 rows out of range carry 0.000 of the SSE (max |bhat| 1.5); without them 0.807; affine 0.732
+(a) rrxor_tree8_s2 t=13: R2 -15.451 (saved -15.264), 146 of 31129 rows out of range carry 0.990 of the SSE (max |bhat| 77.4); without them 0.839; affine 0.751
+(a) rrxor_tree8_s2 t=14: R2 0.744 (saved 0.744), 0 of 29995 rows out of range carry 0.000 of the SSE (max |bhat| 1.6); without them 0.744; affine 0.702
+(a) rrxor_tree8_s2 t=15: R2 0.840 (saved 0.840), 0 of 30549 rows out of range carry 0.000 of the SSE (max |bhat| 1.7); without them 0.840; affine 0.788
+(b) rrxor_tree_s0: k = [91, 142, 237]; pooled affine 0.884 projective -4.416 | init 0.021 / 0.021 | additive ceiling 0.772 next-token ceiling 0.466 -> fail
+(b) rrxor_tree_s1: k = [91, 142, 237]; pooled affine 0.883 projective 0.883 | init 0.037 / 0.037 | additive ceiling 0.772 next-token ceiling 0.466 -> fail
+(b) rrxor_tree_s2: k = [91, 142, 237]; pooled affine 0.895 projective 0.895 | init 0.045 / 0.045 | additive ceiling 0.772 next-token ceiling 0.466 -> pass
+(b) r = 32 tree on RRXOR, reduced product probe: fail

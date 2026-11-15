@@ -1,0 +1,99 @@
+check factored: exact-marginal state, product R2 1.000000, direct affine 0.7558
+check coupled: exact-marginal state, product R2 0.998668, direct affine 0.8041
+factored_transformer_s0: direct 0.982/0.986 product 0.999/1.000 tok_product 0.967
+factored_transformer_s1: direct 0.979/0.984 product 0.999/1.000 tok_product 0.967
+factored_transformer_s2: direct 0.976/0.980 product 0.999/1.000 tok_product 0.967
+factored_chain_s0: direct 0.836/0.845 product 0.999/0.999 tok_product 0.967
+factored_chain_s1: direct 0.834/0.844 product 0.999/0.999 tok_product 0.967
+factored_chain_s2: direct 0.834/0.844 product 0.999/0.999 tok_product 0.967
+factored_tree_s0: direct 0.804/0.806 product 0.996/0.997 tok_product 0.967
+factored_tree_s1: direct 0.812/0.817 product 0.996/0.997 tok_product 0.967
+factored_tree_s2: direct 0.819/0.824 product 0.996/0.997 tok_product 0.967
+factored_tree8_s0: direct 0.749/0.750 product 0.980/0.981 tok_product 0.967
+factored_tree8_s1: direct 0.748/0.748 product 0.980/0.982 tok_product 0.967
+factored_tree8_s2: direct 0.747/0.747 product 0.981/0.983 tok_product 0.967
+coupled_transformer_s0: direct 0.993/0.995 product 0.996/0.997 tok_product 0.940
+coupled_transformer_s1: direct 0.994/0.995 product 0.996/0.997 tok_product 0.940
+coupled_transformer_s2: direct 0.994/0.995 product 0.997/0.997 tok_product 0.940
+coupled_chain_s0: direct 0.956/0.960 product 0.994/0.995 tok_product 0.939
+coupled_chain_s1: direct 0.953/0.956 product 0.993/0.994 tok_product 0.939
+coupled_chain_s2: direct 0.956/0.959 product 0.994/0.995 tok_product 0.939
+coupled_tree_s0: direct 0.885/0.891 product 0.984/0.986 tok_product 0.938
+coupled_tree_s1: direct 0.884/0.889 product 0.984/0.986 tok_product 0.938
+coupled_tree_s2: direct 0.879/0.886 product 0.983/0.985 tok_product 0.938
+coupled_tree8_s0: direct 0.797/0.800 product 0.949/0.953 tok_product 0.937
+coupled_tree8_s1: direct 0.799/0.803 product 0.950/0.954 tok_product 0.937
+coupled_tree8_s2: direct 0.800/0.804 product 0.947/0.953 tok_product 0.937
+run                        direct: aff   proj | marg: aff   proj | product: aff  proj | tok: direct product | init product(proj)
+coupled_chain_s0                   0.956 0.960 |       0.997 0.998 |          0.994 0.995 |      0.928  0.939 |   0.749
+coupled_chain_s1                   0.953 0.956 |       0.997 0.997 |          0.993 0.994 |      0.928  0.939 |   0.743
+coupled_chain_s2                   0.956 0.959 |       0.997 0.998 |          0.994 0.995 |      0.928  0.939 |   0.739
+coupled_transformer_s0             0.993 0.995 |       0.998 0.999 |          0.996 0.997 |      0.928  0.940 |   0.952
+coupled_transformer_s1             0.994 0.995 |       0.999 0.999 |          0.996 0.997 |      0.928  0.940 |   0.954
+coupled_transformer_s2             0.994 0.995 |       0.999 0.999 |          0.997 0.997 |      0.928  0.940 |   0.954
+coupled_tree8_s0                   0.797 0.800 |       0.969 0.971 |          0.949 0.953 |      0.928  0.937 |   0.191
+coupled_tree8_s1                   0.799 0.803 |       0.969 0.971 |          0.950 0.954 |      0.928  0.937 |   0.234
+coupled_tree8_s2                   0.800 0.804 |       0.968 0.971 |          0.947 0.953 |      0.928  0.937 |   0.318
+coupled_tree_s0                    0.885 0.891 |       0.991 0.992 |          0.984 0.986 |      0.928  0.938 |   0.759
+coupled_tree_s1                    0.884 0.889 |       0.991 0.993 |          0.984 0.986 |      0.928  0.938 |   0.777
+coupled_tree_s2                    0.879 0.886 |       0.991 0.992 |          0.983 0.985 |      0.928  0.938 |   0.788
+factored_chain_s0                  0.836 0.845 |       0.999 1.000 |          0.999 0.999 |      0.919  0.967 |   0.784
+factored_chain_s1                  0.834 0.844 |       0.999 0.999 |          0.999 0.999 |      0.919  0.967 |   0.773
+factored_chain_s2                  0.834 0.844 |       0.999 1.000 |          0.999 0.999 |      0.919  0.967 |   0.776
+factored_transformer_s0            0.982 0.986 |       0.999 1.000 |          0.999 1.000 |      0.919  0.967 |   0.950
+factored_transformer_s1            0.979 0.984 |       0.999 1.000 |          0.999 1.000 |      0.919  0.967 |   0.952
+factored_transformer_s2            0.976 0.980 |       0.999 1.000 |          0.999 1.000 |      0.919  0.967 |   0.953
+factored_tree8_s0                  0.749 0.750 |       0.985 0.985 |          0.980 0.981 |      0.919  0.967 |   0.236
+factored_tree8_s1                  0.748 0.748 |       0.984 0.985 |          0.980 0.982 |      0.919  0.967 |   0.238
+factored_tree8_s2                  0.747 0.747 |       0.985 0.987 |          0.981 0.983 |      0.919  0.967 |   0.303
+factored_tree_s0                   0.804 0.806 |       0.997 0.998 |          0.996 0.997 |      0.919  0.967 |   0.731
+factored_tree_s1                   0.812 0.817 |       0.997 0.998 |          0.996 0.997 |      0.919  0.967 |   0.757
+factored_tree_s2                   0.819 0.824 |       0.997 0.998 |          0.996 0.997 |      0.919  0.967 |   0.770
+
+run                        c_share  true_product  c_aff  c_tok | quad positions: c_aff c_quad | product+c (joint)
+coupled_chain_s0           0.0010    0.999        0.472  0.101 |                 0.466  0.907 |   0.995
+coupled_chain_s1           0.0010    0.999        0.453  0.101 |                 0.445  0.889 |   0.994
+coupled_chain_s2           0.0010    0.999        0.479  0.101 |                 0.471  0.903 |   0.995
+coupled_transformer_s0     0.0010    0.999        0.757  0.107 |                   -      -   |   0.997
+coupled_transformer_s1     0.0010    0.999        0.767  0.107 |                   -      -   |   0.997
+coupled_transformer_s2     0.0010    0.999        0.791  0.107 |                   -      -   |   0.998
+coupled_tree8_s0           0.0011    0.999        0.223  0.090 |                 0.211  0.477 |   0.951
+coupled_tree8_s1           0.0011    0.999        0.221  0.090 |                 0.212  0.484 |   0.952
+coupled_tree8_s2           0.0011    0.999        0.230  0.090 |                 0.220  0.466 |   0.949
+coupled_tree_s0            0.0010    0.999        0.393  0.102 |                 0.393  0.807 |   0.986
+coupled_tree_s1            0.0010    0.999        0.401  0.102 |                 0.397  0.809 |   0.986
+coupled_tree_s2            0.0010    0.999        0.409  0.102 |                 0.407  0.811 |   0.984
+
+tree, second half (h2b)    direct: aff   proj | marg: aff   proj | product: aff  proj | tok: direct product
+coupled_tree8_s0                   0.852 0.860 |       0.979 0.982 |          0.965 0.971 |      0.928  0.942
+coupled_tree8_s1                   0.854 0.862 |       0.979 0.982 |          0.966 0.971 |      0.928  0.942
+coupled_tree8_s2                   0.854 0.863 |       0.979 0.983 |          0.966 0.971 |      0.928  0.942
+coupled_tree_s0                    0.922 0.925 |       0.993 0.994 |          0.987 0.989 |      0.928  0.942
+coupled_tree_s1                    0.922 0.927 |       0.993 0.994 |          0.987 0.989 |      0.928  0.942
+coupled_tree_s2                    0.919 0.925 |       0.993 0.994 |          0.987 0.989 |      0.928  0.942
+factored_tree8_s0                  0.838 0.854 |       0.988 0.991 |          0.985 0.988 |      0.919  0.967
+factored_tree8_s1                  0.839 0.855 |       0.989 0.991 |          0.986 0.989 |      0.919  0.967
+factored_tree8_s2                  0.837 0.852 |       0.988 0.991 |          0.986 0.989 |      0.919  0.967
+factored_tree_s0                   0.884 0.895 |       0.998 0.998 |          0.997 0.997 |      0.919  0.967
+factored_tree_s1                   0.887 0.635 |       0.997 0.998 |          0.996 0.997 |      0.919  0.967
+factored_tree_s2                   0.890 0.902 |       0.998 0.997 |          0.997 0.995 |      0.919  0.967
+
+reproduction of the experiment's direct joint probe: largest |difference| in R2 over 48 numbers = 8.22e-08
+
+Rule on `factored` (affine): run                    product  tok_product  init_product | direct  floor   gap | class
+                            factored_transformer_s0  0.999    0.967        0.941    |  0.982  0.755 +0.227 | joint readable
+                            factored_transformer_s1  0.999    0.967        0.943    |  0.979  0.755 +0.224 | joint readable
+                            factored_transformer_s2  0.999    0.967        0.944    |  0.976  0.755 +0.220 | joint readable
+  -> transformer: joint readable
+                            factored_chain_s0       0.999    0.967        0.740    |  0.836  0.756 +0.080 | marginals plus part of the joint
+                            factored_chain_s1       0.999    0.967        0.700    |  0.834  0.756 +0.079 | marginals plus part of the joint
+                            factored_chain_s2       0.999    0.967        0.744    |  0.834  0.756 +0.078 | marginals plus part of the joint
+  -> chain: marginals plus part of the joint
+                            factored_tree_s0        0.996    0.967        0.679    |  0.804  0.755 +0.049 | marginals plus part of the joint
+                            factored_tree_s1        0.996    0.967        0.713    |  0.812  0.755 +0.057 | marginals plus part of the joint
+                            factored_tree_s2        0.996    0.967        0.732    |  0.819  0.755 +0.064 | marginals plus part of the joint
+  -> tree: marginals plus part of the joint
+                            factored_tree8_s0       0.980    0.967        0.228    |  0.749  0.756 -0.007 | marginals not exact
+                            factored_tree8_s1       0.980    0.967        0.225    |  0.748  0.756 -0.008 | marginals not exact
+                            factored_tree8_s2       0.981    0.967        0.284    |  0.747  0.756 -0.010 | marginals not exact
+  -> tree8: marginals not exact
