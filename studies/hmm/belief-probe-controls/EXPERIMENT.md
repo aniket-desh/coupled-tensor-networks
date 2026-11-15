@@ -1,7 +1,7 @@
 ---
 name: belief-probe-controls
 title: Probe controls on the saved belief-geometry checkpoints: factor codes and low-dimensional probes
-status: approved
+status: done
 gpu: NVIDIA RTX PRO 4500 Blackwell,NVIDIA RTX A6000,NVIDIA A40
 count: 1
 hours: 7
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-15T19:37:45Z
+result: inconclusive
+finished_utc: 2026-11-15T22:01:48Z
+writeup: studies/hmm/belief-probe-controls/README.md
 ---
 
 # Probe controls on the saved belief-geometry checkpoints: factor codes and low-dimensional probes
@@ -294,8 +297,18 @@ prints the equal-weight mean of the reverse score; and the family counts cover l
 
 ## Amendments
 
-None.
+- **2026-11-15 21:36 UTC, supervisor, no rule changed.** Three RHM transformer runs (`v3m2s2L6_s1`, `v4m2s2L5_s0`,
+  `v4m2s2L5_s2`) failed with CUDA out of memory while the three queues shared the 32 GB card; 48 of 51 were produced.
+  As "If something fails" prescribes, they are rerun once, one process at a time, as an extra step `rerun`. The one
+  addition to the written commands: `lowdim_summary.py` and `plot.py` are run again after the rerun, so the summary
+  and the figures include the rerun runs.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Recorded as `inconclusive`, which stands here for the definition's "partly supported". Ran 2026-11-15, 19:38 to 21:40 UTC. The detail is in [`README.md`](README.md) and the research note in [`NOTE.md`](NOTE.md).
+
+- **Run not failed:** met. Project checks 29 of 29 and 28 of 28; no split assertion failed; reproduction differences at most 8.2e-08 (part 1) and 2.3e-05 (part 2) against a limit of 0.01; 24 of 24 runs in part 1, and in part 2 24 of 24 (`hmm`), 30 of 30 (`rhm-tree`) and 51 of 51 (`rhm-transformer`), three of the last after the prescribed single-process rerun.
+- **H1 (primary): partly supported, the expected outcome.** On `factored` the chain and the r = 32 tree are both "marginals plus part of the joint" in all three seeds (product 0.999 and 0.996 against 0.967 from token marginals; direct probe 0.078–0.080 and 0.049–0.064 above the floor of 0.755–0.756). Transformer "joint readable", r = 8 tree "marginals not exact". `coupled` not read: its residual carries 0.10–0.11% of the joint's variance.
+- **H2:** among learned cells with three judged seeds, dominant in 5 of 10 and compact in the same 5 (`hmm`), dominant in 7 of 12 and compact in 0 of 12 (`rhm-transformer`), dominant in 2 of 15 and compact in 4 of 15 with none both (`rhm-tree`).
+- **H3:** the CPU results repeat. (a) Rule not met: without its 146 out-of-range rows the seed scores 0.839 against 0.673 and 0.715; the affine probe gives 0.751. (b) Fail in two of three seeds: 0.884, 0.883 and 0.895 against a required 0.886, no interval.
+- **Cost and time:** 2 h 02 min on one RTX PRO 4500 Blackwell, about $1.46, against a 7-hour cap and a $10 budget.
