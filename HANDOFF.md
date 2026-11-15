@@ -160,7 +160,7 @@ and $4.39.
 - Not learned: v16m4s2L4 at r = 16. The supervisor moved the cut-off for starting training runs so that all 60 ran
   (its decision 4, before your 01:50 message authorized such moves); the r = 16 verdicts depend on that.
 
-- **Follow-up, done 02:45: the transformer and the tree side by side** (seed 0, tree at r = 32, not pre-registered,
+- **Follow-up, done 02:32: the transformer and the tree side by side** (seed 0, tree at r = 32, not pre-registered,
   not fact-checked): [studies/rhm/rhm-ttn-belief-geometry/followups/README.md](studies/rhm/rhm-ttn-belief-geometry/followups/README.md)
   with `compare.pdf`. In the second half of the sequence the tree's bilinear probe scores at least as high as the
   transformer's last-layer affine probe in all 9 grammars (median R² 0.87–1.00 against 0.72–0.99) and the tree's
