@@ -1,7 +1,7 @@
 ---
 name: hmm-belief-geometry
 title: Belief-state geometry of hidden Markov processes in a transformer, a chain and a tree tensor network
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA RTX PRO 4500 Blackwell,NVIDIA RTX PRO 4500 Blackwell Server Edition,NVIDIA RTX 6000 Ada Generation
 count: 1
 hours: 8
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-14T23:44:19Z
+result: inconclusive
+finished_utc: 2026-11-15T08:58:13Z
+writeup: studies/hmm/hmm-belief-geometry/README.md
 ---
 
 # Belief-state geometry of hidden Markov processes in a transformer, a chain and a tree tensor network
@@ -491,8 +494,68 @@ run". Three notes, none blocking, all taken:
 
 ## Amendments
 
-None.
+- **2026-11-15 00:35Z, CPU analysis batches run one at a time with 3 threads** (`xargs -P 1`, `OMP_NUM_THREADS=3`
+  instead of `-P 2` and 8 threads), from the second batch on. Decided by the supervising session, nobody asked.
+  - Reason: the worker's container has a CPU quota of 7.65 cores (`/sys/fs/cgroup/cpu.max` = 765000 100000), not the
+    96 that `nproc` reports. The first batch's two analyses ran 16 threads next to the four training processes, and
+    the scheduler gave every thread about 0.36 of a core. Training slowed from 41 ms to about 85 ms per update (the
+    first four transformer runs took 1,226 s for 30,000 updates; the next four were at update 16,000 after 1,342 s).
+    At that rate training would not finish before the 4 h STOP mark.
+  - With one analysis on 3 threads there are 7 busy threads for 7.65 cores, so training keeps a full core per run.
+  - Nothing about the method changes: the same script, analysis set and fits, on the CPU as before. Fewer runs are
+    analyzed during training, and more are left for the GPU step after it, which is unchanged.
+  - The first batch (mess3 transformer seeds 0–2, rrxor transformer seed 0) ran as written and was left to finish.
+- **2026-11-15 01:52Z, the 4 h STOP mark is no longer fixed, and the budget ceiling is $15.** Authorized by the user
+  on 2026-11-15 01:50 UTC (message relayed by the planning session): the budget ceiling is raised from $10 to $15,
+  and the definition's time-based cutoffs may be moved so that every planned run is trained and analyzed.
+  - Reason: training is slower than estimated. The GPU's time is split between the four training processes, and
+    every transformer run took 41 ms per update (about 20.5 minutes per run, against the 10 estimated). The r = 8
+    tree runs at about 33 ms per update. Training was projected to end near 05:00Z, not 03:15Z, so a STOP at 03:44Z
+    (4 h after the launch at 23:44Z) would have skipped most of the r = 32 tree arm.
+  - New rule: the STOP file is created only if the projected end of training and analysis leaves less than 45
+    minutes before the worker's hard time cap for the summary, the figures and publishing. The cap is 07:44Z until
+    the planning session confirms an extension. The decision is made at 03:44Z from the measured rates and recorded
+    here.
+  - The worker's worst-case cost at the current cap stays $5.52 ($0.69/h × 8 h).
+- **2026-11-15 02:18Z, no STOP at the 4 h mark: all 72 runs are trained and analyzed.** Authorized by the user on
+  2026-11-15 01:50 UTC. The planning session extended the worker's hard time cap from 07:44Z to 14:00Z (`orch ls`
+  shows "cap in 11.70h" at 02:17Z); the worst-case cost at the new cap is $9.84, inside the $15 ceiling.
+  - Training is projected to end near 05:00Z and the analysis by about 07:30Z. The STOP file is created only if the
+    work would otherwise run past 13:00Z, which leaves an hour before the cap for the summary, the figures and
+    `orch finish`.
+- **2026-11-15 02:55Z, CPU analysis batches limited to eight runs (recorded on 2026-11-15 after the run, not before
+  acting).** From the fifth batch on, the list of pending runs was passed through `head -n 8` before `xargs`, so that
+  a batch took about an hour and the GPU step could start as soon as training ended without overlapping a batch.
+  Decided by the supervising session.
+  - Under `set -o pipefail` the listing loop is killed by SIGPIPE once `head` has eight lines, so the fifth, sixth
+    and seventh batch steps ended with exit code 141. Their eight analyses each ran to the end; no analysis log has an
+    error and all 72 `analysis.json` files exist.
+- **2026-11-15 05:59Z, the last command block ran as two steps:** the GPU analysis of the remaining 18 runs first,
+  then the summary and the figures, so that the analyses could be checked before the verdict was computed. The
+  commands are the definition's, unchanged.
+- **2026-11-15, after the run: PNG copies of the nine figures** (`figures/png/`, 200 dpi) made on the coordinator by
+  `hmm_figures_png.py`, which calls the plotting functions of `hmm_plot.py` on the saved results, and a research note,
+  `NOTE.md`. Both were requested by the user on 2026-11-15 01:50 UTC. The PDFs are unchanged.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Result recorded: **inconclusive**, which stands for a mixed outcome: H1 is supported and H2, H3a and H3b are each partly
+supported. Write-up: [README.md](README.md). Research note: [NOTE.md](NOTE.md). Supervisor report:
+[SUPERVISOR.md](SUPERVISOR.md).
+
+- **Run failed?** No. Both check scripts passed (29 of 29 and 7 of 7), CUDA was present, 72 of 72 runs finished
+  training and analysis, and the shuffled-label pooled R² was between −0.011 and 0.005 in every run.
+- **Learned:** all 24 cells, in all three seeds. No cell was censored.
+- **H1, transformer reproduction: supported, 2 of 2 cells.** Mess3 0.9997; RRXOR 0.865–0.872 against a next-token
+  ceiling of 0.474.
+- **H2, chain, projective probe: partly supported, 2 of 4 judged cells.** Mess3 and RRXOR pass; `factored` and
+  `coupled` fail against the token readout; coins is not testable (control saturated). Form label: projective on
+  RRXOR, affine on Mess3, `factored` and `coupled`, mixed on coins.
+- **H3a, tree, first half: partly supported, 2 of 6 judged cells.** Mess3 passes at r = 32 and r = 8; `factored` and
+  `coupled` fail at both.
+- **H3b, tree, second half: partly supported, 1 of 2 judged cells.** Coins at r = 8 passes; RRXOR at r = 8 fails.
+- **The RRXOR cells on their own:** H1 pass, H2 pass, H3b fail.
+- **H4 (descriptive):** every model reads the factor marginals at 0.97 or more; only the transformer reads the joint
+  belief better than half the token readout's error.
+- **Cost and runtime:** 8 h 57 min on one RTX A6000 at $0.69/h, about $6.18. The definition's budget was $10 and its
+  cap 8 h; the user raised the ceiling to $15 and the cap was extended to 14:00 UTC during the run (see Amendments).
