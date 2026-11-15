@@ -36,7 +36,7 @@ section.
 
 | Experiment | README.md | PDF figures | figures/png/ | NOTE.md (images resolve, math renders) |
 |---|---|---|---|---|
-| `rhm-belief-geometry` | yes | yes (43) | in progress | in progress (this session) |
+| `rhm-belief-geometry` | yes | yes (43) | yes (18) | yes: 6 images resolve; math passes a lint for GitHub's known pitfalls (173 inline spans, 12 display blocks) but was not seen rendered, since this machine has no renderer; fact-checked, 16 of about 170 claims reworded |
 | `rhm-ttn-belief-geometry` | pending | pending | pending | pending |
 | `rhm-ttn-messages` | pending | pending | pending | pending |
 | `rhm-belief-architectures` | pending | pending | pending | pending |
@@ -122,6 +122,10 @@ $4.98 against 8 h and $20.
 - **H2 (more than the next-token output; descriptive):** in 383 of 414 eligible cases with a next-token ceiling below
   0.9 the probe beats the ceiling by more than 0.05. The exceptions are almost all in the m ≥ 4 grammars (8 of 37
   there). The write-up flags that the ceiling is a lookup estimate, so this count may be inflated.
+- **Research note:** [studies/rhm/rhm-belief-geometry/NOTE.md](studies/rhm/rhm-belief-geometry/NOTE.md), written by a
+  helper with the research-note skill and fact-checked (committed 02:25). The fact-check also corrected two numbers
+  in the README: 148, not 146, of the 414 H2 cases come from v3m2s2L6, and the last-layer range in the synonym-rich
+  grammars is 0.68 to 0.98.
 - **Follow-up, done 01:45–02:00 (not pre-registered; seed 0 of five grammars that passed H1; 20,000 sequences):**
   [studies/rhm/rhm-belief-geometry/followups/README.md](studies/rhm/rhm-belief-geometry/followups/README.md).
   - The same probe fits a random relabelling of the belief states almost as well as the beliefs: R² 0.70–0.96 against
