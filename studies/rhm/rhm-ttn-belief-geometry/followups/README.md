@@ -72,3 +72,47 @@ tabulated by script. Nothing was recomputed from checkpoints. The numbers were n
 - **A like-for-like probe size.** Giving the transformer a probe with as many parameters as the bilinear one, or
   restricting the comparison to positions where the bilinear probe is itself eligible, would make the second-half
   comparison fairer.
+
+---
+
+# Second follow-up: does a probe "up to normalization" recover what the tree's affine probe misses?
+
+No. A projective probe on the two top bonds, which fits the belief up to a per-prefix scale, scores within 0.07 of the
+affine probe in every run and half tried, and within 0.011 in the first half of v8m4s2L4, the grammar among these where
+the experiment's first-half hypothesis fails. So the affine probe's shortfall there is not explained by the bonds
+holding unnormalized messages. This is seed 0 of five grammars on a third of the experiment's sample, and it was not
+pre-registered.
+
+**Why ask.** A tree's merge has the form of the grammar's upward likelihood message, so a bond could hold an
+unnormalized message whose scale varies from prefix to prefix. The belief would then be a ratio of linear functions of
+the bond, which an affine probe cannot express. The projective probe (`studies/belief_common.py`) fits
+b̂ = q / Σq with q affine in the features, and contains the affine probe as a special case.
+
+| run (seed 0) | first half: positions | affine | projective | identity init: affine / projective | second half: positions | affine | projective | identity init: affine / projective |
+|---|---|---|---|---|---|---|---|---|
+| v8m4s2L4, r = 32 | 3 | 0.702 | 0.713 | 0.057 / 0.027 | 6 | 0.552 | 0.584 | 0.132 / 0.140 |
+| v8m4s2L4, r = 16 | 3 | 0.585 | 0.593 | 0.029 / 0.001 | 6 | 0.454 | 0.475 | 0.061 / 0.064 |
+| v4m2s2L5, r = 32 | 7 | 0.975 | 0.991 | 0.458 / 0.515 | 14 | 0.883 | 0.918 | 0.554 / 0.613 |
+| v3m2s2L5, r = 32 | 7 | 0.946 | 0.972 | 0.195 / 0.194 | 14 | 0.785 | 0.852 | 0.311 / 0.190 |
+| v8m2s2L4, r = 32 | 0 | | | | 6 | 0.770 | 0.820 | 0.503 / 0.535 |
+| v8m4s2L3, r = 32 | 0 | | | | 3 | 0.567 | 0.622 | 0.354 / −4.513 |
+
+Each number is R² on held-out prefixes at the final checkpoint, pooled over the positions of that half that are
+eligible for the top-bond probe (at least 10 × (2r + 1) distinct fit prefixes) and whose belief has at most 64
+entries. The 64-entry limit is there because the projective fit is nonlinear; it leaves out the positions with the
+largest beliefs, so these pooled numbers are not the experiment's own. Sample: 20,000 sequences.
+
+- **First half.** The gain from the projective probe is 0.011 and 0.008 in v8m4s2L4 (r = 32 and 16), 0.016 in
+  v4m2s2L5 and 0.026 in v3m2s2L5. In the two small-alphabet grammars the affine probe was already at 0.95 or above.
+- **Second half.** The gain is 0.02 to 0.07. The second half needs the product of the two bonds (the experiment's H2),
+  which neither of these probes is given, so a small gain is expected here.
+- **Per position**, the projective probe is never more than 0.003 below the affine one and at most 0.16 above it
+  (`projective_<run>_s0.json`).
+
+**What it leaves open.** The experiment's own explanation of the first-half failures, that a bond of dimension r
+cannot affinely carry beliefs spanning more than r dimensions, is untouched by this result: a projective probe on the
+same r coordinates has the same limit. The runs with 4,096-entry beliefs (v16m4s2L4, v8m2s2L5) were not tried, because
+their belief targets do not fit in the coordinator's 8 GB. Seeds 1 and 2 were not run. The numbers were tabulated from
+the script's output and not independently fact-checked.
+
+`projective.py` in this folder produced the numbers: `PYTHONPATH=. python studies/rhm/rhm-ttn-belief-geometry/followups/projective.py runs/rhm-ttn-belief-geometry/<run>_s0 <out.json> 20000`.

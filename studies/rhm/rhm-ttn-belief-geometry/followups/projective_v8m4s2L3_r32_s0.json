@@ -1,0 +1,52 @@
+{
+ "run": "v8m4s2L3_r32_s0",
+ "n_ana": 20000,
+ "final_excess": 0.0011034878263279785,
+ "pooled": {
+  "affine@second": 0.5665469974344233,
+  "projective@second": 0.621695385464058,
+  "init_affine@second": 0.35359004944466244,
+  "init_projective@second": -4.5130166065120765
+ },
+ "positions": [
+  {
+   "t": 5,
+   "half": "second",
+   "D": 64,
+   "n_fit_prefixes": 1881,
+   "n_beliefs": 59,
+   "affine": 0.4989175611942869,
+   "projective": 0.5328502498623416,
+   "fit_loss_ratio": 0.9644340491221747,
+   "init_affine": 0.431281666337086,
+   "init_projective": -42.07338605947374,
+   "init_fit_loss_ratio": 0.9869738592958326
+  },
+  {
+   "t": 6,
+   "half": "second",
+   "D": 8,
+   "n_fit_prefixes": 5090,
+   "n_beliefs": 37,
+   "affine": 0.5069797801813264,
+   "projective": 0.6054459324471446,
+   "fit_loss_ratio": 0.8213908029832493,
+   "init_affine": 0.42041661286303733,
+   "init_projective": 0.2623668214329634,
+   "init_fit_loss_ratio": 0.984773484379237
+  },
+  {
+   "t": 7,
+   "half": "second",
+   "D": 8,
+   "n_fit_prefixes": 8615,
+   "n_beliefs": 42,
+   "affine": 0.6217282774219799,
+   "projective": 0.6519114420889276,
+   "fit_loss_ratio": 0.9108959127482258,
+   "init_affine": 0.29129184369909167,
+   "init_projective": 0.32135280206892747,
+   "init_fit_loss_ratio": 0.9484510644431536
+  }
+ ]
+}

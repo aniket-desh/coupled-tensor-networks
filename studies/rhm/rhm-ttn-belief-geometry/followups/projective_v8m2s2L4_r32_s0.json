@@ -1,0 +1,91 @@
+{
+ "run": "v8m2s2L4_r32_s0",
+ "n_ana": 20000,
+ "final_excess": 0.001007758938719051,
+ "pooled": {
+  "affine@second": 0.7697885337757726,
+  "projective@second": 0.8202394987619113,
+  "init_affine@second": 0.5033820868984482,
+  "init_projective@second": 0.5351581044163375
+ },
+ "positions": [
+  {
+   "t": 10,
+   "half": "second",
+   "D": 64,
+   "n_fit_prefixes": 4057,
+   "n_beliefs": 24,
+   "affine": 0.5858588196082972,
+   "projective": 0.6303159471072676,
+   "fit_loss_ratio": 0.905695579735898,
+   "init_affine": 0.519555804845125,
+   "init_projective": 0.5440566960249195,
+   "init_fit_loss_ratio": 0.9172364452208251
+  },
+  {
+   "t": 11,
+   "half": "second",
+   "D": 64,
+   "n_fit_prefixes": 6702,
+   "n_beliefs": 43,
+   "affine": 0.6375336556480513,
+   "projective": 0.6785948623565805,
+   "fit_loss_ratio": 0.9011116430294196,
+   "init_affine": 0.4271178402528928,
+   "init_projective": 0.4777850706148823,
+   "init_fit_loss_ratio": 0.9130951204364186
+  },
+  {
+   "t": 12,
+   "half": "second",
+   "D": 8,
+   "n_fit_prefixes": 6879,
+   "n_beliefs": 10,
+   "affine": 0.7124290830623976,
+   "projective": 0.7964628573486554,
+   "fit_loss_ratio": 0.6985614081538829,
+   "init_affine": 0.5138400612260157,
+   "init_projective": 0.386778058463361,
+   "init_fit_loss_ratio": 0.8467105061543541
+  },
+  {
+   "t": 13,
+   "half": "second",
+   "D": 64,
+   "n_fit_prefixes": 8758,
+   "n_beliefs": 25,
+   "affine": 0.8222750587382754,
+   "projective": 0.8399427417817261,
+   "fit_loss_ratio": 0.8954224572995757,
+   "init_affine": 0.4678158434360903,
+   "init_projective": 0.5173269400979434,
+   "init_fit_loss_ratio": 0.9039492675303137
+  },
+  {
+   "t": 14,
+   "half": "second",
+   "D": 8,
+   "n_fit_prefixes": 9145,
+   "n_beliefs": 11,
+   "affine": 0.9272605849095882,
+   "projective": 0.9592988851758685,
+   "fit_loss_ratio": 0.578403903264974,
+   "init_affine": 0.5648076596068938,
+   "init_projective": 0.6684477540593861,
+   "init_fit_loss_ratio": 0.765627812037625
+  },
+  {
+   "t": 15,
+   "half": "second",
+   "D": 8,
+   "n_fit_prefixes": 9682,
+   "n_beliefs": 10,
+   "affine": 0.8813358818651901,
+   "projective": 0.9604348513517341,
+   "fit_loss_ratio": 0.3431797903239101,
+   "init_affine": 0.5289798698221944,
+   "init_projective": 0.5988980518282514,
+   "init_fit_loss_ratio": 0.8465986580545156
+  }
+ ]
+}

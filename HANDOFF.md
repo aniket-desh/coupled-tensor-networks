@@ -168,6 +168,12 @@ and $4.39.
   grammars. The bilinear probe has 1,088 parameters against the transformer's 129, so this is not evidence that the
   tree represents the belief better.
 
+- **Second follow-up, done 03:05: a probe "up to normalization" on the top bonds** (seed 0 of five grammars, 20,000
+  sequences, positions with beliefs of at most 64 entries; not pre-registered, not fact-checked), in the same
+  follow-up note. The projective probe scores within 0.07 of the affine probe in every run and half, and within 0.011
+  in the first half of v8m4s2L4, where H1 fails. So the first-half shortfall is not explained by the bonds holding
+  unnormalized messages. The experiment's bond-dimension explanation is untouched by this.
+
 ### `rhm-belief-architectures` (aligned tree, permuted tree, chain), finished 2026-11-15 02:17
 
 Write-up: [studies/rhm/rhm-belief-architectures/README.md](studies/rhm/rhm-belief-architectures/README.md); note:
@@ -203,5 +209,6 @@ and $3.04. Recorded as **inconclusive**.
   - the projection files (`results/*/proj_ckpt*.npz`, 2.1 GB) are on disk but kept out of git by a `.gitignore` in the
     experiment folder.
 
-- Follow-ups: the transformer-vs-TTN overlay and the transformer's scrambled-target and belief-split controls are
-  done (see Results). Still open: the projective probe on the TTN checkpoints.
+- Follow-ups: all three planned ones are done (see Results): the transformer's scrambled-target and belief-split
+  controls, the transformer-vs-TTN overlay, and the projective probe on the TTN checkpoints. Each is one seed on a
+  reduced sample; the grammars with 4,096-entry beliefs could not be run on the coordinator's 8 GB.
