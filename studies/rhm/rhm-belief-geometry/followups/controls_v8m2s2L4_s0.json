@@ -1,0 +1,89 @@
+{
+ "run": "v8m2s2L4_s0",
+ "n_ana": 20000,
+ "final_excess": 0.00014750488174133112,
+ "pooled": {
+  "belief": 0.9405430558872904,
+  "scrambled": 0.9198291787911644,
+  "split": -2.2079335166080543,
+  "split_init": -24.053443297896212,
+  "split_ceiling": 0.26808890209855674,
+  "split_scrambled": -2.312845729858409,
+  "n_positions": 7,
+  "n_split_positions": 4
+ },
+ "positions": [
+  {
+   "t": 9,
+   "D": 512,
+   "n_beliefs": 37,
+   "n_fit_prefixes": 2473,
+   "belief": 0.9309076752445062,
+   "scrambled": 0.9682661705143423,
+   "split": -6.673141211469129,
+   "split_init": -63.9880964548711,
+   "split_ceiling": 0.45780643485814254,
+   "split_scrambled": -2.440887895935721
+  },
+  {
+   "t": 10,
+   "D": 64,
+   "n_beliefs": 24,
+   "n_fit_prefixes": 4057,
+   "belief": 0.9227175440233629,
+   "scrambled": 0.8570145978100336,
+   "split": -1.821333483311978,
+   "split_init": -0.6562788173394036,
+   "split_ceiling": 0.3599931466469879,
+   "split_scrambled": -1.2029960772169388
+  },
+  {
+   "t": 11,
+   "D": 64,
+   "n_beliefs": 43,
+   "n_fit_prefixes": 6702,
+   "belief": 0.7658677717626564,
+   "scrambled": 0.7024010792295061,
+   "split": -0.6221778023444922,
+   "split_init": -0.25036015277589585,
+   "split_ceiling": 0.25558765915225556,
+   "split_scrambled": -0.6956510191596548
+  },
+  {
+   "t": 12,
+   "D": 8,
+   "n_beliefs": 10,
+   "n_fit_prefixes": 6879,
+   "belief": 0.9993423264401177,
+   "scrambled": 0.9981365864716975
+  },
+  {
+   "t": 13,
+   "D": 64,
+   "n_beliefs": 25,
+   "n_fit_prefixes": 8758,
+   "belief": 0.9633242351210163,
+   "scrambled": 0.9343038430469535,
+   "split": -2.025137900478839,
+   "split_init": -34.18745778404412,
+   "split_ceiling": 0.1949475952302564,
+   "split_scrambled": -4.123173441849961
+  },
+  {
+   "t": 14,
+   "D": 8,
+   "n_beliefs": 11,
+   "n_fit_prefixes": 9145,
+   "belief": 0.9994751692021753,
+   "scrambled": 0.9982020827431839
+  },
+  {
+   "t": 15,
+   "D": 8,
+   "n_beliefs": 10,
+   "n_fit_prefixes": 9682,
+   "belief": 0.9982953403124033,
+   "scrambled": 0.9963334852598984
+  }
+ ]
+}

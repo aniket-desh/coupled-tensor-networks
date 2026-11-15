@@ -1,0 +1,53 @@
+{
+ "run": "v8m4s2L3_s0",
+ "n_ana": 20000,
+ "final_excess": 0.0001705910094005475,
+ "pooled": {
+  "belief": 0.9726736118273539,
+  "scrambled": 0.9580308155111724,
+  "split": 0.30020211134438834,
+  "split_init": -11.492651451208426,
+  "split_ceiling": 0.986510768908181,
+  "split_scrambled": -1.2182700846700492,
+  "n_positions": 3,
+  "n_split_positions": 3
+ },
+ "positions": [
+  {
+   "t": 5,
+   "D": 64,
+   "n_beliefs": 59,
+   "n_fit_prefixes": 1881,
+   "belief": 0.9925628493273913,
+   "scrambled": 0.9862531355853557,
+   "split": -0.1394294301732082,
+   "split_init": 0.09206423690154708,
+   "split_ceiling": 0.8466856123492951,
+   "split_scrambled": -1.6163215919003355
+  },
+  {
+   "t": 6,
+   "D": 8,
+   "n_beliefs": 37,
+   "n_fit_prefixes": 5090,
+   "belief": 0.9986284175823564,
+   "scrambled": 0.9969077869249042,
+   "split": 0.3340085736424384,
+   "split_init": -0.30879008496217586,
+   "split_ceiling": 1.0,
+   "split_scrambled": -0.8866812011036169
+  },
+  {
+   "t": 7,
+   "D": 8,
+   "n_beliefs": 42,
+   "n_fit_prefixes": 8615,
+   "belief": 0.9506930159962457,
+   "scrambled": 0.8752410960276819,
+   "split": 0.3471108959720529,
+   "split_init": -19.037908599803743,
+   "split_ceiling": 1.0,
+   "split_scrambled": -1.3187333852690877
+  }
+ ]
+}

@@ -19,6 +19,29 @@ section.
 - Launch the three new experiments once each passes its CPU pilot and an independent review, within $10 and 8 h each.
 - Push commits to `origin/main` as they land.
 
+## Instructions received after the laptop closed
+
+- **01:50, relayed by the main session (now in tmux as `main`):**
+  - Every experiment in this batch ends with its plots and a research note as well as the README: `NOTE.md` in the
+    experiment folder, written with the research-note skill, with mathematics that renders in GitHub markdown and the
+    key figures embedded inline as PNGs under `figures/png/`, next to the unchanged PDF figures; fact-checked and
+    committed. The four running supervisors were told directly. `rhm-belief-geometry` had already ended, so its note
+    is written by this session. When each of the other four finishes, this session checks that its folder has
+    `README.md`, the PDF figures, `figures/png/` and a `NOTE.md` whose images resolve and whose math renders.
+  - Each experiment's budget ceiling is now $15, and supervisors may move definition-level time cut-offs so that all
+    planned runs are trained and analysed, recorded as amendments authorized by you. The main session extends the
+    hard time caps of the `hmm-belief-geometry` and `rhm-ttn-messages` workers itself.
+
+## Deliverables per experiment
+
+| Experiment | README.md | PDF figures | figures/png/ | NOTE.md (images resolve, math renders) |
+|---|---|---|---|---|
+| `rhm-belief-geometry` | yes | yes (43) | in progress | in progress (this session) |
+| `rhm-ttn-belief-geometry` | pending | pending | pending | pending |
+| `rhm-ttn-messages` | pending | pending | pending | pending |
+| `rhm-belief-architectures` | pending | pending | pending | pending |
+| `hmm-belief-geometry` | pending | pending | pending | pending |
+
 ## Decisions made while you were away
 
 - 21:12. The two builds that were still in progress when the laptop closed (`hmm-belief-geometry`,
@@ -99,8 +122,18 @@ $4.98 against 8 h and $20.
 - **H2 (more than the next-token output; descriptive):** in 383 of 414 eligible cases with a next-token ceiling below
   0.9 the probe beats the ceiling by more than 0.05. The exceptions are almost all in the m ≥ 4 grammars (8 of 37
   there). The write-up flags that the ceiling is a lookup estimate, so this count may be inflated.
-- **Not yet applied to this run:** the scrambled-target control and the belief split, which the later reviews showed
-  are needed to tell "identifies the belief state" from "holds its geometry". They are on the follow-up list below.
+- **Follow-up, done 01:45–02:00 (not pre-registered; seed 0 of five grammars that passed H1; 20,000 sequences):**
+  [studies/rhm/rhm-belief-geometry/followups/README.md](studies/rhm/rhm-belief-geometry/followups/README.md).
+  - The same probe fits a random relabelling of the belief states almost as well as the beliefs: R² 0.70–0.96 against
+    0.84–0.97, a pooled gap of 0.015–0.15.
+  - It does not extrapolate to beliefs it was not fit on: at most 0.35 where 1.0 was attainable, and no better than
+    the random-init network overall (it wins at 9 of 25 positions). This measure is noisy.
+  - So H1 stands as stated, but in these runs "linearly determines the belief" is mostly "linearly separates a small
+    set of belief states" (a median of 16 per position). Evidence for the belief's geometry, as in the Simplex claim,
+    is weak here.
+  - Not covered: the two grammars that failed H1 (the v16m4s2L4 follow-up was killed for memory on the coordinator;
+    v3m2s2L6 was not run), and seeds 1 and 2.
+  - The note was fact-checked: 12 of 46 claims in its first draft did not fully hold, and all were corrected.
 
 ## Things to look at first
 
