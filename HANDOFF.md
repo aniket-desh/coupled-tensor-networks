@@ -247,9 +247,13 @@ Write-up: [studies/hmm/hmm-belief-geometry/README.md](studies/hmm/hmm-belief-geo
 Across all five experiments the pre-registered probe results mostly hold where the model learned the task: the
 transformer's last layer, the chain's state and the product of the tree's top bonds each linearly determine the exact
 belief on prefixes the probe never saw, well above an untrained network and a token readout. What does not hold up is
-the stronger, Simplex-style reading that these representations lay out the belief *geometry*. Every experiment that
-tested it found that a probe fits a scrambled relabelling of the belief states about as well as the beliefs, and does
-not extrapolate to beliefs it was not fit on. The tree does not implement the grammar's message passing
+the stronger, Simplex-style reading that these representations lay out the belief *geometry*. In all four belief
+experiments, a probe fits a scrambled relabelling of the belief states most of the way to how well it fits the beliefs
+themselves (a pooled gap of 0.015–0.15 for the transformer on the RHM, within 0.07 for the tree's bilinear probe,
+within 0.06 for every arm of the architecture comparison on learned grammars, and 0.81 against 0.865–0.872 for the
+transformer on RRXOR). In the three RHM belief experiments a probe also fails to extrapolate to beliefs it was not fit
+on; the HMM experiment did not run that test, and the test is a noisy one. The tree does not implement the grammar's
+message passing
 (`rhm-ttn-messages`: its merges fail the update test in every cell), though its bonds keep what the task needs and
 little else. The aligned tree learned all four grammars where the permuted tree and the chain learned two, but the
 alignment comparison fell one win short of its pre-registered bar.
