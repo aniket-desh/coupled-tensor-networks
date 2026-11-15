@@ -9,10 +9,10 @@ section.
 | Experiment | What it asks | Status | Spend / budget |
 |---|---|---|---|
 | `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | **finished 01:38. H1 supported: 10 of 12 grammars** | $4.98 / $20 |
-| `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | running (supervisor `exp-rhm-ttn-belief-geometry`) | $2.81 / $10 at 23:41 |
+| `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | **finished 02:15. H2 supported (7 of 8 cells at each width); H1 partly supported (2 of 6)** | $4.39 / $15 |
 | `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | launched 21:40 after two review passes (supervisor `exp-rhm-ttn-messages`) | $1.45 / $10 at 23:41 |
 | `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | launched 23:44 after two review passes (supervisor `exp-hmm-belief-geometry`) | cap $10 |
-| `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | launched 21:42 after two review passes (supervisor `exp-rhm-belief-architectures`) | $1.42 / $10 at 23:41 |
+| `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | **finished 02:17. Inconclusive: chain hypothesis could not be judged (2 learned grammars, 3 needed); alignment hypothesis not supported by its rule (9 wins, 0 losses, 3 ties)** | $3.04 / $15 |
 
 ## What you decided before leaving
 
@@ -37,9 +37,9 @@ section.
 | Experiment | README.md | PDF figures | figures/png/ | NOTE.md (images resolve, math renders) |
 |---|---|---|---|---|
 | `rhm-belief-geometry` | yes | yes (43) | yes (18) | yes: 6 images resolve; math passes a lint for GitHub's known pitfalls (173 inline spans, 12 display blocks) but was not seen rendered, since this machine has no renderer; fact-checked, 16 of about 170 claims reworded |
-| `rhm-ttn-belief-geometry` | pending | pending | pending | pending |
+| `rhm-ttn-belief-geometry` | yes | yes (30) | yes (8) | yes: 7 images resolve; math passes the lint (164 inline spans, 13 display blocks), not seen rendered; fact-checked by its supervisor (17 statements changed) |
 | `rhm-ttn-messages` | pending | pending | pending | pending |
-| `rhm-belief-architectures` | pending | pending | pending | pending |
+| `rhm-belief-architectures` | yes | yes (15) | yes (5) | yes: 5 images resolve; math passes the lint (127 inline spans, 7 display blocks), not seen rendered. Its 7 display equations were written as single-line `$$ … $$`; at 02:30 this session put the delimiters on their own lines, the more robust form, with no change to the content |
 | `hmm-belief-geometry` | pending | pending | pending | pending |
 
 ## Decisions made while you were away
@@ -123,7 +123,7 @@ $4.98 against 8 h and $20.
   0.9 the probe beats the ceiling by more than 0.05. The exceptions are almost all in the m ≥ 4 grammars (8 of 37
   there). The write-up flags that the ceiling is a lookup estimate, so this count may be inflated.
 - **Research note:** [studies/rhm/rhm-belief-geometry/NOTE.md](studies/rhm/rhm-belief-geometry/NOTE.md), written by a
-  helper with the research-note skill and fact-checked (committed 02:25). The fact-check also corrected two numbers
+  helper with the research-note skill and fact-checked (committed 02:12). The fact-check also corrected two numbers
   in the README: 148, not 146, of the 414 H2 cases come from v3m2s2L6, and the last-layer range in the synonym-rich
   grammars is 0.68 to 0.98.
 - **Follow-up, done 01:45–02:00 (not pre-registered; seed 0 of five grammars that passed H1; 20,000 sequences):**
@@ -138,6 +138,46 @@ $4.98 against 8 h and $20.
   - Not covered: the two grammars that failed H1 (the v16m4s2L4 follow-up was killed for memory on the coordinator;
     v3m2s2L6 was not run), and seeds 1 and 2.
   - The note was fact-checked: 12 of 46 claims in its first draft did not fully hold, and all were corrected.
+
+### `rhm-ttn-belief-geometry` (tree tensor network), finished 2026-11-15 02:15
+
+Write-up: [studies/rhm/rhm-ttn-belief-geometry/README.md](studies/rhm/rhm-ttn-belief-geometry/README.md); note:
+[NOTE.md](studies/rhm/rhm-ttn-belief-geometry/NOTE.md); supervisor's report:
+[SUPERVISOR.md](studies/rhm/rhm-ttn-belief-geometry/SUPERVISOR.md). All 60 runs trained and were analysed; 6 h 06 m
+and $4.39.
+
+- **H2 (second half: the belief is in the product of the two top bonds): supported at both widths**, 7 of 8 learned,
+  testable grammars at each of r = 16 and r = 32. The bilinear probe scores R² 0.85–1.00 on held-out prefixes, and
+  0.86–1.00 where the additive ceiling (the best any function additive in the two halves can do) is 0.51–0.78.
+- **H1 (first half: affine probe on the top bonds): partly supported**, 2 of 6 at each width. It reaches 0.84–0.99
+  in the two small-alphabet grammars (v = 3, 4) and 0.43–0.77 in the four with v = 8 or 16. The write-up's likely
+  reading, found after looking and not tested: an r-dimensional bond cannot affinely carry beliefs that span more
+  than r dimensions.
+- **Geometry: little evidence.** The probes fit a scrambled target about as well as the belief (bilinear difference
+  −0.02 to 0.07 per cell) and score below zero on beliefs they were not fit on, in every run. So H1 and H2 show the
+  bonds linearly identify the belief state, not that they hold an affine code of it. This matches the transformer
+  follow-up above.
+- Not learned: v16m4s2L4 at r = 16. The supervisor moved the cut-off for starting training runs so that all 60 ran
+  (its decision 4, before your 01:50 message authorized such moves); the r = 16 verdicts depend on that.
+
+### `rhm-belief-architectures` (aligned tree, permuted tree, chain), finished 2026-11-15 02:17
+
+Write-up: [studies/rhm/rhm-belief-architectures/README.md](studies/rhm/rhm-belief-architectures/README.md); note:
+[NOTE.md](studies/rhm/rhm-belief-architectures/NOTE.md); supervisor's report:
+[SUPERVISOR.md](studies/rhm/rhm-belief-architectures/SUPERVISOR.md). All 36 runs trained and were analysed; 4 h 13 m
+and $3.04. Recorded as **inconclusive**.
+
+- **Learning.** The aligned tree learned all four grammars (0.0007–0.0059 nats/token above Bayes). The permuted tree
+  and the chain learned only the two grammars with m = 2, and stayed above the 0.02 threshold on the two with m = 4
+  (chain 0.024–0.068, permuted tree 0.039–0.157). All at one learning rate, 1e-3.
+- **Chain hypothesis: inconclusive**, because the rule needs three learned grammars and the chain learned two. In
+  both, the affine probe on the chain state scores R² 0.96–0.98 on unseen prefixes, against 0.45–0.55 for the token
+  readout and 0.19–0.31 for the untrained chain.
+- **Alignment hypothesis: not supported by its pre-registered rule.** On learning the aligned tree won 9 of 12 pairs
+  with 0 losses and 3 ties (median gap 0.020 nats), one win short of the 80% bar. On representation it won 6 of 6
+  usable pairs (median adjusted gap 0.153), below the 9 pairs needed to count.
+- A choice for you: the log label is "inconclusive"; the supervisor notes it is one command away from
+  "not-supported" if you prefer that reading.
 
 ## Things to look at first
 

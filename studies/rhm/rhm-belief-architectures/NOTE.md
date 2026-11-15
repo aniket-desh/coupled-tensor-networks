@@ -8,23 +8,31 @@ The answer is narrower than the question. At the one learning rate tried, the al
 
 **The belief state of the RHM is the posterior over the pending subtrees.** The RHM generates a sequence by expanding a tree of depth $L$. A symbol at one level expands into $s = 2$ children at the next by one of $m$ productions chosen uniformly, every level has $v$ symbols, and the $T = 2^L$ leaves are the observed tokens $x_0, \dots, x_{T-1}$. All productions of a level are distinct pairs, so a complete sequence has a unique parse. After $t$ tokens, call a node *pending* if its span of leaves starts at or after position $t$ and its parent's span does not, and let $\mathcal{N}_t$ be the set of pending nodes. The belief is the joint posterior of their symbols,
 
-$$b_t(z) = P\left(z_{\mathcal{N}_t} = z \mid x_0, \dots, x_{t-1}\right), \qquad z \in \prod_{u \in \mathcal{N}_t} \lbrace 1, \dots, v \rbrace, \qquad D_t = v^{|\mathcal{N}_t|}.$$
+$$
+b_t(z) = P\left(z_{\mathcal{N}_t} = z \mid x_0, \dots, x_{t-1}\right), \qquad z \in \prod_{u \in \mathcal{N}_t} \lbrace 1, \dots, v \rbrace, \qquad D_t = v^{|\mathcal{N}_t|}.
+$$
 
 For $T = 16$ and $v = 8$, the pending nodes at $t = 5$ are the token at position 5, the node above positions 6 and 7, and the node above the right half, so $D_5 = 8^3 = 512$; at $t = 7$ they are the token at position 7 and the right half, so $D_7 = 64$. The next-token distribution is a linear function of the belief, because the next token is the first leaf under the first pending node $u_1$:
 
-$$P(x_t = a \mid x_0, \dots, x_{t-1}) = \sum_{z} b_t(z) P\left(x_t = a \mid z_{u_1}\right).$$
+$$
+P(x_t = a \mid x_0, \dots, x_{t-1}) = \sum_{z} b_t(z) P\left(x_t = a \mid z_{u_1}\right).
+$$
 
 The map from beliefs to next-token distributions is many to one, so a network whose state at $t$ serves only the prediction at $t$, as in the trees, could predict perfectly while keeping less than the belief. The chain's state must determine the belief if it predicts perfectly at every later position, but not necessarily in a linearly readable form. The experiment therefore reports, as a ceiling, how well the belief can be recovered from the exact next-token distribution alone.
 
 **The three networks are multilinear in their inputs; the two trees differ only in how they group positions, and the chain shares one core across positions.** Write $e(x)$ for the one-hot vector of a token. In the tree, leaf $i$ holds $a_i = A_i e(x_{\pi(i)}) \in \mathbb{R}^r$ with bond dimension $r = 32$, each internal node fuses its two children with its own core,
 
-$$h_a = \sum_{b, c} W_{abc} h^{\mathrm{left}}_b h^{\mathrm{right}}_c,$$
+$$
+h_a = \sum_{b, c} W_{abc} h^{\mathrm{left}}_b h^{\mathrm{right}}_c,
+$$
 
 and the root turns the two bonds beneath it, $h_A$ and $h_B$, into logits $\ell_o = \sum_{b,c} C_{obc} (h_A)_b (h_B)_c$. To predict $x_t$ the tree is run on the prefix with every position from $t$ on replaced by a mask token. The aligned tree has $\pi(i) = i$, so each bond summarizes a subtree of the grammar and $h_A$, $h_B$ summarize the left and right halves of the sequence. The permuted tree has a fixed random $\pi$, drawn so that no two sibling leaves of the grammar are siblings in the model; its bonds summarize scattered positions, and in all 12 permuted runs no internal model node below the root covers exactly the leaves of a grammar node. The parameter count is $T(v+1)r + (T-2)r^3 + v r^2$ for both trees.
 
 The chain keeps one state and one core for all positions:
 
-$$(h_t)_a = \sum_{b,c} W_{abc} (h_{t-1})_b \left(A e(x_{t-1})\right)_c, \qquad \text{that is} \quad h_t = M(x_{t-1}) h_{t-1}, \qquad \ell_t = U h_t,$$
+$$
+(h_t)_a = \sum_{b,c} W_{abc} (h_{t-1})_b \left(A e(x_{t-1})\right)_c, \qquad \text{that is} \quad h_t = M(x_{t-1}) h_{t-1}, \qquad \ell_t = U h_t,
+$$
 
 with $h_0$ learned and $\ell_t$ the logits for $x_t$. Its state after $t$ tokens is a product of token-indexed matrices applied to $h_0$, which is the form of an unnormalized Bayesian filter. Its width $w$ is chosen so that its parameter count $w + 2vw + w^3$ is closest to the tree's: $w = 78$ for $T = 16$ and $w = 100$ for $T = 32$, within 1.4% of the tree in every grammar. No network has biases or nonlinearities, and all start from an identity-like initialization.
 
@@ -39,13 +47,17 @@ The projective and softmax probes are fit only at positions with $D_t \le 64$, w
 
 The bilinear probe is needed because of how the two halves of an aligned tree combine. For $t \gt T/2$ the left half is complete and parses to a single symbol $z_L$, the right half is a partial prefix, and the two are independent given the symbol $z_R$ of the right half. Hence
 
-$$b_t(z) = \frac{\sum_{z_R} P(z_R \mid z_L) P\left(x_{T/2}, \dots, x_{t-1}, z \mid z_R\right)}{P\left(x_{T/2}, \dots, x_{t-1} \mid z_L\right)}.$$
+$$
+b_t(z) = \frac{\sum_{z_R} P(z_R \mid z_L) P\left(x_{T/2}, \dots, x_{t-1}, z \mid z_R\right)}{P\left(x_{T/2}, \dots, x_{t-1} \mid z_L\right)}.
+$$
 
 Because the left half enters only through $z_L$, which takes $v$ values, this can be written as $b_t = \sum_{a} \mathbf{1}[z_L = a] g_a(x_{T/2}, \dots, x_{t-1})$: exactly bilinear in the one-hot code of $z_L$ and a function of the right prefix. An affine probe on $[h_A, h_B]$ can only produce a sum $f(\text{left half}) + g(\text{right prefix})$, so it is bounded by the best additive fit, which the experiment computes without the network and reports as the additive bound. The bilinear probe is not subject to the additive bound in either tree, since products of the two top bonds can carry interactions between what each has seen, and it is the probe on which the trees are compared. It reads the belief exactly only if $h_A$ carries $z_L$ linearly and $h_B$ carries the functions $g_a$ linearly.
 
 **Scores are taken on prefixes the probe never saw, and only where the fit is determined.** For each run, 60,000 sequences are sampled from the grammar. At each prefix length the distinct prefixes are assigned at random to a fit set or a test set, and
 
-$$R^2 = 1 - \frac{\sum_t \sum_{i \in \mathrm{test}_t} \Vert b_t^{(i)} - \hat b_t^{(i)} \Vert^2}{\sum_t \sum_{i \in \mathrm{test}_t} \Vert b_t^{(i)} - \bar b_t \Vert^2},$$
+$$
+R^2 = 1 - \frac{\sum_t \sum_{i \in \mathrm{test}_t} \Vert b_t^{(i)} - \hat b_t^{(i)} \Vert^2}{\sum_t \sum_{i \in \mathrm{test}_t} \Vert b_t^{(i)} - \bar b_t \Vert^2},
+$$
 
 with $\bar b_t$ the mean belief of the fit set and the sums over $t$ running over a group of positions. A position enters a group only if it has at least $10(p + 1)$ distinct fit prefixes for a probe with $p$ features. The *common positions* are those eligible for the 1,088-feature bilinear probe, at least 10,890 distinct fit prefixes, and they are the same in every arm. Controls are scored on the same rows: the untrained network, the token readout (the same probe on the one-hot prefix for the chain's three families, and the affine probe on the one-hot prefix for the trees), the next-token ceiling, and a *scrambled target* in which each distinct belief is replaced by a random 8-vector. The last one measures how well a probe fits an arbitrary labelling of the belief states. A fit to shuffled labels is scored separately, on a split by sequence over all positions. A network has *learned* a grammar if its test loss ends within 0.02 nats per token of the exact Bayes loss in all three seeds.
 
@@ -87,7 +99,9 @@ The two grammars that the chain did not learn are outside the verdict, and they 
 
 The representation measure compares the bilinear probe on the common positions past the midpoint, in pairs where both trees learned. With $g = R^2_{\mathrm{aligned}} - R^2_{\mathrm{perm}}$, a pair goes to the aligned tree if
 
-$$g(\text{final}) - g(\text{untrained}) \ge 0.1 \quad \text{and} \quad g(\text{final}) \gt 0,$$
+$$
+g(\text{final}) - g(\text{untrained}) \ge 0.1 \quad \text{and} \quad g(\text{final}) \gt 0,
+$$
 
 where subtracting the untrained gap removes what the leaf order alone gives two untrained trees. For v8m2s2L4, seed 0, the trained trees score 0.9975 and 0.9715, so $g(\text{final}) = 0.026$; the untrained trees score 0.6153 and 0.7087, so $g(\text{untrained}) = -0.093$; the adjusted gap is 0.119 and the pair goes to the aligned tree. All 6 usable pairs do (adjusted gaps 0.119 to 0.208, median 0.153, $p = 2^{-6} \approx 0.016$), but the rule requires 9 usable pairs, so the measure is untestable. In all six, the final gap itself is below 0.1: the permuted tree's top bonds read the belief at 0.90 to 0.98 against 0.995 to 0.999 for the aligned tree, and the pairs pass because the untrained permuted tree starts ahead. The same count on the common positions up to the midpoint, which the definition reports apart with no verdict, is 1 win and 2 ties of 3 pairs, all in v4m2s2L5; in two of those three seeds the permuted tree's probe is the higher one.
 
