@@ -1,8 +1,9 @@
 # Handoff: belief-geometry batch
 
 Kept by the tmux session `belief-batch`, which took over the planning conversation on 2026-11-14 at 21:12 UTC, when
-the laptop closed. Times are UTC. This file is updated as things change; the last update is at the bottom of each
-section.
+the laptop closed. Times are UTC. **Final version, 2026-11-15 09:25: all five experiments are finished, logged and
+pushed, no worker is running, and the session has ended.** Total GPU spend was $23.85 (4.98 + 4.39 + 3.04 + 5.26 +
+6.18) against ceilings of $20 and four times $15.
 
 ## Status at a glance
 
@@ -11,7 +12,7 @@ section.
 | `rhm-belief-geometry` | Does a transformer hold the RHM belief state linearly in its residual stream? | **finished 01:38. H1 supported: 10 of 12 grammars** | $4.98 / $20 |
 | `rhm-ttn-belief-geometry` | The same for the tree tensor network's bond states | **finished 02:15. H2 supported (7 of 8 cells at each width); H1 partly supported (2 of 6)** | $4.39 / $15 |
 | `rhm-ttn-messages` | Do the tree's bonds hold the grammar's messages, and do its merges implement the update? | **finished 05:35. Not supported: the tree does not implement the grammar's message passing (H1 and H4 fail in every cell; H2 supported)** | $5.26 / $15 |
-| `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | launched 23:44 after two review passes (supervisor `exp-hmm-belief-geometry`) | cap $10 |
+| `hmm-belief-geometry` | Simplex's processes (Mess3, RRXOR and others) on a transformer, a tree and a chain | **finished 09:00. Mixed (logged as inconclusive): transformer reproduction supported (2 of 2); chain and tree each partly supported** | $6.18 / $15 |
 | `rhm-belief-architectures` | Aligned tree vs permuted tree vs chain on the RHM | **finished 02:17. Inconclusive: chain hypothesis could not be judged (2 learned grammars, 3 needed); alignment hypothesis not supported by its rule (9 wins, 0 losses, 3 ties)** | $3.04 / $15 |
 
 ## What you decided before leaving
@@ -40,7 +41,7 @@ section.
 | `rhm-ttn-belief-geometry` | yes | yes (30) | yes (8) | yes: 7 images resolve; math passes the lint (164 inline spans, 13 display blocks), not seen rendered; fact-checked by its supervisor (17 statements changed) |
 | `rhm-ttn-messages` | yes | yes (24) | yes (5) | yes: 5 images resolve; math passes the lint (137 inline spans, 12 display blocks), not seen rendered; three fact-check passes by its supervisor |
 | `rhm-belief-architectures` | yes | yes (15) | yes (5) | yes: 5 images resolve; math passes the lint (127 inline spans, 7 display blocks), not seen rendered. Its 7 display equations were written as single-line `$$ … $$`; at 02:30 this session put the delimiters on their own lines, the more robust form, with no change to the content |
-| `hmm-belief-geometry` | pending | pending | pending | pending |
+| `hmm-belief-geometry` | yes | yes (9) | yes (9) | yes: 5 images resolve; math passes the lint (168 inline spans, 15 display blocks), not seen rendered; two fact-check passes by its supervisor |
 
 ## Decisions made while you were away
 
@@ -214,14 +215,72 @@ $5.26. Recorded as **not supported**.
   forbids.
 - Not learned: v16m4s2L4 at r = 16, as in the tree belief experiment.
 
+### `hmm-belief-geometry` (Simplex's processes on a transformer, a chain and trees), finished 2026-11-15 09:00
+
+Write-up: [studies/hmm/hmm-belief-geometry/README.md](studies/hmm/hmm-belief-geometry/README.md); note:
+[NOTE.md](studies/hmm/hmm-belief-geometry/NOTE.md); supervisor's report:
+[SUPERVISOR.md](studies/hmm/hmm-belief-geometry/SUPERVISOR.md). All 72 runs trained and were analysed, and every
+(process, model) cell learned; 8 h 57 m and $6.18. Logged as **inconclusive**, which here means a mixed outcome.
+
+- **H1 (transformer reproduction): supported, 2 of 2.** The last-layer affine probe scores R² 0.9997 on Mess3
+  (initial network 0.976–0.978, token readout 0.967) and 0.865–0.872 on RRXOR (initial network 0.25–0.29, tokens
+  0.063, next-token ceiling 0.474), in all three seeds.
+- **H2 (chain, projective probe): partly supported, 2 of 4.** It passes on Mess3 (0.9999) and RRXOR (0.994–0.997
+  against a next-token ceiling of 0.469). It fails on the two product processes against the token readout
+  (`factored` 0.844–0.845 against 0.919; `coupled` 0.956–0.960 against 0.928, short of the halving rule). The coins
+  cell is not testable, because its control is saturated.
+- **H3a (tree, first half): partly supported, 2 of 6.** Mess3 passes at both bond dimensions; `factored` and `coupled`
+  fail at both (0.75–0.89 for the joint belief, below the token readout at 0.92–0.93).
+- **H3b (tree, second half, product of the top bonds): partly supported, 1 of 2.** The coins pass at r = 8
+  (0.991–0.994). RRXOR at r = 8 fails: 0.733 and 0.767 in two seeds and −4.55 in the third, against an additive
+  ceiling of 0.772.
+- **RRXOR, the process that separates belief from prediction, splits 2 to 1:** the transformer and the chain pass,
+  the r = 8 tree fails. The write-up adds the same caveat as the RHM experiments: RRXOR has 17 distinct beliefs per
+  position, and an affine probe fits a random vector per belief state with R² 0.81 for the transformer (0.865–0.872
+  for the belief) and 0.88–0.92 for the chain, so the passes show the state identifies the belief state, not that it
+  lays out the belief geometry.
+- **Product processes (descriptive):** every model reads the two factor marginals at 0.97 or more; only the
+  transformer carries the joint (0.98–0.995, against 0.75–0.96 in the tensor networks).
+
+## What the batch says, in one paragraph
+
+Across all five experiments the pre-registered probe results mostly hold where the model learned the task: the
+transformer's last layer, the chain's state and the product of the tree's top bonds each linearly determine the exact
+belief on prefixes the probe never saw, well above an untrained network and a token readout. What does not hold up is
+the stronger, Simplex-style reading that these representations lay out the belief *geometry*. Every experiment that
+tested it found that a probe fits a scrambled relabelling of the belief states about as well as the beliefs, and does
+not extrapolate to beliefs it was not fit on. The tree does not implement the grammar's message passing
+(`rhm-ttn-messages`: its merges fail the update test in every cell), though its bonds keep what the task needs and
+little else. The aligned tree learned all four grammars where the permuted tree and the chain learned two, but the
+alignment comparison fell one win short of its pre-registered bar.
+
 ## Things to look at first
 
 - [studies/rhm/rhm-belief-geometry/figures/geometry_v8m4s2L4.pdf](studies/rhm/rhm-belief-geometry/figures/geometry_v8m4s2L4.pdf):
   the Simplex-style panel (true beliefs, probes, shuffled and random-init controls, raw PCA) at four positions.
 - `triangles_*.pdf` in the same folder for the six v = 3 grammars; `summary.pdf`, `positions.pdf`, `training.pdf`.
-- Dashboards: ports 8010 and 8011 on the coordinator.
+- The five research notes, one per experiment folder (`NOTE.md`), each with embedded figures:
+  [transformer](studies/rhm/rhm-belief-geometry/NOTE.md), [tree](studies/rhm/rhm-ttn-belief-geometry/NOTE.md),
+  [architectures](studies/rhm/rhm-belief-architectures/NOTE.md), [messages](studies/rhm/rhm-ttn-messages/NOTE.md),
+  [HMM processes](studies/hmm/hmm-belief-geometry/NOTE.md). Their math passed a lint but was not seen rendered: open
+  one on GitHub first and tell me if an equation shows as raw text.
+- [studies/rhm/rhm-ttn-belief-geometry/followups/compare.pdf](studies/rhm/rhm-ttn-belief-geometry/followups/compare.pdf):
+  the transformer and the tree on the same held-out prefixes.
+- The experiment log, `EXPERIMENTS.md`, has all five runs.
 
 ## Open items
+
+- **Decisions that are yours:**
+  - `rhm-belief-architectures` is logged as "inconclusive"; its supervisor notes that "not-supported" is one
+    `orch experiment done` command away if you prefer that label for the alignment hypothesis.
+  - `rhm-ttn-belief-geometry`'s supervisor moved the cut-off for starting training runs so that all 60 ran, before
+    your 01:50 message authorized such moves. The r = 16 verdicts depend on that; the r = 32 ones do not.
+  - Each supervisor kept its large projection files (1–3 GB per experiment) out of git and left notes on what
+    remains on disk; see each `SUPERVISOR.md` under "What you need to do".
+- **The notes' math was never seen rendered** (no renderer on the coordinator). All five pass a lint for GitHub's known
+  pitfalls.
+- **Follow-ups not done:** seeds 1 and 2 for the three follow-ups; the two RHM grammars with 4,096-entry beliefs,
+  which need more than the coordinator's 8 GB; a low-dimensional probe that would test belief geometry directly.
 
 - From the transformer run's supervisor, for you to decide:
   - an unmerged results branch remains (`results/20261114-183036-rhm-belief-geometry-dl1dad9eotnowo`, about 590 MB of
