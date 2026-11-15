@@ -1,7 +1,7 @@
 ---
 name: rhm-belief-architectures
 title: "RHM belief states across tensor-network architectures: aligned tree, permuted tree, chain"
-status: approved
+status: done
 gpu: NVIDIA RTX A6000,NVIDIA RTX PRO 4500 Blackwell,NVIDIA RTX PRO 4500 Blackwell Server Edition,NVIDIA RTX 6000 Ada Generation
 count: 1
 hours: 8
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-14T21:42:31Z
+result: inconclusive
+finished_utc: 2026-11-15T02:15:08Z
+writeup: studies/rhm/rhm-belief-architectures/README.md
 ---
 
 # RHM belief states across tensor-network architectures: aligned tree, permuted tree, chain
@@ -479,8 +482,34 @@ experiment-reviewer, second pass: the P0 and both P1s judged addressed, no new P
 
 ## Amendments
 
-None.
+- **2026-11-15 01:50Z, where the projection files are kept (supervisor, before finishing the worker).** The 72
+  `proj_ckpt*.npz` files came to 1.2 GB, not the "under 200 MB" estimated under Expected outputs, and the repository's
+  whole `.git` is 1.1 GB. Published inside the experiment folder they would have been committed by the merge, or split
+  by the toolkit's 20 MB limit for repository files.
+  - Change: after the verdict and figures step, the files are moved on the worker from `results/<run>/` to
+    `runs/rhm-belief-architectures/proj/<run>/`, a data folder that comes back to the coordinator outside git. On the
+    coordinator they are copied back into `results/<run>/`, where `arch_plot.py` expects them, and a `.gitignore` in
+    this folder keeps them out of commits.
+  - No effect on the method, the criteria or any number: `summary.json` and the figures were written before the move,
+    and `arch_summary.py` reads only `analysis.json`.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Recorded as **inconclusive**. The detail is in [README.md](README.md), with the mathematics and figures in
+[NOTE.md](NOTE.md). Every line is conditional on learning rate 1e-3.
+
+- **Run failed: no.** The checks passed and CUDA was present; 36 of 36 runs finished training and analysis (31
+  needed); the shuffled-label pooled R² is at most 0.0003 in every run (limit 0.05). No grammar is censored.
+- **Learned:** the aligned tree learned all four grammars. The permuted tree and the chain learned v8m2s2L4 and
+  v4m2s2L5 and did not learn v8m4s2L4 and v16m4s2L4.
+- **H_A: inconclusive.** Two learned, testable grammars, and the rule needs three. Both support it: A1 and A2 hold
+  in all three seeds of both, A3 in v4m2s2L5 only.
+- **H_B: not supported.**
+  - Learning: 9 wins, 0 losses, 3 ties of 12 usable pairs, to neither tree (10 wins needed); median gap 0.020 nats.
+  - Representation: 6 wins, 0 losses of 6 usable pairs, untestable (9 pairs needed); median adjusted gap 0.153.
+- **Descriptive:** aligned tree against chain, learning 9 wins, 0 losses, 3 ties of 12, and 6 ties of 6 on
+  representation. On the two learned grammars the scrambled target scores within 0.06 of the real belief in every
+  arm, and the belief split is negative.
+- **Cost and runtime:** 4 h 13 min of the 8 h cap, about $3.04 of the $10 budget, on one RTX PRO 4500 Blackwell at
+  $0.72/h. The user's relaxation of 2026-11-15 01:50 UTC (ceiling $15, movable time cutoffs) arrived after the last
+  run had been analyzed and was not used.
