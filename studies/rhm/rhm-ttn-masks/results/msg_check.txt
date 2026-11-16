@@ -1,0 +1,39 @@
+PASS  v4m2L4: exact tree bonds = grammar.likelihoods messages  max err 0.0e+00
+PASS  v4m2L4: exact_update(children) = parent message  
+PASS  v4m2L4: extended message sums over the next token to the message; it refines the message grouping  max err 0.0e+00, 0 extended ids spanning two messages
+PASS  v4m2L4: fit_projective = belief_common.projective_fit_predict  max diff 0.0e+00
+PASS  v4m2L4 exact: M1 projective R2 = 1 on held-out local prefixes (every eligible node)  2 eligible nodes, worst partial 1.00000000, full 1.00000000; affine partial -1.708 (the scale of an unnormalized message varies)
+PASS  v4m2L4 exact: M2 ve = 1 for the unnormalized and the extended message  min 1.0000000000 over 60 (30 extended)
+PASS  v4m2L4 exact: M1x is computed, and the exact tree does not hold the extended message (R2 < 1)  extended-message projective R2 0.295 .. 0.323 at 2 eligible nodes
+PASS  v4m2L4 exact: M3 production table exact (all levels), zero norm and read-out on invalid pairs  acc 1.000, mass 0.999999, invalid/valid norm 0.0e+00, read-out mass invalid/valid 7.6e-07, valid cv 1.1e-06, 88 valid pairs
+PASS  v4m2L4 exact: M3 production table exact (level >= 2), zero norm and read-out on invalid pairs  acc 1.000, mass 0.999997, invalid/valid norm 0.0e+00, read-out mass invalid/valid 1.8e-06, valid cv 1.2e-06, 32 valid pairs
+PASS  v4m2L4 exact: M4 mixture update (every subset, level >= 2) and M4a code linearity R2 = 1  emp_proj 1.0000000 emp_seen_proj 1.0000000 emp_leftmask_proj 1.0000000 emp_both_proj 1.0000000 dir_proj 1.0000000 _emp_proj 1.0000000 _dir_proj 1.0000000 | additive ceiling both 0.760 leftmask 0.977 dir 0.782; both-informative pairs scored: 4002
+PASS  v4m2L4 exact: controls: shuffled ~ 0, token readout and scrambled target reported  tok proj partial 0.7310610397339896, scr proj partial 0.1129945667305895
+PASS  v4m2L4 exact + gauge: M1 projective R2 = 1 on held-out local prefixes (every eligible node)  2 eligible nodes, worst partial 1.00000000, full 1.00000000; affine partial -1.708 (the scale of an unnormalized message varies)
+PASS  v4m2L4 exact + gauge: M2 ve = 1 for the unnormalized and the extended message  min 1.0000000000 over 60 (30 extended)
+PASS  v4m2L4 exact + gauge: M1x is computed, and the exact tree does not hold the extended message (R2 < 1)  extended-message projective R2 0.295 .. 0.323 at 2 eligible nodes
+PASS  v4m2L4 exact + gauge: M3 production table exact (all levels), zero norm and read-out on invalid pairs  acc 1.000, mass 1.000000, invalid/valid norm 1.4e-16, read-out mass invalid/valid 9.4e-07, valid cv 1.2e-06, 88 valid pairs
+PASS  v4m2L4 exact + gauge: M3 production table exact (level >= 2), zero norm and read-out on invalid pairs  acc 1.000, mass 0.999999, invalid/valid norm 1.0e-15, read-out mass invalid/valid 1.8e-06, valid cv 1.2e-06, 32 valid pairs
+PASS  v4m2L4 exact + gauge: M4 mixture update (every subset, level >= 2) and M4a code linearity R2 = 1  emp_proj 1.0000000 emp_seen_proj 1.0000000 emp_leftmask_proj 1.0000000 emp_both_proj 1.0000000 dir_proj 1.0000000 _emp_proj 1.0000000 _dir_proj 1.0000000 | additive ceiling both 0.760 leftmask 0.977 dir 0.782; both-informative pairs scored: 4002
+PASS  v4m2L4 exact + gauge: controls: shuffled ~ 0, token readout and scrambled target reported  tok proj partial 0.7310610397339896, scr proj partial 0.1129806748924499
+PASS  v4m2L4 random cores: M3 and M4 fail  M3 acc 0.386, M4 dir R2 -0.736, emp R2 -0.099
+PASS  v3m2L4: exact tree bonds = grammar.likelihoods messages  max err 0.0e+00
+PASS  v3m2L4: exact_update(children) = parent message  
+PASS  v3m2L4: extended message sums over the next token to the message; it refines the message grouping  max err 0.0e+00, 0 extended ids spanning two messages
+PASS  v3m2L4: fit_projective = belief_common.projective_fit_predict  max diff 0.0e+00
+PASS  v3m2L4 exact: M1 projective R2 = 1 on held-out local prefixes (every eligible node)  2 eligible nodes, worst partial 0.99999985, full 1.00000000; affine partial 0.439 (the scale of an unnormalized message varies)
+PASS  v3m2L4 exact: M2 ve = 1 for the unnormalized and the extended message  min 1.0000000000 over 60 (30 extended)
+PASS  v3m2L4 exact: M1x is computed, and the exact tree does not hold the extended message (R2 < 1)  extended-message projective R2 0.294 .. 0.358 at 2 eligible nodes
+PASS  v3m2L4 exact: M3 production table exact (all levels), zero norm and read-out on invalid pairs  acc 1.000, mass 1.000000, invalid/valid norm 0.0e+00, read-out mass invalid/valid 7.3e-08, valid cv 2.8e-07, 66 valid pairs
+PASS  v3m2L4 exact: M3 production table exact (level >= 2), zero norm and read-out on invalid pairs  acc 1.000, mass 1.000000, invalid/valid norm 0.0e+00, read-out mass invalid/valid 1.9e-07, valid cv 1.1e-07, 24 valid pairs
+PASS  v3m2L4 exact: M4 mixture update (every subset, level >= 2) and M4a code linearity R2 = 1  emp_proj 1.0000000 emp_seen_proj 1.0000000 emp_leftmask_proj 1.0000000 emp_both_proj 1.0000000 dir_proj 1.0000000 _emp_proj 1.0000000 _dir_proj 1.0000000 | additive ceiling both 0.877 leftmask 0.925 dir 0.839; both-informative pairs scored: 4331
+PASS  v3m2L4 exact: controls: shuffled ~ 0, token readout and scrambled target reported  tok proj partial 0.6777924517990888, scr proj partial 0.36739596181540046
+PASS  v3m2L4 exact + gauge: M1 projective R2 = 1 on held-out local prefixes (every eligible node)  2 eligible nodes, worst partial 1.00000000, full 1.00000000; affine partial 0.439 (the scale of an unnormalized message varies)
+PASS  v3m2L4 exact + gauge: M2 ve = 1 for the unnormalized and the extended message  min 1.0000000000 over 60 (30 extended)
+PASS  v3m2L4 exact + gauge: M1x is computed, and the exact tree does not hold the extended message (R2 < 1)  extended-message projective R2 0.294 .. 0.358 at 2 eligible nodes
+PASS  v3m2L4 exact + gauge: M3 production table exact (all levels), zero norm and read-out on invalid pairs  acc 1.000, mass 1.000000, invalid/valid norm 7.6e-17, read-out mass invalid/valid 7.3e-08, valid cv 2.8e-07, 66 valid pairs
+PASS  v3m2L4 exact + gauge: M3 production table exact (level >= 2), zero norm and read-out on invalid pairs  acc 1.000, mass 1.000000, invalid/valid norm 1.4e-15, read-out mass invalid/valid 1.9e-07, valid cv 1.1e-07, 24 valid pairs
+PASS  v3m2L4 exact + gauge: M4 mixture update (every subset, level >= 2) and M4a code linearity R2 = 1  emp_proj 1.0000000 emp_seen_proj 1.0000000 emp_leftmask_proj 1.0000000 emp_both_proj 1.0000000 dir_proj 1.0000000 _emp_proj 1.0000000 _dir_proj 1.0000000 | additive ceiling both 0.877 leftmask 0.925 dir 0.839; both-informative pairs scored: 4331
+PASS  v3m2L4 exact + gauge: controls: shuffled ~ 0, token readout and scrambled target reported  tok proj partial 0.6777924517990888, scr proj partial 0.36739598748448676
+PASS  v3m2L4 random cores: M3 and M4 fail  M3 acc 0.561, M4 dir R2 -0.744, emp R2 -0.262
+all pass

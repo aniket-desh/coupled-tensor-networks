@@ -1,0 +1,96 @@
+H1 / M1: partially observed messages from the bond, projective probe, held-out local prefixes, eligible nodes (tok = token readout; scr = scrambled target; @tok2 = the nodes where the pairwise token readout is eligible: bond probe, then that readout, on those nodes; id = eligible nodes with at most r + 1 distinct partial messages)
+run                    excess #nodes  proj   aff   init   tok    scr  full  shuffle | @tok2 #n  proj   tok2 | H1  id   distinct partial messages per node
+v16m4s2L4_r32_s0       0.0221    6   0.279 0.234 0.086 0.178-0.164 0.849 0.001  |       0    -     -   | n  0/6  [94, 94, 94, 94, 301, 301]
+v16m4s2L4_r32_s1       0.0239    6   0.265 0.235 0.069 0.168-0.162 0.915 0.002  |       0    -     -   | n  0/6  [98, 98, 98, 98, 339, 339]
+v16m4s2L4_r32_s2       0.0231    6   0.270 0.247 0.078 0.194-0.044 0.868 0.001  |       0    -     -   | n  0/6  [92, 92, 92, 92, 308, 308]
+v3m2s2L4_r32_s0        0.0007    1   0.281 0.252 0.578 0.545-0.505 0.993-0.004  |       0    -     -   | n  1/1  [6]
+v3m2s2L4_r32_s1        0.0007    1   0.070-5.409 0.199 0.464 0.273 0.995 0.009  |       0    -     -   | n  1/1  [9]
+v3m2s2L4_r32_s2        0.0010    1   0.069 0.369 0.670 0.631 0.626 0.993-0.004  |       0    -     -   | n  1/1  [14]
+v8m2s2L4_r32_s0        0.0021    2   0.611 0.485 0.344 0.573-0.538 0.923 0.001  |       0    -     -   | n  2/2  [31, 31]
+v8m2s2L4_r32_s1        0.0022    2   0.641 0.496 0.372 0.472 0.063 0.940 0.006  |       0    -     -   | n  1/2  [33, 34]
+v8m2s2L4_r32_s2        0.0025    2   0.666 0.586 0.358 0.574 0.063 0.975 0.004  |       0    -     -   | n  1/2  [33, 34]
+v8m4s2L4_r32_s0        0.0064    5   0.370 0.280 0.107 0.152 0.098 0.989 0.004  |       1  0.177 0.301 | n  0/5  [51, 51, 51, 174, 174]
+v8m4s2L4_r32_s1        0.0059    5   0.442 0.415 0.136 0.178-0.023 0.992 0.002  |       1  0.171 0.384 | n  0/5  [52, 52, 52, 174, 174]
+v8m4s2L4_r32_s2        0.0052    5   0.410 0.282 0.048 0.164-0.158 0.945 0.003  |       1  0.193 0.438 | n  0/5  [48, 48, 48, 153, 153]
+
+M1x (descriptive): the normalized extended message (with the next token) from the bond, partially observed rows
+run                     proj   aff   init   tok
+v16m4s2L4_r32_s0        0.108 0.047 0.005-0.035
+v16m4s2L4_r32_s1        0.104 0.051 0.007-0.033
+v16m4s2L4_r32_s2        0.107 0.086 0.007-0.018
+v3m2s2L4_r32_s0         0.688 0.590 0.161 0.232
+v3m2s2L4_r32_s1         0.294-6.195 0.141-0.059
+v3m2s2L4_r32_s2         0.837 0.741 0.176 0.178
+v8m2s2L4_r32_s0         0.345 0.236 0.018 0.097
+v8m2s2L4_r32_s1         0.374 0.276 0.085 0.068
+v8m2s2L4_r32_s2         0.384 0.294 0.105 0.079
+v8m4s2L4_r32_s0         0.310 0.211-0.040-0.078
+v8m4s2L4_r32_s1         0.371 0.305-0.001-0.006
+v8m4s2L4_r32_s2         0.334 0.047-0.068-0.049
+
+H2 / M2: share of whitened bond variance explained (ve) among rows with a synonymous partner (cover). Criterion: the same extended message and number of observed leaves (xmsg). Descriptive: the same message (msg), normalized (nmsg)
+run                    xmsg:ve  init  cover partial full  H2 | msg:ve  init partial | nmsg:ve
+v16m4s2L4_r32_s0         0.948 0.089 0.774 0.934 0.998  Y  |  0.690 0.004 0.661 |  0.623
+v16m4s2L4_r32_s1         0.951 0.085 0.774 0.931 0.999  Y  |  0.718 0.003 0.696 |  0.658
+v16m4s2L4_r32_s2         0.948 0.097 0.774 0.933 0.998  Y  |  0.715 0.033 0.695 |  0.631
+v3m2s2L4_r32_s0          0.730 0.249 0.863 0.728 0.544  n  |  0.342 0.142 0.365 |  0.110
+v3m2s2L4_r32_s1          0.861 0.306 0.864 0.880 0.519  Y  |  0.432 0.170 0.458 |  0.157
+v3m2s2L4_r32_s2          0.888 0.273 0.864 0.901 0.559  Y  |  0.500 0.147 0.524 |  0.221
+v8m2s2L4_r32_s0          0.964 0.258 0.864 0.958 0.995  Y  |  0.586 0.112 0.585 |  0.373
+v8m2s2L4_r32_s1          0.965 0.261 0.863 0.964 0.996  Y  |  0.583 0.121 0.573 |  0.421
+v8m2s2L4_r32_s2          0.971 0.291 0.863 0.968 0.998  Y  |  0.597 0.132 0.599 |  0.381
+v8m4s2L4_r32_s0          0.964 0.075 0.795 0.958 0.995  Y  |  0.752 0.026 0.725 |  0.657
+v8m4s2L4_r32_s1          0.973 0.120 0.795 0.964 0.997  Y  |  0.807 0.067 0.797 |  0.690
+v8m4s2L4_r32_s2          0.970 0.102 0.795 0.964 0.995  Y  |  0.823 0.057 0.821 |  0.692
+
+H3 / M3: production table read from the cores on class-mean bonds, parents of level >= 2 (invalid: norm, then read-out mass q, of invalid pairs / valid pairs, 0 for exact messages; cv = spread of q over valid pairs); level 1 separately
+run                    #pairs  acc   mass  init-acc H3 | invalid: norm  init    q    init  valid-cv | level 1: #pairs acc   init
+v16m4s2L4_r32_s0          256  0.941 0.672 0.383   n  |         0.661 1.030 1.573 0.997 0.569   |            448  1.000 0.667
+v16m4s2L4_r32_s1          256  1.000 0.757 0.297   Y  |         0.655 1.037 2.081 1.007 0.478   |            448  1.000 0.616
+v16m4s2L4_r32_s2          256  0.906 0.679 0.277   n  |         0.681 1.022 1.289 1.010 0.498   |            448  0.964 0.609
+v3m2s2L4_r32_s0            24  1.000 0.992 0.917   Y  |        71.804 3.558 1.626 4.429 0.264   |             42  1.000 1.000
+v3m2s2L4_r32_s1            24  1.000 0.996 0.958   Y  |        103.269 2.852 0.658 2.550 0.145   |             42  1.000 1.000
+v3m2s2L4_r32_s2            24  1.000 0.994 0.958   Y  |        58.770 1.550 1.281 2.164 0.099   |             42  1.000 1.000
+v8m2s2L4_r32_s0            63  0.952 0.826 0.651   Y  |         1.145 1.209 1.103 1.000 0.565   |            112  0.929 0.929
+v8m2s2L4_r32_s1            60  0.967 0.866 0.650   Y  |         1.194 1.269 1.305 0.995 0.393   |            112  0.875 0.875
+v8m2s2L4_r32_s2            61  0.918 0.841 0.738   n  |         1.386 1.270 1.469 1.289 0.374   |            112  0.893 0.893
+v8m4s2L4_r32_s0           128  1.000 0.925 0.344   Y  |         0.673 1.096 1.301 0.950 0.379   |            224  1.000 0.844
+v8m4s2L4_r32_s1           128  1.000 0.935 0.406   Y  |         0.579 1.056 1.468 1.107 0.438   |            224  1.000 0.897
+v8m4s2L4_r32_s2           128  0.969 0.892 0.461   Y  |         0.724 1.093 1.254 1.001 0.330   |            224  1.000 0.844
+
+H4 / M4: exact update on mixtures of class means, parents of level >= 2 (emp = all empirical pairs; both = left partial, right informative; left = left masked, right informative; ceil = additive ceiling of the same subset; M4a = code linearity)
+run                     emp   init   ceil | both  b-init b-ceil #nodes | left  l-init l-ceil | seen  s-ceil |  dir  d-init d-ceil | M4a-emp M4a-dir M4a-init | level 1 emp init | H4
+v16m4s2L4_r32_s0        0.360 0.128 0.507 | 0.292 0.077 0.367    4   | 0.182 0.163 0.963 | 0.469 0.531 |-0.218 0.022 0.708 |  0.856   0.679   0.412   |  0.564 0.486  | n
+v16m4s2L4_r32_s1        0.392 0.090 0.496 | 0.316 0.055 0.359    4   | 0.216 0.131 0.977 | 0.508 0.496 |-0.017-0.016 0.687 |  0.874   0.627   0.389   |  0.572 0.496  | n
+v16m4s2L4_r32_s2        0.393 0.094 0.491 | 0.310 0.055 0.367    4   | 0.242 0.122 0.978 | 0.505 0.476 |-0.167-0.132 0.699 |  0.842   0.592   0.381   |  0.625 0.507  | n
+v3m2s2L4_r32_s0         0.436-0.041 0.607 | 0.454-0.254 0.557    4   |-0.630-1.292 0.966 | 0.625 0.629 | 0.062-0.640 0.698 |  0.960   0.953   0.849   |  0.923 0.925  | n
+v3m2s2L4_r32_s1         0.680-0.047 0.856 | 0.713 0.160 0.877    4   | 0.537-0.802 0.925 | 0.702 0.862 | 0.462-0.425 0.839 |  0.987   0.986   0.884   |  0.885 0.788  | n
+v3m2s2L4_r32_s2         0.511 0.492 0.766 | 0.459 0.422 0.684    4   | 0.397 0.381 1.000 | 0.583 0.815 | 0.246 0.313 0.836 |  0.993   0.992   0.889   |  0.932 0.826  | n
+v8m2s2L4_r32_s0         0.390 0.300 0.719 | 0.393 0.208 0.589    4   | 0.060-0.016 0.980 | 0.481 0.817 |-0.592-0.098 0.747 |  0.926   0.647   0.779   |  0.798-0.229  | n
+v8m2s2L4_r32_s1         0.426 0.122 0.675 | 0.511 0.156 0.543    4   |-0.007-0.333 0.989 | 0.494 0.759 |-0.697-1.052 0.733 |  0.908   0.490   0.667   |  0.754 0.141  | n
+v8m2s2L4_r32_s2         0.352 0.160 0.717 | 0.381 0.132 0.620    4   | 0.026-0.112 0.962 | 0.433 0.798 |-0.411-0.669 0.727 |  0.856   0.573   0.510   |  0.766-0.328  | n
+v8m4s2L4_r32_s0         0.696 0.110 0.509 | 0.605 0.038 0.429    4   | 0.460 0.019 0.952 | 0.779 0.506 | 0.332-0.062 0.690 |  0.860   0.775   0.418   |  0.804 0.269  | n
+v8m4s2L4_r32_s1         0.613 0.209 0.534 | 0.555 0.154 0.467    4   | 0.414 0.239 0.984 | 0.693 0.512 |-0.018 0.076 0.709 |  0.727   0.613   0.492   |  0.799 0.409  | n
+v8m4s2L4_r32_s2         0.597 0.148 0.567 | 0.530 0.124 0.525    4   | 0.386 0.193 0.967 | 0.682 0.525 |-0.114-0.047 0.739 |  0.856   0.766   0.457   |  0.831-0.058  | n
+
+M4 per tree level of the parent: both (init, ceiling) / left-masked (ceiling) / all empirical / Dirichlet
+v16m4s2L4_r32_s0       l1: both   -   (-,-) left 0.316 (1.000) emp 0.564 dir-0.831  l2: both 0.295 (0.105,0.353) left 0.205 (0.961) emp 0.374 dir-0.254  l3: both 0.286 (0.032,0.390) left 0.050 (0.976) emp 0.320 dir-0.106
+v16m4s2L4_r32_s1       l1: both   -   (-,-) left 0.290 (1.000) emp 0.572 dir-1.021  l2: both 0.264 (0.075,0.344) left 0.213 (0.977) emp 0.369 dir-0.076  l3: both 0.412 (0.017,0.388) left 0.236 (0.976) emp 0.459 dir 0.169
+v16m4s2L4_r32_s2       l1: both   -   (-,-) left 0.327 (1.000) emp 0.625 dir-0.580  l2: both 0.300 (0.078,0.357) left 0.258 (0.978) emp 0.398 dir-0.129  l3: both 0.327 (0.018,0.383) left 0.137 (0.978) emp 0.379 dir-0.280
+v3m2s2L4_r32_s0        l1: both   -   (-,-) left 0.964 (1.000) emp 0.923 dir 0.832  l2: both 0.317 (-0.192,0.360) left-1.066 (0.953) emp 0.357 dir-0.145  l3: both 0.648 (-0.344,0.839) left 0.464 (1.000) emp 0.671 dir 0.533
+v3m2s2L4_r32_s1        l1: both   -   (-,-) left 0.907 (1.000) emp 0.885 dir 0.611  l2: both 0.608 (-0.179,0.877) left 0.542 (0.921) emp 0.631 dir 0.441  l3: both 0.841 (0.575,0.878) left 0.502 (0.954) emp 0.840 dir 0.563
+v3m2s2L4_r32_s2        l1: both   -   (-,-) left 0.869 (1.000) emp 0.932 dir 0.813  l2: both 0.419 (0.552,0.811) left 0.418 (1.000) emp 0.491 dir 0.229  l3: both 0.541 (0.159,0.428) left 0.183 (1.000) emp 0.587 dir 0.321
+v8m2s2L4_r32_s0        l1: both   -   (-,-) left 0.705 (1.000) emp 0.798 dir 0.343  l2: both 0.327 (0.212,0.556) left-0.023 (0.987) emp 0.336 dir-0.819  l3: both 0.508 (0.201,0.646) left 0.357 (0.955) emp 0.551 dir 0.127
+v8m2s2L4_r32_s1        l1: both   -   (-,-) left 0.594 (1.000) emp 0.754 dir 0.326  l2: both 0.435 (0.126,0.561) left-0.070 (0.990) emp 0.342 dir-0.994  l3: both 0.598 (0.189,0.524) left 0.423 (0.983) emp 0.623 dir 0.286
+v8m2s2L4_r32_s2        l1: both   -   (-,-) left 0.666 (1.000) emp 0.766 dir 0.251  l2: both 0.239 (0.103,0.574) left-0.092 (0.973) emp 0.244 dir-0.713  l3: both 0.573 (0.170,0.682) left 0.434 (0.922) emp 0.606 dir 0.369
+v8m4s2L4_r32_s0        l1: both   -   (-,-) left 0.499 (1.000) emp 0.804 dir 0.096  l2: both 0.640 (0.077,0.418) left 0.480 (0.946) emp 0.728 dir 0.327  l3: both 0.551 (-0.022,0.447) left 0.347 (0.983) emp 0.591 dir 0.347
+v8m4s2L4_r32_s1        l1: both   -   (-,-) left 0.673 (1.000) emp 0.799 dir 0.291  l2: both 0.586 (0.208,0.474) left 0.444 (0.984) emp 0.632 dir-0.051  l3: both 0.497 (0.050,0.454) left 0.128 (0.989) emp 0.548 dir 0.097
+v8m4s2L4_r32_s2        l1: both   -   (-,-) left 0.521 (1.000) emp 0.831 dir 0.112  l2: both 0.526 (0.148,0.498) left 0.398 (0.967) emp 0.606 dir-0.237  l3: both 0.537 (0.083,0.571) left 0.315 (0.967) emp 0.567 dir 0.254
+
+h1_r32: not supported: 0 of 3 learned, testable grammars (v3m2s2L4_r32, v8m2s2L4_r32, v8m4s2L4_r32) [in v3m2s2L4_r32, v8m2s2L4_r32 H1 is a test of message identity: few distinct messages]
+h2_r32: partly supported: 2 of 3 learned, testable grammars (v3m2s2L4_r32, v8m2s2L4_r32, v8m4s2L4_r32)
+h3_r32: partly supported: 2 of 3 learned, testable grammars (v3m2s2L4_r32, v8m2s2L4_r32, v8m4s2L4_r32)
+h4_r32: not supported: 0 of 3 learned, testable grammars (v3m2s2L4_r32, v8m2s2L4_r32, v8m4s2L4_r32)
+censored (a seed missing or not finished): none
+not learned (excess loss >= 0.02 in some seed): v16m4s2L4_r32
+run failed: no

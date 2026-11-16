@@ -1,0 +1,34 @@
+per run, final checkpoint (both = M4 both-informative R2, level >= 2; inv_q = invalid / valid read-out mass)
+run                   prefix: excess vexcess  both  ceil inv_q  h4 |  varied: excess vexcess  both  ceil inv_q  h4 |   mixed: excess vexcess  both  ceil inv_q  h4
+v16m4s2L4_r32_s0               0.005   4.472  0.20  0.37  1.25  F |           0.022   0.081  0.29  0.37  1.57  F |           0.011   0.090  0.37  0.37  1.60  F
+v16m4s2L4_r32_s1               0.006   6.189  0.18  0.36  1.38  F |           0.024   0.088  0.32  0.36  2.08  F |           0.013   0.098  0.36  0.36  1.61  F
+v16m4s2L4_r32_s2               0.005   4.934  0.20  0.37  1.23  F |           0.023   0.082  0.31  0.37  1.29  F |           0.012   0.091  0.35  0.37  1.60  F
+v3m2s2L4_r32_s0                0.000   3.842  0.27  0.56  2.22  F |           0.001   0.001  0.45  0.56  1.63  F |           0.001   0.001  0.48  0.56  1.89  F
+v3m2s2L4_r32_s1                0.000   2.400  0.37  0.88  0.59  F |           0.001   0.001  0.71  0.88  0.66  F |           0.001   0.002  0.78  0.88  1.03  F
+v3m2s2L4_r32_s2                0.001   1.378  0.48  0.68  1.17  F |           0.001   0.001  0.46  0.68  1.28  F |           0.001   0.002  0.22  0.68  1.07  F
+v8m2s2L4_r32_s0                0.001   9.198  0.41  0.59  1.13  F |           0.002   0.004  0.39  0.59  1.10  F |           0.002   0.005  0.41  0.59  1.12  F
+v8m2s2L4_r32_s1                0.001   5.774  0.49  0.54  1.10  F |           0.002   0.003  0.51  0.54  1.30  F |           0.002   0.005  0.53  0.54  1.21  F
+v8m2s2L4_r32_s2                0.001   8.567  0.37  0.62  1.10  F |           0.002   0.005  0.38  0.62  1.47  F |           0.002   0.005  0.35  0.62  1.58  F
+v8m4s2L4_r32_s0                0.002   2.811  0.47  0.43  1.98  F |           0.006   0.025  0.60  0.43  1.30  F |           0.004   0.030  0.65  0.43  1.06  F
+v8m4s2L4_r32_s1                0.002   2.045  0.51  0.47  2.32  F |           0.006   0.023  0.56  0.47  1.47  F |           0.004   0.028  0.61  0.47  1.34  F
+v8m4s2L4_r32_s2                0.002   1.974  0.55  0.53  1.59  F |           0.005   0.021  0.53  0.53  1.25  F |           0.004   0.025  0.54  0.53  1.17  F
+
+H4 per arm (msg_summary): prefix: not supported (0 of 4); varied: not supported (0 of 3); mixed: not supported (0 of 4)
+H_A: inconclusive (H4 not met, and the mixed arm learned the varied task in only 2 grammars)  (mixed passes H4 in 0 of 4 grammars, prefix in 0 of 4; mixed closes the gap over prefix in []; mixed learned the varied task in ['v3m2s2L4_r32', 'v8m2s2L4_r32'])
+H_B: not supported  (invalid read-out mass lower in mixed than in prefix in 6 of 12 learned pairs; paired ratio mixed / prefix: median   1.10, range   0.53 to   1.74)
+arms analysed: ['prefix', 'varied', 'mixed']
+
+prefix arm against rhm-ttn-messages (same script arguments and seeds): excess, m4_both, m3_invalid_q
+  v16m4s2L4_r32_s0     excess  0.0048 /  0.0048  m4_both  0.2005 /  0.2003  m3_invalid_q  1.2462 /  1.2453
+  v16m4s2L4_r32_s1     excess  0.0059 /  0.0059  m4_both  0.1849 /  0.1849  m3_invalid_q  1.3800 /  1.3801
+  v16m4s2L4_r32_s2     excess  0.0052 /  0.0052  m4_both  0.1984 /  0.1986  m3_invalid_q  1.2296 /  1.2297
+  v3m2s2L4_r32_s0      excess  0.0004 /  0.0004  m4_both  0.2662 /  0.2658  m3_invalid_q  2.2172 /  2.3297
+  v3m2s2L4_r32_s1      excess  0.0004 /  0.0004  m4_both  0.3694 /  0.3425  m3_invalid_q  0.5946 /  0.6050
+  v3m2s2L4_r32_s2      excess  0.0005 /  0.0005  m4_both  0.4786 /  0.4628  m3_invalid_q  1.1673 /  1.1666
+  v8m2s2L4_r32_s0      excess  0.0010 /  0.0010  m4_both  0.4118 /  0.4086  m3_invalid_q  1.1345 /  1.1271
+  v8m2s2L4_r32_s1      excess  0.0010 /  0.0010  m4_both  0.4907 /  0.4837  m3_invalid_q  1.1007 /  1.1006
+  v8m2s2L4_r32_s2      excess  0.0013 /  0.0013  m4_both  0.3733 /  0.3729  m3_invalid_q  1.0991 /  1.0991
+  v8m4s2L4_r32_s0      excess  0.0024 /  0.0024  m4_both  0.4669 /  0.4639  m3_invalid_q  1.9800 /  1.9367
+  v8m4s2L4_r32_s1      excess  0.0021 /  0.0021  m4_both  0.5116 /  0.5115  m3_invalid_q  2.3199 /  2.3138
+  v8m4s2L4_r32_s2      excess  0.0021 /  0.0021  m4_both  0.5494 /  0.5490  m3_invalid_q  1.5915 /  1.5892
+run failed: no
