@@ -1,10 +1,13 @@
 """Figures for rhm-ttn-masks, from saved results only.
 
-    PYTHONPATH=. python studies/rhm/rhm-ttn-masks/mask_plot.py RESULTS_DIR RUNS_DIR FIG_DIR
+    PYTHONPATH=. python studies/rhm/rhm-ttn-masks/mask_plot.py RESULTS_DIR RUNS_DIR FIG_DIR [PNG_DIR]
+
+With PNG_DIR, both figures are also saved there as 200-dpi PNGs of the same name (for NOTE.md, where PDFs don't render).
 
 summary.pdf   per grammar, one point per seed and arm: the both-informative R2 of the mixture update (M4, parents of
               tree level >= 2; the additive ceiling as a tick), and the invalid / valid read-out mass ratio (M3).
-training.pdf  prefix-task and varied-task excess loss over training, per grammar and arm (one line per seed)."""
+training.pdf  prefix-task and varied-task excess loss over training, per grammar and arm (one line per seed;
+              dotted: the 0.02 nats/token gate)."""
 import json
 import sys
 from pathlib import Path
@@ -20,6 +23,9 @@ COL = dict(prefix='#7f7f7f', mixed='#1f77b4', varied='#d95f02')
 def main():
     res, runs_dir, fig_dir = (Path(p) for p in sys.argv[1:4])
     fig_dir.mkdir(parents=True, exist_ok=True)
+    png_dir = Path(sys.argv[4]) if len(sys.argv) > 4 else None
+    if png_dir:
+        png_dir.mkdir(parents=True, exist_ok=True)
     S = json.load(open(res / 'summary.json'))['arms']
     arms = [a for a in ARMS if a in S]
     cells = sorted({n.rsplit('_s', 1)[0] for a in arms for n in S[a]['runs']})
@@ -46,6 +52,8 @@ def main():
     axes[1].set_title('M3: invalid child pairs (exact messages: 0)', fontsize=8)
     fig.tight_layout()
     fig.savefig(fig_dir / 'summary.pdf')
+    if png_dir:
+        fig.savefig(png_dir / 'summary.png', dpi=200, bbox_inches='tight')
 
     fig, axes = plt.subplots(2, len(cells), figsize=(3.2 * len(cells), 5), squeeze=False, sharex=True)
     for i, c in enumerate(cells):
@@ -59,16 +67,18 @@ def main():
                     ax.plot([q['step'] for q in h], [max(q[k], 1e-5) for q in h], color=COL[a], lw=1, alpha=0.8,
                             label=a if s == 0 else None)
         axes[0, i].set_title(c.split('_r')[0], fontsize=9)
-        axes[0, i].axhline(0.02, color='k', lw=0.6, ls=':')
         for ax in axes[:, i]:
+            ax.axhline(0.02, color='k', lw=0.6, ls=':')  # the gate of each task
             ax.set_xscale('log')
             ax.set_yscale('log')
         axes[1, i].set_xlabel('update')
-    axes[0, 0].set_ylabel('prefix task: excess loss (nats/token)')
-    axes[1, 0].set_ylabel('varied task: excess loss (nats/token)')
+    axes[0, 0].set_ylabel('prefix task\nexcess loss (nats/token)')
+    axes[1, 0].set_ylabel('varied task\nexcess loss (nats/token)')
     axes[0, 0].legend(frameon=False, fontsize=8)
     fig.tight_layout()
     fig.savefig(fig_dir / 'training.pdf')
+    if png_dir:
+        fig.savefig(png_dir / 'training.png', dpi=200, bbox_inches='tight')
 
 
 if __name__ == '__main__':

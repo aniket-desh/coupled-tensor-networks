@@ -1,7 +1,7 @@
 ---
 name: rhm-ttn-masks
 title: Does training a TreeTN on varied observation masks, not only prefixes, make its merges compose uncertain messages?
-status: approved
+status: done
 gpu: NVIDIA RTX PRO 4500 Blackwell,NVIDIA RTX A6000,NVIDIA A40
 count: 1
 hours: 10
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-15T19:15:43Z
+result: inconclusive
+finished_utc: 2026-11-16T00:59:22Z
+writeup: studies/rhm/rhm-ttn-masks/README.md
 ---
 
 # Does training a TreeTN on varied observation masks, not only prefixes, make its merges compose uncertain messages?
@@ -267,4 +270,11 @@ None.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Run on 2026-11-15 and 2026-11-16 on one NVIDIA A40. Write-up: [README.md](README.md); research note: [NOTE.md](NOTE.md); the supervising session's report: [SUPERVISOR.md](SUPERVISOR.md).
+
+- **H_A: inconclusive.** The `mixed` arm passes H4 in 0 of 4 grammars (0 of 12 runs), as does `prefix`; it closes the gap over `prefix` in 0 grammars (1 run of 12); and it learned the varied task in 2 grammars (`v3m2s2L4`, `v8m2s2L4`), where "not supported" needs 3.
+- **H_B: not supported.** `m3_invalid_q` is lower in `mixed` than in `prefix` in 6 of 12 pairs (10 needed), and the median paired ratio is 1.10 (0.5 at most needed), range 0.53 to 1.74.
+- **Overall result recorded:** inconclusive (H_A's verdict).
+- **The run did not fail.** Every check passed; 36 of 36 runs trained and 36 of 36 were analysed, the `varied` arm included; the prefix arm's prefix excess loss agrees with `rhm-ttn-messages` to 1.1e-8 nats/token in the 12 shared runs.
+- **Descriptive:** the `varied` arm misses the prefix gate in `v16m4s2L4` and passes H4 in 0 of its 3 judged grammars; H1 to H3 have the same verdicts in the `prefix` and `mixed` arms.
+- **Cost and runtime:** 5 h 26 m and about $3.21, against a 10-hour cap, a $10 budget and an estimate of 6 to 7 hours.
