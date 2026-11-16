@@ -1,6 +1,6 @@
 # Follow-up: how large are the partial-parity directions in the runs that stall?
 
-In the 12 runs that never learn, the 4-bit partial parities grow by a factor of 3 × 10³ to 9 × 10⁹ during training
+In the 12 runs that never learn, the 4-bit partial parities grow by a factor of 3 × 10³ to 8 × 10⁹ during training
 but end as a small part of the bond, a median of 1.5 × 10⁻⁴ of its variance (range 2.9 × 10⁻⁶ to 3.0 × 10⁻²). That
 is about as large as the same share in the runs that do learn, measured at their last checkpoint before the loss
 drops, so
@@ -32,7 +32,7 @@ Reported as the median over the nodes that hold 4 (or 8) of the k bits; bias-0 m
 | 1.0 | 2.1 × 10⁻² to 1.7 × 10⁻¹, median 8.6 × 10⁻² (n = 9) | none stalled |
 
 - **Stalled runs** (12: five at ε = 0.01, six at ε = 0.1, one at ε = 0.3). The 4-bit share starts at 1.6 × 10⁻¹³ to
-  5.2 × 10⁻⁶ and ends at 2.9 × 10⁻⁶ to 3.0 × 10⁻², a growth of 3 × 10³ to 9 × 10⁹ (median 7 × 10⁴). So the
+  5.2 × 10⁻⁶ and ends at 2.9 × 10⁻⁶ to 3.0 × 10⁻², a growth of 3 × 10³ to 8 × 10⁹ (median 7 × 10⁴). So the
   decodability is not whitening acting on a static direction: training amplified these directions by orders of
   magnitude. The 8-bit share ends at 7 × 10⁻¹³ to 5.7 × 10⁻⁴ (median 3.6 × 10⁻⁹).
 - **Learned runs** (24). Their 4-bit share is at or near 1 at the end (0.993–1.000), and at the last checkpoint

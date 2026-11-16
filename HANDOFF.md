@@ -1,3 +1,175 @@
+# Handoff: follow-up batch on the theory notes
+
+Written by the tmux session `wrapup`, which took over the planning conversation on 2026-11-15 at 19:55 UTC. Times are
+UTC. **Final version, 2026-11-16 01:40: both GPU experiments are finished, logged and pushed, no worker is running, and
+the session has ended.** GPU spend was about $4.67 ($3.21 + $1.46, the log's estimates) against two budgets of $10. The earlier batch's handoff
+follows this section, unchanged.
+
+You asked for experiments planned from the theory agent's notes, then for the coordinator's storage to be cleaned up
+and the experiments run. Neither GPU experiment gave a clean yes or no: both are recorded as inconclusive, for
+different reasons given below. The three reanalyses on the coordinator's CPU did give definite answers.
+
+## Status at a glance
+
+| Experiment | What it asks | Result against its criteria | Spend / budget |
+|---|---|---|---|
+| `rhm-ttn-masks` | Does training the tree on masks where both children are informative make its merges compose uncertain messages? | **Inconclusive, leaning negative.** The mixed-mask tree passes the merge test in 0 of 12 runs, as does the prefix-mask tree. The definition calls that "not supported" only if the mixed tree learned the varied task in 3 of 4 grammars, and it did in 2. The secondary hypothesis (invalid child pairs suppressed) is not supported. | $3.21 / $10 |
+| `belief-probe-controls` | Three reanalyses of saved checkpoints: is the joint belief carried as its factor marginals, is the belief the dominant geometry of the state, and the two open RRXOR tree cells | **Inconclusive, standing for "partly supported", the outcome its definition expected.** The chain and the r = 32 tree hold exact marginals plus part of the joint. The belief is the dominant geometry in 5 of 10 judged Mess3 and RRXOR cells, 7 of 12 RHM transformer cells and 2 of 15 RHM tree cells. | $1.46 / $10 |
+
+Each folder has `README.md`, `NOTE.md` with embedded PNG figures, the PDF figures and a `SUPERVISOR.md`. Both were
+reviewed twice before launch and fact-checked once after.
+
+## The two GPU experiments
+
+**`rhm-ttn-masks`** ([write-up](studies/rhm/rhm-ttn-masks/README.md)). 36 runs: 4 grammars, 3 mask distributions
+(`prefix`, `varied`, and `mixed`, half of each), 3 seeds, r = 32, with the same sequences, initial tree and optimizer in
+the three arms.
+
+- On pairs of child messages that are both informative, the decoded merge matches the exact update with R² 0.22–0.78
+  in the 12 mixed-mask runs and 0.18–0.55 in the 12 prefix-mask runs, against a bar of 0.8. Mixed is higher in 8 of
+  12 runs (median difference +0.12, range −0.26 to +0.41).
+- Invalid child pairs are not suppressed. Their read-out mass relative to valid pairs is lower under mixed masks in 6
+  of 12 pairs (10 needed), and the median paired ratio is 1.10 as the script takes it, 1.04 as the mean of the two
+  middle values (0.5 at most needed).
+- The mixed tree learned the varied task to within 0.02 nats/token of Bayes only in the two grammars with 2
+  productions per symbol. In `v8m4s2L4` it ends at 0.025–0.030 and in `v16m4s2L4` at 0.090–0.098. The loss fell
+  through the last 10,000 updates in both; over the last 2,000 it was still falling in all seeds of `v16m4s2L4` and
+  flat in two of three seeds of `v8m4s2L4`.
+- A prefix-trained tree does not transfer to varied masks: its varied excess loss is 1.4–9.2 nats/token.
+- The new training script reproduces the earlier experiment: the prefix arm's prefix excess loss agrees with
+  `rhm-ttn-messages` to 1.1 × 10⁻⁸ nats/token in the 12 shared runs.
+- Why a failed merge test is weak evidence here, as the review established before launch: the test never sees a
+  bond from a varied-mask input, and a tree with a softmax read-out may be unable to hold exact messages and reach
+  the Bayes loss on varied rows.
+
+**`belief-probe-controls`** ([write-up](studies/hmm/belief-probe-controls/README.md)). Nothing was trained: 24
+factor-code runs and 105 low-dimensional probe runs on the saved checkpoints of three earlier experiments.
+
+- **Factor code.** On `factored`, the product of the model's own two marginal probes gives the 9-state joint belief
+  at R² 0.999 (chain) and 0.996 (r = 32 tree, first half, the half the rule judges), against 0.967 for the same
+  product from token-readout marginals. Their direct joint probes (0.834–0.836 and 0.804–0.819) are 0.08 and
+  0.05–0.06 above the 0.755–0.756 that a state holding exactly the two marginals scores. So both pass the rule for
+  exact marginals (product at least 0.99) and hold a little of the joint. The transformer's direct probe is
+  0.976–0.982, against 0.921–0.923 for the initial transformer and 0.919 for a token readout. The r = 8 tree sits at
+  the floor, with marginals that are not exact (product 0.980–0.981). Most of this followed from saved numbers,
+  which the definition says.
+- **`coupled` cannot test correlations.** Its residual beyond the product of marginals carries 0.10–0.11% of the
+  joint's variance, so it was not read.
+- **Is the belief the dominant geometry of the state?** "Dominant" means most of the state's variance is a linear
+  function of the belief; "compact" means the belief is readable from as few of the state's top principal
+  directions as the belief itself needs. Among learned cells with three judged seeds:
+  - Mess3 and RRXOR: dominant in 5 of 10 cells, and the same 5 are compact: Mess3 in the chain, the transformer and
+    the first half of both trees, and RRXOR in the chain.
+  - RRXOR in the transformer is neither: the belief is readable from the full last layer, but the reverse score is
+    0.10, 0.10 and 0.43 in the three seeds.
+  - RHM transformer: dominant in 7 of 12 grammars, compact in 0 of 12. Both counts are sensitive to choices in the
+    rule: with positions weighted equally the dominant count is 5 of 12, and at twice the number of directions 2 of
+    12 are compact.
+  - RHM tree at r = 32: dominant in 2 of 15 cells, compact in 4 of 15, none both.
+  - Two cautions. On Mess3 the belief is a function of the exact next-token distribution, so "dominant" there says
+    the main directions are the model's own prediction. And some cells rest on few positions: 2 or 3 for the first
+    half of the Mess3 trees and 2 for the RRXOR transformer.
+- **RRXOR trees.** The r = 8 seed that scored −4.55 has its error in 146 of 31,129 test rows at t = 13; without them
+  it scores 0.839 against 0.673 and 0.715 for the other seeds, so the rule written for it (within 0.05) is not met,
+  and the affine probe, which drops no rows, gives 0.751. The r = 32 tree with reduced product features scores 0.884,
+  0.883 and 0.895 against a required 0.886: it misses in two seeds by 0.002, with no interval computed.
+
+## The reanalyses on the coordinator's CPU
+
+All three were run from saved results with no network trained, and are written up next to their scripts.
+
+- **Capacity ceiling** ([write-up](studies/rhm/rhm-ttn-belief-geometry/followups/README.md)). An affine probe on a
+  bond with r coordinates cannot exceed the rank-r Eckart–Young value of the beliefs. Of the 8 judged cells that
+  failed the first-half criterion of `rhm-ttn-belief-geometry`, 3 have a ceiling below the 0.8 bar (0.609, 0.688,
+  and 0.796, which is at the threshold) and 5 do not (0.840–0.969). In all 8 the probe is 0.15–0.29 below its ceiling, so the low first-half scores
+  are mostly an inefficient affine code. No probe score exceeds its ceiling (largest difference −1.6 × 10⁻⁴ over 39
+  runs).
+- **What the scrambled-target control could detect** (same write-up). With the exact belief as the activations, the
+  experiment's probe fits the scrambled target at R² 0.72–0.96 in the first half of all 13 cells that have eligible
+  first-half positions, because the distinct beliefs are nearly affinely independent. The control could therefore
+  not have tested geometry there. In the four r = 32 second-half cells where that oracle is low (0.26–0.48), the
+  bilinear probe fits the scrambled target at 0.81–1.00 (median of three seeds), which shows the product features
+  carry more than the belief, not that the belief's geometry is absent. This check was not in the theory notes; it replaced the matched
+  permutation control, which behaves the same way.
+- **Partial parities in the stalled runs** ([write-up](studies/lang/lang-parity/followups/README.md)). In the 12
+  runs that never learn, the share of a level-2 bond's variance along its 4-bit partial parity grows by a factor of
+  3 × 10³ to 8 × 10⁹ during training and ends at a median of 1.5 × 10⁻⁴ (range 2.9 × 10⁻⁶ to 3.0 × 10⁻²). At each
+  init scale where both kinds of run exist, that is at least as large in the median as the share the learned runs
+  have at their last checkpoint before they learn, with overlapping ranges; over all 24 learned runs that share has
+  a median of 6.7 × 10⁻³. Patching those directions changes the
+  output's KL by at most 2.3 × 10⁻⁵ nats, against 3.35–3.58 in the learned runs. So the stalled runs built the 4-bit
+  parities as small, growing directions and never combined them.
+
+## What the batch says, in one paragraph
+
+The picture from the earlier batch gets sharper and less negative. The tensor networks do hold beliefs in
+interpretable forms: the chain and the r = 32 tree carry a product process as its factor marginals, to R² above
+0.99, plus a little of the joint, and on Mess3 the belief is the dominant, low-dimensional geometry of the chain's
+state, of the transformer's last layer and of the first half of the trees (where it is also the model's own
+prediction). On RRXOR that holds for the chain and not for the
+transformer, and on the RHM the belief dominates the transformer's last layer in 7 of 12 grammars without being
+compact in any. The earlier reading that probes fit a scrambled target "about as well as" the belief was a weaker
+statement than it looked, since the control could not detect geometry in the first half. What stays negative is the
+grammar's message algebra: adding the observation patterns that the prefix task lacks did not make the tree's merge
+pass the update test in any run, though the test and the training both have limits that keep this from being a
+clean negative.
+
+## Decisions that are yours
+
+- **`results.keep_days` in `orch.toml`.** I changed it from 14 to 0 and left the edit uncommitted. When I asked you
+  about deleting the old `runs/` folders I said they could be restored from the published archives, without knowing
+  that `orch` deletes those archives 14 days after collection. With 0 the archives are kept; revert the edit if you
+  would rather let them expire, which makes those deletions permanent.
+- **The varied-pattern follow-up for `rhm-ttn-masks`:** probe a bond for its normalized message on bonds collected
+  from varied-mask inputs. Its reading was fixed before the run for one outcome: if the probe reaches R² ≥ 0.8 in the
+  mixed arm where the prefix arm does not, the mixed tree carries uncertain messages even though the merge test
+  fails. It needs a new analysis script and the saved checkpoints only (`runs/rhm-ttn-masks/`, 274 MB). It does not
+  change the recorded verdict, which depends on the varied gate in the next item.
+- **A longer schedule or a wider tree for the two grammars with 4 productions per symbol.** The primary hypothesis
+  cannot return "not supported" until the mixed tree meets the varied gate in a third grammar, and `v8m4s2L4` missed
+  it by 0.005–0.010 nats/token.
+- **The label for `belief-probe-controls`.** The tool has no "partly supported", so its supervisor recorded
+  "inconclusive", as `hmm-belief-geometry` did. Change it with `orch experiment done` if you prefer another label.
+- **Follow-ups its write-up lists as not yet checked** (six in all; these are the three I would weigh first): a
+  bootstrap over prefixes for the r = 32 RRXOR tree, which two seeds miss by 0.002; repeating the low-dimensional
+  probes for the chain and the trees after fixing the gauge of the bonds; and what the RRXOR transformer's one or two
+  top-variance directions encode.
+
+## Things to know
+
+- **Storage.** The coordinator's volume read 40G before the cleanup and 22G after it on 2026-11-15 (`du -sh
+  /workspace`, a 50 GB volume, no expansion). Removed: eight `runs/` folders belonging to seven older experiments
+  (each compared byte for byte with its published archive first), a duplicate copy of projection files, the package
+  cache and unreachable git objects. It reads 35G now, because another session has since added
+  `/workspace/participation-ratios` (9.8 GB) and refilled part of the package cache.
+- **An unexplained difference.** The prefix arm of `rhm-ttn-masks` repeats 12 runs of `rhm-ttn-messages` with prefix
+  losses equal to 1.1 × 10⁻⁸, yet the analysis of those runs differs by up to 0.027 in both-informative R² and 0.11
+  in the invalid read-out ratio. The supervisor reported it and did not investigate the cause. It is far smaller
+  than the prefix arm's distance to the 0.8 bar (0.25 or more), but larger than the 0.017 by which the best mixed
+  run misses that bar on the both-informative pairs (`v3m2s2L4` seed 1 at 0.78, which also fails the test's other
+  clauses).
+- **One statement in a definition was too strong.** `belief-probe-controls` says the tree's second half cannot be
+  dominant by construction; no second-half cell is, but one run is (`v4m2s2L5` seed 0). The write-ups say "not
+  expected".
+- **Not seen rendered.** Neither `NOTE.md` has been viewed rendered, since the coordinator has no Markdown renderer.
+  Their image links resolve.
+- **Fact-checks ran once.** Each supervisor applied its fact-checker's corrections and did not run a second pass on
+  the corrected text.
+- **Changes from the plan as I first presented it.** In `belief-probe-controls` the matched permutation control was
+  dropped and the low-dimensional and reverse probes became the geometry test, and the capacity ceiling and the
+  parity measurement were done on the coordinator's CPU outside the experiment. In `rhm-ttn-masks` two choices were
+  made without asking, which its definition counts as within the plan: the query is the leftmost mask instead of a
+  new query symbol, and the T = 32 grammar `v4m2s2L5` was left out for cost.
+- **This section was fact-checked once.** An independent pass checked about 110 claims against the result files and
+  reworded 13. The two that mattered: the storage figure was out of date, and the list of changes from the plan
+  misdescribed two of them. It also asked for the cautions on the dominant and compact counts. The corrections were
+  applied and not re-checked. What it could not verify from files: the storage readings before and after the
+  cleanup, and what was said in conversation.
+- **Nothing failed.** Three RHM transformer runs in `belief-probe-controls` ran out of GPU memory and were rerun
+  one at a time, as its definition prescribes.
+
+---
+
 # Handoff: belief-geometry batch
 
 Kept by the tmux session `belief-batch`, which took over the planning conversation on 2026-11-14 at 21:12 UTC, when
