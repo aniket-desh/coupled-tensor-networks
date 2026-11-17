@@ -1,0 +1,6 @@
+{
+ "commit": "",
+ "dirty": false,
+ "torch": "2.11.0+cu128",
+ "numpy": "2.5.4"
+}
