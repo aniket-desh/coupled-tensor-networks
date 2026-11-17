@@ -1,7 +1,7 @@
 ---
 name: rhm-forced-synonyms
 title: Does a Bayes-optimal width-2 TreeTN on a 3-symbol RHM collapse synonyms, compose codes by the grammar, and respond to forbidden pairs?
-status: approved
+status: done
 cpu: 2
 count: 1
 hours: 3
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-17T22:33:34Z
+result: supported
+finished_utc: 2026-11-17T23:20:28Z
+writeup: studies/rhm/rhm-forced-synonyms/README.md
 ---
 
 # Does a Bayes-optimal width-2 TreeTN on a 3-symbol RHM collapse synonyms, compose codes by the grammar, and respond to forbidden pairs?
@@ -269,4 +272,23 @@ None.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+**Supported** (2026-11-17). All 160 runs produced a finite tree; none raised or diverged; 31 stopped at the polish's
+limit (28 at width 1, 3 at width 2). No amendment was made. The write-up is [`README.md`](README.md), the research note
+[`NOTE.md`](NOTE.md), the supervisor's report [`SUPERVISOR.md`](SUPERVISOR.md).
+
+- **Checks:** `toy_checks` 29 of 29, `analyze.py --check` 8 of 8.
+- **H1, supported:** the 40 width-1 runs end between 8.39e-3 and 1.10e-2 nats (criterion: none below 1e-5).
+- **Gate:** 38 of 40 width-2 runs are exact (20 variance, 18 identity), 37 of them found by Adam (needed: 10).
+- **H2, supported:** over the 38 exact runs the synonym-swap effect is at most 9.0e-5, the within-symbol shares at
+  most 1.7e-12, the composition error at most 1.35e-6, and compositions are 6 of 6 in every run (threshold 1e-3).
+- **H3, supported:** over the 37 runs Adam found, the median of the per-run smallest forbidden response is 0.826
+  (criterion: at least 0.5) and the smallest response is 0.086 (at least 0.01). 12 of the 37 runs have one response
+  below 0.5. The 3 width-2 runs that Adam left at 3.1e-3 nats, which the criterion excludes, each have one response
+  of 2e-4 to 5e-4 at Adam's last update.
+- **H4, supported:** (x, y) on the left and right bonds agree to 5.8e-6 and the 114 responses match the T5 formulas
+  to a relative 9.1e-7 (threshold 1e-3).
+- **Descriptive:** no exact width-2 run is within 0.1 of x = y = −1. At widths 3 and 4 all 80 runs are exact, 0 of
+  240 forbidden responses are below 0.01, and the synonym is kept in 8 of 40 runs at width 3 and 36 of 40 at width 4.
+- **A correction to the Theory text above:** the smallest of the three responses ranges over (0, 1.466], not
+  (0, 1.43]. No criterion uses this number.
+- **Cost and runtime:** $0 and 24 m 54 s on the coordinator (estimate: about 23 minutes), inside the 3-hour cap.

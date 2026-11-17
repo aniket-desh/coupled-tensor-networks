@@ -1,6 +1,8 @@
 """Figures for rhm-forced-synonyms, from the saved results only.
 
     PYTHONPATH=. python studies/rhm/rhm-forced-synonyms/plot.py studies/rhm/rhm-forced-synonyms/results studies/rhm/rhm-forced-synonyms/figures
+
+An optional third argument is a folder that also receives each figure as a 200-dpi PNG (for NOTE.md and README.md).
 """
 import json
 import sys
@@ -9,11 +11,20 @@ from pathlib import Path
 import numpy as np
 
 from studies.rhm import toy as Y
-from studies.rhm.plotting import CATEGORICAL, INK2, plt, save
+from studies.rhm.plotting import CATEGORICAL, INK2, plt
+from studies.rhm.plotting import save as save_pdf
 
 FLOOR = 1e-18                      # values below this (exact zeros in float64) are drawn here on log axes
 INIT_COLOR = {'variance': CATEGORICAL[0], 'identity': CATEGORICAL[1]}
 clip = lambda v: np.maximum(np.asarray(v, dtype=float), FLOOR)
+PNG_DIR = None                     # set from the optional third argument
+
+
+def save(fig, path):
+    if PNG_DIR:
+        Path(PNG_DIR).mkdir(parents=True, exist_ok=True)
+        fig.savefig(Path(PNG_DIR) / (Path(path).stem + '.png'), dpi=200, bbox_inches='tight')
+    save_pdf(fig, path)
 
 
 def main(res, figs):
@@ -136,4 +147,5 @@ def main(res, figs):
 
 
 if __name__ == '__main__':
+    PNG_DIR = sys.argv[3] if len(sys.argv) > 3 else None
     main(sys.argv[1], sys.argv[2])

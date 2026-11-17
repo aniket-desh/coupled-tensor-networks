@@ -1,0 +1,6 @@
+{
+ "commit": "b960bb2062b2725473597ea545ec3cc6b3d8081b",
+ "dirty": true,
+ "torch": "2.11.0+cu128",
+ "numpy": "2.5.4"
+}

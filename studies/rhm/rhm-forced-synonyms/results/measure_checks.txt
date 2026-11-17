@@ -1,0 +1,9 @@
+PASS  complex tree: exact, synonyms collapsed, 6/6 compositions  
+PASS  complex tree: a forbidden pair (b, b) reads out as b at full size (rho = 1, cos = 1), also at the token level  ([0.9999999999999998, 0.9999999999999997, 0.9999999999999998], [0.9999999999999998, 0.9999999999999998, 1.0])
+PASS  complex tree: the three codes sum to zero (x = y = -1), and forb_pred = 1  [-0.9999999999999992, -0.9999999999999998]
+PASS  every measure except forb_bond is unchanged by a change of basis of all bonds  ([np.float64(0.9999999999999999), np.float64(1.0000000000000002), np.float64(1.0)], [np.float64(1.3763843714576602), np.float64(1.003698358752007), np.float64(0.6199172697903322)])
+PASS  one-hot message-passing tree (width 3): exact, collapsed, 6/6, and forbidden pairs read out as zero  [0.0, 0.0, 0.0]
+PASS  a tree that hides the synonym where only a forbidden context reads it: exact, swap_L_legal = 0, swap_L_all > 0, within_L > 0  (0.0, 0.5773502691896256, 0.3333333333333332)
+PASS  a random width-2 tree fails: synonyms differ, compositions wrong  (11.856242281674902, 0.7310024299561578, 3.6591153361206805)
+PASS  T5 corollary on a grid of (x, y): every two responses have product >= 3/4, so the second-smallest is >= sqrt(3)/2  (np.float64(0.7500014095236857), np.float64(0.8660262175729356), np.float64(1.4244523561824352))
+measure checks passed
