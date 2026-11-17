@@ -1,7 +1,7 @@
 ---
 name: rhm-toy-rerun
 title: Rerun of rhm-forced-synonyms and rhm-crossed-rank on a Runpod CPU worker
-status: approved
+status: done
 cpu: 16
 count: 1
 hours: 1.5
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-17T23:01:58Z
+result: supported
+finished_utc: 2026-11-17T23:52:22Z
+writeup: studies/rhm/rhm-toy-rerun/README.md
 ---
 
 # Rerun of rhm-forced-synonyms and rhm-crossed-rank on a Runpod CPU worker
@@ -155,7 +158,7 @@ skipped: a rerun of two approved designs, each reviewed once, with no change to 
 
 ## Amendments
 
-- **2026-11-17 23:45 UTC, an added output; no rule, criterion, method or budget changed.** After the worker was
+- **2026-11-17 23:43 UTC, an added output; no rule, criterion, method or budget changed.** After the worker was
   finished, `compare.py` reported the `rhm-forced-synonyms` verdicts and all 160 exactness flags equal, and
   `runs.json` turned out to be equal value for value, which is more than the hypothesis expected (it allowed runs to
   differ in the last digits). To say how far the agreement goes, the supervisor added `compare_runs.py`: it loads
@@ -170,4 +173,18 @@ skipped: a rerun of two approved designs, each reviewed once, with no change to 
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Recorded as **supported**, judged on what exists, as the Hypothesis section says. Write-up: [`README.md`](README.md).
+
+- **`rhm-forced-synonyms`, supported.** Every verdict string of the worker's `summary.json` equals the coordinator's
+  (H1 to H4 supported on both). 118 of 160 runs are exact on both machines, none on one machine only, and all 160 run
+  files are equal in every saved entry except the wall-clock time.
+- **`rhm-crossed-rank`, pending.** The worker's run is complete: 720 of 720 runs, H1 to H4 supported, smallest exact
+  widths 2, 2, 3, 4 equal to the bounds, trainability readings "the crossed tree is harder to train at its bound" on
+  `sym` and "no detectable difference" on `mod`. The coordinator's run had 266 of 720 runs at 23:43 UTC and no
+  `summary.json`, so `compare.py` reports it missing. The 266 runs present on both machines are bit for bit equal.
+  The planning session makes the verdict comparison when the coordinator's run ends.
+- **Run failed?** No. Both checks passed (29 of 29 toy checks, 8 of 8 measure checks) and `analyze.py` printed no
+  `RUN FAILED` for either grid.
+- **Cost and runtime.** About $0.31 of the $3 budget and 38 minutes of the 1.5-hour cap (23:02 to 23:40 UTC,
+  2026-11-17). Training and analysis took 31 minutes against an estimate of 12, because a run took a median of 33 s
+  on the worker against the 13 s assumed; nothing was dropped.

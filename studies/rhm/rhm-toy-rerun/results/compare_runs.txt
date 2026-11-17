@@ -1,0 +1,57 @@
+{
+ "compared_utc": "2026-11-17T23:43:17Z",
+ "forced-synonyms": {
+  "runs_coordinator": 160,
+  "runs_worker": 160,
+  "runs_compared": 160,
+  "unreadable": [],
+  "entries_compared": [
+   "cfg",
+   "ckpts",
+   "kl_adam",
+   "kl_polished",
+   "log",
+   "polish",
+   "polished"
+  ],
+  "runs_equal_in_every_entry": 160,
+  "runs_with_a_differing_entry": {},
+  "seconds_per_run_coordinator": {
+   "median": 18.824825286865234,
+   "min": 12.99547290802002,
+   "max": 24.333330392837524
+  },
+  "seconds_per_run_worker": {
+   "median": 32.98345899581909,
+   "min": 23.141753673553467,
+   "max": 35.84713125228882
+  }
+ },
+ "crossed-rank": {
+  "runs_coordinator": 266,
+  "runs_worker": 720,
+  "runs_compared": 266,
+  "unreadable": [],
+  "entries_compared": [
+   "cfg",
+   "ckpts",
+   "kl_adam",
+   "kl_polished",
+   "log",
+   "polish",
+   "polished"
+  ],
+  "runs_equal_in_every_entry": 266,
+  "runs_with_a_differing_entry": {},
+  "seconds_per_run_coordinator": {
+   "median": 19.44683301448822,
+   "min": 17.861324071884155,
+   "max": 26.83731245994568
+  },
+  "seconds_per_run_worker": {
+   "median": 33.4791738986969,
+   "min": 20.577333211898804,
+   "max": 43.93565487861633
+  }
+ }
+}
