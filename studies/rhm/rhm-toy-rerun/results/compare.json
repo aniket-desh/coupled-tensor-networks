@@ -1,0 +1,13 @@
+{
+ "forced-synonyms": {
+  "verdicts_agree": true,
+  "differing_verdicts": {},
+  "runs_coordinator": 160,
+  "runs_worker": 160,
+  "runs_in_both": 160,
+  "exact_coordinator": 118,
+  "exact_worker": 118,
+  "runs_exact_on_one_machine_only": []
+ },
+ "crossed-rank": "missing: /workspace/coupled-tensor-networks/studies/rhm/rhm-crossed-rank/results"
+}

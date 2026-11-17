@@ -155,7 +155,16 @@ skipped: a rerun of two approved designs, each reviewed once, with no change to 
 
 ## Amendments
 
-None.
+- **2026-11-17 23:45 UTC, an added output; no rule, criterion, method or budget changed.** After the worker was
+  finished, `compare.py` reported the `rhm-forced-synonyms` verdicts and all 160 exactness flags equal, and
+  `runs.json` turned out to be equal value for value, which is more than the hypothesis expected (it allowed runs to
+  differ in the last digits). To say how far the agreement goes, the supervisor added `compare_runs.py`: it loads
+  every run file present on both machines and tests each saved entry for exact equality, and reports the per-run
+  wall-clock time on each machine. It runs on the coordinator, reads the two coordinator run folders, and writes
+  `results/compare_runs.json` and `results/compare_runs.txt` in this folder only. For `rhm-crossed-rank` it covers
+  the coordinator runs finished when it is run; the verdict comparison for that experiment stays pending as the
+  Hypothesis section says. Command:
+  `PYTHONPATH=. uv run --frozen python studies/rhm/rhm-toy-rerun/compare_runs.py studies/rhm/rhm-toy-rerun/results/compare_runs.json | tee studies/rhm/rhm-toy-rerun/results/compare_runs.txt`
 
 <!-- Each change made during the run, with the time and the reason, recorded and committed before acting on it. -->
 
