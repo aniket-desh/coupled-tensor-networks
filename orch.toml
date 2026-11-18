@@ -61,7 +61,9 @@ skip = []
 append_paths = []
 
 [results]
-keep_days = 14   # delete published tars from the global volume this long after collection; 0 keeps them
+keep_days = 0   # delete published tars from the global volume this long after collection; 0 keeps them
+# Was 14 until 2026-11-15. Set to 0 because the local runs/ folders of eight older experiments were deleted that day to
+# free the coordinator's volume, which leaves these tars as the only copy of their checkpoints.
 
 [data]
 hf_hub = ""       # path of a Hugging Face hub cache in this project, if any, e.g. ".cache/hf/hub"
