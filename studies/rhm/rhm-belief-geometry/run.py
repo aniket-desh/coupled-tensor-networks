@@ -65,6 +65,7 @@ def main():
     ap.add_argument('--d', type=int, default=128)
     ap.add_argument('--layers', type=int, default=4)
     ap.add_argument('--heads', type=int, default=4)
+    ap.add_argument('--ckpts', default='', help='comma-separated checkpoint steps, replacing the default set (0 and --steps are always kept)')
     a = ap.parse_args()
     dev = 'cuda' if torch.cuda.is_available() else 'cpu'
     g = parse_cfg(a.config)
@@ -82,7 +83,8 @@ def main():
     opt = torch.optim.Adam(model.parameters(), lr=a.lr)
     gen = torch.Generator(dev).manual_seed(1000 + a.seed)
     rules_dev = {l: r.to(dev) for l, r in rules.items()}
-    ckpts = sorted({0, 300, 1000, 3000, 10000, 30000, a.steps} & set(range(a.steps + 1)))
+    ckpts = {0, a.steps} | {int(c) for c in a.ckpts.split(',')} if a.ckpts else {0, 300, 1000, 3000, 10000, 30000, a.steps}
+    ckpts = sorted(ckpts & set(range(a.steps + 1)))
     logs = sorted(set(ckpts) | set(range(0, a.steps + 1, 1000)) | {100, 200, 500})
     hist, t0 = [], time.time()
     cfg = dict(grammar=dict(g, seed=a.seed), d=a.d, layers=a.layers, heads=a.heads, T=T, V=v)
