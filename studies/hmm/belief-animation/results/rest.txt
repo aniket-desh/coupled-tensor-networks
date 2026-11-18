@@ -1,0 +1,37 @@
+cuda under MPS: True
+MPS=1
+DONE mess3_tree8_s0: mess3_tree8_s0 step  26223 (120/120) pooled R2 0.9957 [5679 s]
+DONE mess3_chain_s0: mess3_chain_s0 step  26223 (120/120) pooled R2 0.9999 [7138 s]
+DONE rrxor_chain_s0: rrxor_chain_s0 stopped at the deadline with 95/120 checkpoints
+DONE rrxor_tree_s0: rrxor_tree_s0 stopped at the deadline with 100/120 checkpoints
+DONE mess3_tree_s0: mess3_tree_s0 stopped at the deadline with 96/120 checkpoints
+DONE rrxor_tree8_s0: rrxor_tree8_s0 stopped at the deadline with 84/120 checkpoints
+total 80300
+drwxr-xr-x 2 root root    4096 Nov 18 21:10 .
+drwxr-xr-x 5 root root      60 Nov 18 19:09 ..
+-rw-r--r-- 1 root root   14144 Nov 18 21:08 mess3_chain_s0.json
+-rw-r--r-- 1 root root 6272467 Nov 18 21:08 mess3_chain_s0.npz
+-rw-r--r-- 1 root root   14174 Nov 18 17:24 mess3_transformer_s0.json
+-rw-r--r-- 1 root root 6249887 Nov 18 17:24 mess3_transformer_s0.npz
+-rw-r--r-- 1 root root   14081 Nov 18 20:44 mess3_tree8_s0.json
+-rw-r--r-- 1 root root 6294364 Nov 18 20:44 mess3_tree8_s0.npz
+-rw-r--r-- 1 root root   14125 Nov 18 21:10 mess3_tree_s0.json
+-rw-r--r-- 1 root root 4988830 Nov 18 21:10 mess3_tree_s0.npz
+-rw-r--r-- 1 root root   14068 Nov 18 21:10 rrxor_chain_s0.json
+-rw-r--r-- 1 root root 5545779 Nov 18 21:10 rrxor_chain_s0.npz
+-rw-r--r-- 1 root root   14076 Nov 18 17:47 rrxor_transformer_s0.json
+-rw-r--r-- 1 root root 7126688 Nov 18 17:47 rrxor_transformer_s0.npz
+-rw-r--r-- 1 root root   14007 Nov 18 21:10 rrxor_tree8_s0.json
+-rw-r--r-- 1 root root 4825255 Nov 18 21:10 rrxor_tree8_s0.npz
+-rw-r--r-- 1 root root   14053 Nov 18 21:10 rrxor_tree_s0.json
+-rw-r--r-- 1 root root 5830813 Nov 18 21:10 rrxor_tree_s0.npz
+-rw-r--r-- 1 root root   14057 Nov 18 18:02 v8m2s2L4_chain_s0.json
+-rw-r--r-- 1 root root 6893496 Nov 18 18:02 v8m2s2L4_chain_s0.npz
+-rw-r--r-- 1 root root   14231 Nov 18 18:13 v8m2s2L4_perm_s0.json
+-rw-r--r-- 1 root root 6805332 Nov 18 18:13 v8m2s2L4_perm_s0.npz
+-rw-r--r-- 1 root root   13949 Nov 18 18:14 v8m2s2L4_r16_s0.json
+-rw-r--r-- 1 root root 6939208 Nov 18 18:14 v8m2s2L4_r16_s0.npz
+-rw-r--r-- 1 root root   16542 Nov 18 17:27 v8m2s2L4_s0.json
+-rw-r--r-- 1 root root 7317378 Nov 18 17:27 v8m2s2L4_s0.npz
+-rw-r--r-- 1 root root   14097 Nov 18 17:50 v8m2s2L4_tree_s0.json
+-rw-r--r-- 1 root root 6895321 Nov 18 17:50 v8m2s2L4_tree_s0.npz

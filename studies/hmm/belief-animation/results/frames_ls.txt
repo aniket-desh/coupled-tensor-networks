@@ -1,0 +1,21 @@
+total 51156
+drwxr-xr-x 2 root root    4096 Nov 18 19:03 .
+drwxr-xr-x 4 root root      60 Nov 18 19:09 ..
+-rw-r--r-- 1 root root  595277 Nov 18 19:03 mess3_chain_s0.npz
+-rw-r--r-- 1 root root   14174 Nov 18 17:24 mess3_transformer_s0.json
+-rw-r--r-- 1 root root 6249887 Nov 18 17:24 mess3_transformer_s0.npz
+-rw-r--r-- 1 root root 1111873 Nov 18 19:00 mess3_tree8_s0.npz
+-rw-r--r-- 1 root root 1108027 Nov 18 19:02 mess3_tree_s0.npz
+-rw-r--r-- 1 root root   14076 Nov 18 17:47 rrxor_transformer_s0.json
+-rw-r--r-- 1 root root 7126688 Nov 18 17:47 rrxor_transformer_s0.npz
+-rw-r--r-- 1 root root 1196565 Nov 18 19:03 rrxor_tree_s0.npz
+-rw-r--r-- 1 root root   14057 Nov 18 18:02 v8m2s2L4_chain_s0.json
+-rw-r--r-- 1 root root 6893496 Nov 18 18:02 v8m2s2L4_chain_s0.npz
+-rw-r--r-- 1 root root   14231 Nov 18 18:13 v8m2s2L4_perm_s0.json
+-rw-r--r-- 1 root root 6805332 Nov 18 18:13 v8m2s2L4_perm_s0.npz
+-rw-r--r-- 1 root root   13949 Nov 18 18:14 v8m2s2L4_r16_s0.json
+-rw-r--r-- 1 root root 6939208 Nov 18 18:14 v8m2s2L4_r16_s0.npz
+-rw-r--r-- 1 root root   16542 Nov 18 17:27 v8m2s2L4_s0.json
+-rw-r--r-- 1 root root 7317378 Nov 18 17:27 v8m2s2L4_s0.npz
+-rw-r--r-- 1 root root   14097 Nov 18 17:50 v8m2s2L4_tree_s0.json
+-rw-r--r-- 1 root root 6895321 Nov 18 17:50 v8m2s2L4_tree_s0.npz
