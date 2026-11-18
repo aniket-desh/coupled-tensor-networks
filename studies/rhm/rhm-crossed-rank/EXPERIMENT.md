@@ -1,7 +1,7 @@
 ---
 name: rhm-crossed-rank
 title: Does aligning the tree with the grammar save bond dimension? Aligned vs crossed TreeTN on two hand-built 3-symbol RHMs
-status: approved
+status: done
 cpu: 2
 count: 1
 hours: 3
@@ -10,6 +10,9 @@ disk_gb: 40
 data:
 secrets:
 approved_utc: 2026-11-17T22:33:34Z
+result: supported
+finished_utc: 2026-11-18T01:10:32Z
+writeup: studies/rhm/rhm-crossed-rank/README.md
 ---
 
 # Does aligning the tree with the grammar save bond dimension? Aligned vs crossed TreeTN on two hand-built 3-symbol RHMs
@@ -253,4 +256,27 @@ None.
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+**Supported** (2026-11-18). All 720 runs finished; none raised, diverged or was dropped; 102 of the 480 default-rate
+runs and 32 of the 240 rate-arm runs stopped at the polish's limit and are counted as censored. No amendment was made.
+The write-up is [`README.md`](README.md), the research note [`NOTE.md`](NOTE.md), the supervisor's report
+[`SUPERVISOR.md`](SUPERVISOR.md).
+
+- **Checks:** `toy_checks` 29 of 29.
+- **H1, supported:** in the 7 cells below their bound the smallest excess loss of 140 runs is 1.15e-3 nats
+  (criterion: none below 1e-5).
+- **H2, supported:** on `mod` at r = 3 the aligned cell has 20 of 20 exact runs and the crossed cell 0 of 20, its
+  runs ending between 1.15e-3 and 4.19e-3 nats.
+- **H3, supported:** on `sym` at r = 2 the aligned cell has 19 of 20 exact runs and the crossed cell 14 of 20.
+- **H4, attained:** on `mod` the crossed cell at r = 4 has 10 of 20 exact runs (10 of 10 variance init, 0 of 10
+  identity init); the best has a largest centered-logit error of 1.8e-7 (criterion: below 1e-4) and a largest weight
+  of 2.73. The smallest exact width equals the bound in all four (grammar, grouping) pairs: 2, 2, 3, 4.
+- **Trainability at the bound (pre-stated reading, rate arm complete):** `sym`, the crossed tree is harder to train
+  (15 of 20 against 20 of 20, p = 0.047; one more exact run would give p = 0.106); `mod`, no detectable difference
+  (17 of 20 against 20 of 20, p = 0.23). At the default rates: `sym` 14 against 19 of 20 (p = 0.091), `mod` 10 against
+  20 of 20 (p = 0.0004).
+- **Between the thresholds:** 2 runs of the main grid (`sym` crossed, r = 3) and 1 of the rate arm.
+- **Runtime and cost:** training took 112 minutes against the estimate of 80 and the cap of 180 (a run took 19 s at
+  the median, not 13, with two experiments sharing the CPUs); the whole script, with its 25-minute wait, 2 h 17 min.
+  $0 of the $1 budget.
+- **One number in this definition is wrong and was left as written:** a tree at r = 6 has 1,596 parameters, not "at
+  most 1,400". Nothing depends on it.

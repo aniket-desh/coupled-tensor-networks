@@ -1,0 +1,30 @@
+PASS  sym: 384 sequences, 24 legal prefixes, each of probability 1/24  
+PASS  sym: P(x_5 | prefix) = (K^3)[A] = 1/4 at A, 3/8 elsewhere  [0.25, 0.375, 0.375]
+PASS  sym: targets equal grammar.stack_belief -> next_token_from_belief  0.0
+PASS  sym: a uniform predictor is UNIFORM_KL = 0.016417 nats above Bayes  0.0164167586293425
+PASS  sym: centered Bayes logits are log(2/3) (e_A - 1/3), norm F_NORM, pairwise distance F_DIST  
+PASS  sym: the half symbol is the missing symbol of the two pair symbols, which always differ  
+PASS  mod: 384 sequences, 24 legal prefixes, each of probability 1/24  
+PASS  mod: P(x_5 | prefix) = (K^3)[A] = 1/4 at A, 3/8 elsewhere  [0.25, 0.375, 0.375]
+PASS  mod: targets equal grammar.stack_belief -> next_token_from_belief  0.0
+PASS  mod: a uniform predictor is UNIFORM_KL = 0.016417 nats above Bayes  0.0164167586293425
+PASS  mod: centered Bayes logits are log(2/3) (e_A - 1/3), norm F_NORM, pairwise distance F_DIST  
+PASS  mod: the half symbol is the missing symbol of the two pair symbols, which always differ  
+PASS  sym: A = x_1 + x_2 + x_3 + x_4 mod 3 on legal prefixes  
+PASS  sym: the pair symbol is the missing symbol of its two tokens  
+PASS  mod: bottom-level first-child sets equal sym's  [[0, 1], [0, 2], [1, 2]]
+PASS  mod: rows (x_1 x_3) = 00, 01, 02, 10 against columns (x_2 x_4, y) = (12, 0), (12, 1), (21, 0), (21, 1): all 16 entries legal, determinant -27 in units of log(2/3)/3  -26.999999999999954
+PASS  width lower bounds: sym aligned 2, sym crossed 2, mod aligned 3, mod crossed 4  {('sym', 'aligned'): 2, ('sym', 'crossed'): 2, ('mod', 'aligned'): 3, ('mod', 'crossed'): 4}
+PASS  mod: the crossed bond (x_1, x_3) alone needs width 4; the aligned bond (x_1, x_2) needs 2; leaves x_1, x_3 need 3  
+PASS  sym aligned: the width-2 complex tree is exact  9.25185853854297e-18
+PASS  sym crossed: the width-2 complex tree is exact  9.25185853854297e-18
+PASS  mod: the width-2 complex tree is NOT exact (it needs width 3)  0.025341569256760288
+PASS  sym aligned: the width-3 one-hot message-passing tree is exact  0.0
+PASS  mod aligned: the width-3 one-hot message-passing tree is exact  0.0
+PASS  regauge changes every core and leaves the logits unchanged  3.3306690738754696e-16
+PASS  excess-loss gradient matches a central finite difference  (-0.006937114729876903, -0.0069371147505771615)
+PASS  2,000 Adam updates lower the excess loss and save the requested checkpoints  (0.19234157805988195, 7.751322731823033e-15)
+PASS  the L-BFGS polish does not raise the excess loss and reports its iterations  (7.751322731823033e-15, 6.808789643208968e-15, {'n_iter': 9, 'func_evals': 20, 'capped': False})
+PASS  the polish leaves a non-finite tree alone  
+PASS  a polish stopped by its limit is marked capped  {'n_iter': 2, 'func_evals': 3, 'capped': True}
+29/29 checks passed

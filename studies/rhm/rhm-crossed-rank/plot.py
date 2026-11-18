@@ -1,6 +1,8 @@
 """Figures for rhm-crossed-rank, from the saved results only.
 
     PYTHONPATH=. python studies/rhm/rhm-crossed-rank/plot.py studies/rhm/rhm-crossed-rank/results studies/rhm/rhm-crossed-rank/figures
+
+An optional third argument is a folder that also receives 200-dpi PNG copies (for the Markdown notes).
 """
 import json
 import sys
@@ -17,7 +19,13 @@ MARK = {'variance': 'o', 'identity': '^'}
 clip = lambda v: np.maximum(np.asarray(v, dtype=float), FLOOR)
 
 
-def main(res, figs):
+def main(res, figs, pngs=None):
+    def save_both(fig, name):
+        if pngs:
+            Path(pngs).mkdir(parents=True, exist_ok=True)
+            fig.savefig(Path(pngs) / f'{name}.png', dpi=200, bbox_inches='tight')
+        save(fig, Path(figs) / f'{name}.pdf')
+
     rows = [q for q in json.load(open(Path(res) / 'runs.json')) if q['default_rate']]   # the rate arm is in summary.json only
     summ = json.load(open(Path(res) / 'summary.json'))
     curves = json.load(open(Path(res) / 'curves.json'))
@@ -46,8 +54,8 @@ def main(res, figs):
         axes[1].plot([], [], m, ms=3, color=INK2, label=f'{i} init')
     axes[1].plot([], [], '--', color=INK2, lw=0.8, label='width lower bound (colored), exact threshold (gray)')
     axes[1].plot([], [], ':', color=INK2, lw=0.6, label='uniform predictor')
-    axes[1].legend(fontsize=5.5, loc='center right')
-    save(fig, Path(figs) / 'capacity.pdf')
+    fig.legend(*axes[1].get_legend_handles_labels(), fontsize=5.5, loc='upper center', ncol=6, bbox_to_anchor=(0.5, 0.0))   # below the panels, clear of the points
+    save_both(fig, 'capacity')
 
     # training curves on mod at the widths around the two bounds
     show = [r for r in (2, 3, 4) if r in widths]
@@ -67,8 +75,8 @@ def main(res, figs):
     for g, c in COLOR.items():
         axes[0][-1].plot([], [], '-', color=c, label=g)
     axes[0][-1].legend(fontsize=6)
-    save(fig, Path(figs) / 'curves.pdf')
+    save_both(fig, 'curves')
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main(*sys.argv[1:4])

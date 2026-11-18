@@ -1,0 +1,166 @@
+480 runs at the default rates in 24 cells, 240 in the rate arm, 0 errored. exact: excess loss below 1e-10 nats after the polish; uniform is 0.016417.
+cell                 bound  n  exact (var, id; by Adam)  between  capped  min excess  median     max        min/uniform  best run: max |weight|, max logit error
+sym_aligned_r1           2  20     0 ( 0,  0;  0)          0      13     8.39e-03   1.01e-02  1.10e-02   0.511        3.06, 2.1e-01
+sym_aligned_r2           2  20    19 (10,  9; 18)          0       1     1.62e-17   5.72e-16  3.12e-03   0.000        2.01, 8.0e-09
+sym_aligned_r3           2  20    20 (10, 10; 20)          0       0     2.26e-17   2.72e-15  5.45e-14   0.000        1.28, 5.3e-09
+sym_aligned_r4           2  20    20 (10, 10; 20)          0       0     7.05e-17   5.11e-14  6.60e-11   0.000        2.71, 1.7e-08
+sym_aligned_r5           2  20    20 (10, 10; 20)          0       1     4.56e-15   2.40e-13  6.86e-11   0.000        2.66, 3.0e-07
+sym_aligned_r6           2  20    20 (10, 10; 19)          0       3     4.99e-15   2.80e-12  6.71e-11   0.000        3.01, 3.5e-07
+sym_crossed_r1           2  20     0 ( 0,  0;  0)          0      14     8.39e-03   1.01e-02  1.10e-02   0.511        2.18, 2.1e-01
+sym_crossed_r2           2  20    14 ( 4, 10; 14)          0       6     -5.20e-18   3.51e-15  5.12e-03   -0.000        1.47, 3.7e-09
+sym_crossed_r3           2  20    18 ( 8, 10; 18)          2       2     2.37e-17   1.17e-14  3.49e-08   0.000        1.37, 7.5e-09
+sym_crossed_r4           2  20    20 (10, 10; 20)          0       1     6.94e-16   1.24e-14  3.73e-11   0.000        2.66, 1.1e-07
+sym_crossed_r5           2  20    20 (10, 10; 20)          0       0     3.86e-16   7.03e-15  8.92e-14   0.000        2.38, 8.3e-08
+sym_crossed_r6           2  20    20 (10, 10; 20)          0       2     4.57e-17   1.61e-15  5.14e-13   0.000        2.57, 3.8e-08
+mod_aligned_r1           3  20     0 ( 0,  0;  0)          0      10     1.25e-02   1.28e-02  1.35e-02   0.761        1.28, 2.7e-01
+mod_aligned_r2           3  20     0 ( 0,  0;  0)          0      20     1.96e-03   1.98e-03  1.99e-03   0.119        1.76, 1.3e-01
+mod_aligned_r3           3  20    20 (10, 10; 20)          0       2     4.34e-17   5.95e-15  5.08e-13   0.000        1.39, 1.7e-08
+mod_aligned_r4           3  20    20 (10, 10; 20)          0       2     6.71e-16   2.22e-14  1.63e-12   0.000        1.93, 8.1e-08
+mod_aligned_r5           3  20    20 (10, 10; 20)          0       3     4.51e-16   5.09e-14  8.87e-11   0.000        2.66, 8.3e-08
+mod_aligned_r6           3  20    20 (10, 10; 20)          0       3     2.06e-15   5.01e-14  5.47e-12   0.000        1.15, 1.8e-07
+mod_crossed_r1           4  20     0 ( 0,  0;  0)          0      10     1.24e-02   1.28e-02  1.29e-02   0.754        3.31, 3.2e-01
+mod_crossed_r2           4  20     0 ( 0,  0;  0)          0       2     4.89e-03   4.89e-03  7.96e-03   0.298        5.18, 2.4e-01
+mod_crossed_r3           4  20     0 ( 0,  0;  0)          0       7     1.15e-03   1.15e-03  4.19e-03   0.070        2.84, 1.2e-01
+mod_crossed_r4           4  20    10 (10,  0; 10)          0       0     3.28e-15   5.75e-04  1.15e-03   0.000        2.73, 1.8e-07
+mod_crossed_r5           4  20    20 (10, 10; 19)          0       0     2.56e-16   5.32e-15  5.52e-14   0.000        1.26, 5.0e-08
+mod_crossed_r6           4  20    20 (10, 10; 20)          0       0     1.11e-16   4.96e-15  3.35e-14   0.000        3.03, 4.1e-08
+{
+ "bounds": {
+  "sym_aligned": 2,
+  "sym_crossed": 2,
+  "mod_aligned": 3,
+  "mod_crossed": 4
+ },
+ "smallest_exact_width": {
+  "sym_aligned": 2,
+  "sym_crossed": 2,
+  "mod_aligned": 3,
+  "mod_crossed": 4
+ },
+ "n_runs": 480,
+ "n_runs_rate_arm": 240,
+ "n_errored": 0,
+ "n_cells": 24,
+ "n_runs_between_thresholds": 2,
+ "n_diverged": 0,
+ "H1 no run below its bound is exact": "supported",
+ "H1 detail": {
+  "cells": 7,
+  "runs": 140,
+  "smallest_excess": 0.0011491709341102166
+ },
+ "H2 alignment saves width on mod": "supported",
+ "H2 detail": {
+  "aligned_r3_exact": 20,
+  "crossed_r3_exact": 0,
+  "crossed_r3_min": 0.0011491709341102166
+ },
+ "H3 existence control: on sym both groupings have an exact run at width 2": "supported",
+ "H4 the crossed bound of 4 is attained on mod": "supported",
+ "H4 detail": {
+  "n": 20,
+  "n_exact": 10,
+  "n_exact_by_init": {
+   "variance": 10,
+   "identity": 0
+  },
+  "min": 3.282096816548119e-15,
+  "best_run": "mod_crossed_r4_variance_s2000",
+  "best_run_largest_weight": 2.7334567988150598,
+  "best_run_largest_centered_logit_error": 1.8176204194531032e-07
+ },
+ "trainability at the bound (pre-stated reading)": {
+  "sym": {
+   "default_rates": {
+    "aligned": "19/20 at r=2",
+    "crossed": "14/20 at r=2",
+    "fisher_p": 0.09147609147609148,
+    "reading": "no detectable difference"
+   },
+   "best_rate_per_init": {
+    "aligned": "20/20 at r=2",
+    "crossed": "15/20 at r=2",
+    "fisher_p": 0.047124047124047136,
+    "reading": "the crossed tree is harder to train at its bound"
+   },
+   "rates_complete": true,
+   "exact_of_n_by_init_and_rate": {
+    "aligned": {
+     "variance": {
+      "0.001": "10/10",
+      "0.003": "10/10",
+      "0.01": "10/10",
+      "0.03": "10/10"
+     },
+     "identity": {
+      "0.001": "4/10",
+      "0.003": "9/10",
+      "0.01": "10/10",
+      "0.03": "10/10"
+     }
+    },
+    "crossed": {
+     "variance": {
+      "0.001": "5/10",
+      "0.003": "4/10",
+      "0.01": "4/10",
+      "0.03": "5/10"
+     },
+     "identity": {
+      "0.001": "9/10",
+      "0.003": "10/10",
+      "0.01": "10/10",
+      "0.03": "9/10"
+     }
+    }
+   },
+   "reading": "the crossed tree is harder to train at its bound"
+  },
+  "mod": {
+   "default_rates": {
+    "aligned": "20/20 at r=3",
+    "crossed": "10/20 at r=4",
+    "fisher_p": 0.00043591979075850045,
+    "reading": "the crossed tree is harder to train at its bound"
+   },
+   "best_rate_per_init": {
+    "aligned": "20/20 at r=3",
+    "crossed": "17/20 at r=4",
+    "fisher_p": 0.23076923076923084,
+    "reading": "no detectable difference"
+   },
+   "rates_complete": true,
+   "exact_of_n_by_init_and_rate": {
+    "aligned": {
+     "variance": {
+      "0.001": "10/10",
+      "0.003": "10/10",
+      "0.01": "10/10",
+      "0.03": "9/10"
+     },
+     "identity": {
+      "0.001": "10/10",
+      "0.003": "10/10",
+      "0.01": "10/10",
+      "0.03": "10/10"
+     }
+    },
+    "crossed": {
+     "variance": {
+      "0.001": "10/10",
+      "0.003": "10/10",
+      "0.01": "10/10",
+      "0.03": "10/10"
+     },
+     "identity": {
+      "0.001": "0/10",
+      "0.003": "0/10",
+      "0.01": "0/10",
+      "0.03": "7/10"
+     }
+    }
+   },
+   "reading": "no detectable difference"
+  }
+ }
+}
