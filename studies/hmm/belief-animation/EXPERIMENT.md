@@ -219,7 +219,15 @@ The user's standing go-ahead of 2026-11-18 ("if you need more data/frames, rerun
 
 ## Amendments
 
-None.
+- **2026-11-18 16:52 UTC, before step 3: the two r = 32 HMM trees keep every checkpoint (`EVERY_TREE32=1`).** The
+  timing step measured 299 s for 6 checkpoints of the r = 32 RRXOR tree's frames, about 47 s per checkpoint after
+  setup, just above the 45 s at which "Time and cost" said to keep every second checkpoint. That rule was there to
+  protect the time cap, and the same step showed the cap is not at risk: training took 9 s for 300 updates with 59
+  test evaluations (alone on the A40), far below the estimate, and the frame step is bound by one CPU thread per
+  process, so the two trees do not slow each other. At 47 s per checkpoint, 120 checkpoints take about 95 minutes per
+  tree, both in parallel, so the whole run should end about 2 h 15 min after launch, against a cap of 5 h, at about
+  $1.4 of the $6 budget. Halving the trees' frames would make two of the four HMM panels move at half the frame rate
+  of the others for no saving that matters. The stop rule at 4 hours is unchanged.
 
 <!-- Each change made during the run, with the time and the reason, recorded and committed before acting on it. -->
 
