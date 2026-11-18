@@ -8,6 +8,13 @@ run is complete (720 of 720 runs, all four hypotheses supported), but the coordi
 was written, so its verdicts cannot be compared yet. The 266 coordinator runs that existed at 23:43 UTC are bit for bit
 equal to the worker's.
 
+**Update, 2026-11-18 01:15 UTC, by the planning session: the `rhm-crossed-rank` comparison is complete and agrees.**
+The coordinator's run ended at 00:51 UTC. `compare.py` finds every verdict equal (H1 to H4, both trainability
+readings, the smallest exact widths), 513 of 720 runs exact on both machines and none on one machine only, and
+`compare_runs.py` finds all 720 run files equal in every saved entry except the wall-clock time
+(`results/compare.txt`, `results/compare_runs.txt`). The rest of this file is as the rerun's supervisor wrote it at
+23:50 UTC, when that comparison was still pending.
+
 Because the two machines produced identical numbers, the rerun shows that the results reproduce. It does not show how
 sensitive the verdicts are to numerical noise, which is what a rerun on different hardware would have tested if the
 arithmetic had differed.

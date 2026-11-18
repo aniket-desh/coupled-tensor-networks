@@ -1,5 +1,5 @@
 {
- "compared_utc": "2026-11-17T23:43:17Z",
+ "compared_utc": "2026-11-18T01:12:10Z",
  "forced-synonyms": {
   "runs_coordinator": 160,
   "runs_worker": 160,
@@ -28,9 +28,9 @@
   }
  },
  "crossed-rank": {
-  "runs_coordinator": 266,
+  "runs_coordinator": 720,
   "runs_worker": 720,
-  "runs_compared": 266,
+  "runs_compared": 720,
   "unreadable": [],
   "entries_compared": [
    "cfg",
@@ -41,16 +41,16 @@
    "polish",
    "polished"
   ],
-  "runs_equal_in_every_entry": 266,
+  "runs_equal_in_every_entry": 720,
   "runs_with_a_differing_entry": {},
   "seconds_per_run_coordinator": {
-   "median": 19.44683301448822,
-   "min": 17.861324071884155,
+   "median": 19.123951196670532,
+   "min": 12.565552473068237,
    "max": 26.83731245994568
   },
   "seconds_per_run_worker": {
-   "median": 33.4791738986969,
-   "min": 20.577333211898804,
+   "median": 33.479851841926575,
+   "min": 18.993473291397095,
    "max": 43.93565487861633
   }
  }

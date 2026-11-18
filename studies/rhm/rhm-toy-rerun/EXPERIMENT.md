@@ -183,6 +183,9 @@ Recorded as **supported**, judged on what exists, as the Hypothesis section says
   `sym` and "no detectable difference" on `mod`. The coordinator's run had 266 of 720 runs at 23:43 UTC and no
   `summary.json`, so `compare.py` reports it missing. The 266 runs present on both machines are bit for bit equal.
   The planning session makes the verdict comparison when the coordinator's run ends.
+- **`rhm-crossed-rank`, completed 2026-11-18 01:15 UTC by the planning session: supported.** The coordinator's run
+  ended at 00:51 UTC. Every verdict string equals the worker's, 513 of 720 runs are exact on both machines and none
+  on one machine only, and all 720 run files are equal in every saved entry except the wall-clock time.
 - **Run failed?** No. Both checks passed (29 of 29 toy checks, 8 of 8 measure checks) and `analyze.py` printed no
   `RUN FAILED` for either grid.
 - **Cost and runtime.** About $0.31 of the $3 budget and 38 minutes of the 1.5-hour cap (23:02 to 23:40 UTC,

@@ -9,5 +9,14 @@
   "exact_worker": 118,
   "runs_exact_on_one_machine_only": []
  },
- "crossed-rank": "missing: /workspace/coupled-tensor-networks/studies/rhm/rhm-crossed-rank/results"
+ "crossed-rank": {
+  "verdicts_agree": true,
+  "differing_verdicts": {},
+  "runs_coordinator": 720,
+  "runs_worker": 720,
+  "runs_in_both": 720,
+  "exact_coordinator": 513,
+  "exact_worker": 513,
+  "runs_exact_on_one_machine_only": []
+ }
 }
