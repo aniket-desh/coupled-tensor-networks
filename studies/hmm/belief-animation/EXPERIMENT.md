@@ -229,6 +229,28 @@ The user's standing go-ahead of 2026-11-18 ("if you need more data/frames, rerun
   $1.4 of the $6 budget. Halving the trees' frames would make two of the four HMM panels move at half the frame rate
   of the others for no saving that matters. The stop rule at 4 hours is unchanged.
 
+- **2026-11-18 19:10 UTC, during step 3: the frame step of the six HMM chain and tree runs is restarted with a
+  deadline, and those runs may end with fewer than 120 frames.** Observed at 19:04 UTC: all 11 trainings started so
+  far have finished, and the two HMM transformers and all five RHM runs have complete frames (120 or 128). The four
+  frame steps then running (Mess3 and RRXOR r = 32 trees, Mess3 chain, Mess3 r = 8 tree) had 20, 19, 9 and 21 of 120
+  checkpoints after 104, 104, 36 and 42 minutes: 2 to 5 minutes per checkpoint, against the 47 s the timing step
+  measured for one process alone. At that rate they need 3 to 9 more hours and the cap is at 21:41 UTC. The previous
+  amendment was wrong to say the trees would not slow each other: the projective fit is thousands of small GPU
+  operations, and processes that time-slice one GPU wait for each other on every one of them. Its consequence (keep
+  all 120 checkpoints of the r = 32 trees) is withdrawn.
+  Change: (1) the four frame steps are stopped and `anim_rest.sh` runs the six runs' frames instead (training RRXOR
+  chain and r = 8 tree first, which had not started): through CUDA MPS, all six at once, if MPS starts on the worker;
+  otherwise one after another with equal shares of the time left. (2) `anim_frames.py` keeps the frames already
+  saved (`--resume`), takes the remaining checkpoints coarse to fine (both ends, every 16th, 8th, 4th, 2nd, the
+  rest), and starts none after 21:10 UTC (`--deadline`), so whatever is done by then is spread evenly over the
+  log-spaced grid. This replaces the 4-hour stop rule for these six runs. (3) Success criterion for these six runs,
+  replacing "every checkpoint": the first and the last checkpoint and at least every 4th in between (31 frames or
+  more). A run with fewer keeps its panel and the write-up gives its frame count; the videos hold a panel on its
+  latest frame until its next one. (4) The six runs' checkpoints (about 0.5 GB) are copied to
+  `runs/belief-animation/ckpt` and published, so missing frames can be extracted later without retraining.
+  Unchanged: the probes, the seed, the analysis set, the matching tolerance, and no interpolation between frames.
+  The 7 completed runs are not touched.
+
 <!-- Each change made during the run, with the time and the reason, recorded and committed before acting on it. -->
 
 ## Outcome

@@ -1,6 +1,6 @@
 """Decoded beliefs at every saved checkpoint of one training run: the frames of the belief-geometry animation.
 
-    PYTHONPATH=. python studies/hmm/belief-animation/anim_frames.py RUN_DIR OUT_DIR [N_ANA] [--every K]
+    PYTHONPATH=. python studies/hmm/belief-animation/anim_frames.py RUN_DIR OUT_DIR [N_ANA] [--every K] [--resume] [--deadline UNIX_TIME]
     PYTHONPATH=. python studies/hmm/belief-animation/anim_frames.py --steps 30000     # print the checkpoint steps
 
 RUN_DIR is a run folder of hmm_run.py, rhm-belief-geometry/run.py, ttn_run.py or arch_run.py (result.json and
@@ -20,7 +20,10 @@ Analysis set, split and probes are those of the original analyses (same seeds, N
       an orthonormal basis V_r of the span of the centered beliefs. Least squares commutes with a linear map of the
       target and the prediction stays in that span, so the fit, its R2 and its projection are those of the full b_t.
 
-Saved to OUT_DIR/<run>.npz (rewritten every 10 checkpoints, so a stop loses at most 10):
+Checkpoints are processed coarse to fine (coarse_to_fine below), and the file is rewritten every 2 checkpoints,
+so a stopped or resumed frame step has frames spread evenly over the checkpoint grid.
+
+Saved to OUT_DIR/<run>.npz, frames sorted by step:
   steps (F,), positions (P,), sse (F, P) and sst (P,) over the whole test half (R2 = 1 - sse / sst, pooled over
   positions as 1 - sum sse / sum sst), and for the first SAVE_N test rows
   HMM  true (P, SAVE_N, S) float32, pred (F, P, SAVE_N, S) float16 (clipped to [-8, 8]).
@@ -29,6 +32,7 @@ Saved to OUT_DIR/<run>.npz (rewritten every 10 checkpoints, so a stop loses at m
 and OUT_DIR/<run>.json: cfg, the test-loss history of the run, and its update time."""
 import json
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -145,13 +149,30 @@ def setup_rhm(cfg, fam, n_ana, dev):
     return positions, targets, predict, extra
 
 
+def coarse_to_fine(n):
+    """Order in which n checkpoints are processed: both ends, then every 16th, 8th, 4th, 2nd, then the rest. A frame
+    step that is stopped part-way then leaves frames spread evenly over the log-spaced checkpoint grid, and not only
+    the earliest ones."""
+    order = [0, n - 1]
+    for stride in (16, 8, 4, 2, 1):
+        order += range(0, n, stride)
+    return list(dict.fromkeys(order))
+
+
 def main():
     args = sys.argv[1:]
     if args[0] == '--steps':
         print(','.join(map(str, frame_steps(int(args[1])))))
         return
-    every = int(args[args.index('--every') + 1]) if '--every' in args else 1
-    args = args[:args.index('--every')] if '--every' in args else args
+    opt = {}
+    for name in ('--every', '--deadline'):  # --deadline: unix time after which no further checkpoint is started
+        if name in args:
+            i = args.index(name)
+            opt[name] = args[i + 1]
+            del args[i:i + 2]
+    resume = '--resume' in args  # keep the frames already in OUT_DIR/<run>.npz and compute only the missing ones
+    args = [a for a in args if a != '--resume']
+    every, deadline = int(opt.get('--every', 1)), float(opt.get('--deadline', 'inf'))
     run_dir, out_dir = Path(args[0]), Path(args[1])
     n_ana = int(args[2]) if len(args) > 2 else N_ANA
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -166,31 +187,44 @@ def main():
     sst = np.array([((targets[t][half:] - targets[t][:half].mean(0)) ** 2).sum().item() for t in positions])
     ckpts = res['ckpts']
     ckpts = sorted(set(ckpts[::every]) | {ckpts[0], ckpts[-1]})
-    steps, preds, sses = [], [], []
+    out_file = out_dir / f'{run_dir.name}.npz'
+    done = {}  # step -> (pred (P, SAVE_N, .) float16, sse (P,))
+    if resume and out_file.exists():
+        z = np.load(out_file)
+        assert [int(t) for t in z['positions']] == positions
+        done = {int(s): (z['pred'][i], z['sse'][i]) for i, s in enumerate(z['steps'])}
 
     def write():
-        out = dict(steps=np.array(steps), positions=np.array(positions), true=true, sst=sst, sse=np.array(sses),
-                   pred=np.stack(preds))
+        steps = sorted(done)
+        if not steps:
+            return
+        out = dict(steps=np.array(steps), positions=np.array(positions), true=true, sst=sst,
+                   sse=np.array([done[s][1] for s in steps]), pred=np.stack([done[s][0] for s in steps]))
         if extra:
             out.update(uid=np.stack([extra['uid'][t] for t in positions]),
                        n_unique=np.array([extra['n_unique'][t] for t in positions]))
         tmp = out_dir / f'{run_dir.name}.tmp.npz'
         np.savez_compressed(tmp, **out)
-        tmp.replace(out_dir / f'{run_dir.name}.npz')
+        tmp.replace(out_file)
+        json.dump(dict(run=run_dir.name, family=fam, cfg=cfg, n_ana=n_ana, status=res.get('status', 'finished'),
+                       bayes=res['bayes'], ms_per_update=res['ms_per_update'], n_ckpts=len(ckpts), n_frames=len(steps),
+                       hist=[{k: h[k] for k in ('step', 'test', 'excess')} for h in res['hist']]),
+                  open(out_dir / f'{run_dir.name}.json', 'w'), indent=1)
 
-    for i, ck in enumerate(ckpts):
+    t0 = time.time()
+    todo = [ckpts[i] for i in coarse_to_fine(len(ckpts)) if ckpts[i] not in done]
+    for i, ck in enumerate(todo):
+        if time.time() > deadline:
+            print(f'{run_dir.name} stopped at the deadline with {len(done)}/{len(ckpts)} checkpoints', flush=True)
+            break
         state = torch.load(run_dir / f'ckpt_{ck}.pt', map_location=dev)['state']
         pk = predict(state)
-        sses.append([((targets[t][half:] - pk[t]) ** 2).sum().item() for t in positions])
-        preds.append(np.stack([keep(pk[t][:SAVE_N]).clamp(-CLIP, CLIP).cpu().numpy().astype(np.float16) for t in positions]))
-        steps.append(ck)
-        print(f'{run_dir.name} step {ck:6d} ({i + 1}/{len(ckpts)}) pooled R2 {1 - sum(sses[-1]) / sst.sum():.4f}', flush=True)
-        if (i + 1) % 10 == 0 or i + 1 == len(ckpts):
+        sse = np.array([((targets[t][half:] - pk[t]) ** 2).sum().item() for t in positions])
+        done[ck] = (np.stack([keep(pk[t][:SAVE_N]).clamp(-CLIP, CLIP).cpu().numpy().astype(np.float16) for t in positions]), sse)
+        print(f'{run_dir.name} step {ck:6d} ({len(done)}/{len(ckpts)}) pooled R2 {1 - sse.sum() / sst.sum():.4f} [{time.time() - t0:.0f} s]', flush=True)
+        if (i + 1) % 2 == 0:
             write()
-    json.dump(dict(run=run_dir.name, family=fam, cfg=cfg, n_ana=n_ana, status=res.get('status', 'finished'),
-                   bayes=res['bayes'], ms_per_update=res['ms_per_update'],
-                   hist=[{k: h[k] for k in ('step', 'test', 'excess')} for h in res['hist']]),
-              open(out_dir / f'{run_dir.name}.json', 'w'), indent=1)
+    write()
 
 
 if __name__ == '__main__':
