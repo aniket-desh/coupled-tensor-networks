@@ -1,7 +1,7 @@
 ---
 name: belief-animation
 title: Belief geometry over training: dense checkpoints for an animation (Mess3, RRXOR, RHM)
-status: approved
+status: done
 gpu: NVIDIA A40,NVIDIA RTX A6000,NVIDIA L40S,NVIDIA RTX 6000 Ada Generation,NVIDIA RTX PRO 4500 Blackwell
 count: 1
 min_gpu_gb: 30
@@ -11,6 +11,9 @@ disk_gb: 60
 data:
 secrets:
 approved_utc: 2026-11-18T16:41:28Z
+result: supported
+finished_utc: 2026-11-18T21:23:44Z
+writeup: studies/hmm/belief-animation/README.md
 ---
 
 # Belief geometry over training: dense checkpoints for an animation (Mess3, RRXOR, RHM)
@@ -255,4 +258,22 @@ The user's standing go-ahead of 2026-11-18 ("if you need more data/frames, rerun
 
 ## Outcome
 
-Not run yet. Afterwards: one line per criterion with what was observed, the cost and runtime against the budget, and a link to the write-up. The write-up holds the detail; don't repeat it here.
+Run on 2026-11-18, 16:41 to 21:13 UTC. Write-up: [README.md](README.md).
+
+- **The run succeeded (as amended at 19:10 UTC):** met. All 13 runs trained and have frames, and the three videos and
+  the combined one render as H.264. Nine runs have every checkpoint (120, or 128 for the RHM transformer). The four
+  others have the first and last checkpoint and more than every fourth in between: RRXOR tree r = 32 100 of 120,
+  Mess3 tree r = 32 96, RRXOR chain 95, RRXOR tree r = 8 84. The original criterion (every checkpoint) was not met
+  for those four.
+- **A rerun matches its original:** 13 of 13. The 10 tensor-network reruns agree with the original's final excess
+  loss and pooled probe R² to four decimals and with its logged loss at every common step. The Mess3 transformer's
+  final excess is 0.00013 against 0.00014 with the same R²; the RRXOR and RHM transformers differ by 0.003 and 0.006
+  in pooled final R². The three transformer reruns do not follow the original's loss trajectory during training,
+  which the Hypothesis section expected them to.
+- **Correction to the Method section:** `v8m2s2L4` is one of two grammars that all three RHM experiments trained and
+  every architecture learned (the other is `v4m2s2L5`), not the only one, and there are three such experiments, not
+  four.
+- **A video is incomplete:** none; every arm of every video has frames.
+- **The run failed:** no. The checks passed (29 of 29 and 28 of 28).
+- **Cost and runtime:** 4 h 31 min on one NVIDIA A40, about $2.67, against a 5 h cap and a $6 budget (the estimate
+  was 2.5 h).
