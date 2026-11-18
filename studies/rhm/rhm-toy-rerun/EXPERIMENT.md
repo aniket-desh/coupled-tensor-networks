@@ -11,7 +11,7 @@ data:
 secrets:
 approved_utc: 2026-11-17T23:01:58Z
 result: supported
-finished_utc: 2026-11-17T23:52:22Z
+finished_utc: 2026-11-18T01:12:41Z
 writeup: studies/rhm/rhm-toy-rerun/README.md
 ---
 
