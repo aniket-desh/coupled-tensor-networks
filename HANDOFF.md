@@ -1,3 +1,172 @@
+# Handoff: two provable toy grammars, and getting Runpod workers back
+
+Written by the tmux session `toy-batch`, which took over the planning conversation on 2026-11-17 at 23:02 UTC, when
+the laptop closed. Times are UTC. **Final version, 2026-11-18 01:25: all three experiments are finished, `orch ls` shows no
+worker, nothing is pushed, and the session ends once this file is committed.** The rerun is in the experiment log; the
+two coordinator runs are not (see "Decisions that are yours"). Runpod spend was about $0.31 against a budget of $3,
+by the log's estimate (hourly rate times 38 minutes; Runpod's bill had not posted), plus a 2-minute test worker at
+$0.06/hr.
+The two earlier handoffs follow this section, unchanged.
+
+You gave a worked answer to "what theory would you want solved" (two hand-built 3-symbol grammars with proofs) and
+asked for the experiments to be developed, run and batched in tmux; later, to restore the old Runpod key and rerun
+them with worker access back. All three experiments came back supported.
+
+## Status at a glance
+
+| Experiment | What it asks | Result against its criteria | Where it ran |
+|---|---|---|---|
+| `rhm-forced-synonyms` | On grammar `sym`, must an exact width-2 tree collapse synonyms, compose codes as the grammar does, and respond to forbidden pairs, and does training find such trees? | **Supported**, H1 to H4. 38 of 40 width-2 runs reach the exact predictor and all 38 have the properties the theorems require. | coordinator, 25 min, $0 |
+| `rhm-crossed-rank` | On grammar `mod`, does a tree aligned with the grammar need width 3 where a crossed tree needs 4? | **Supported**, H1 to H3, and H4 "attained". Smallest exact widths 2, 2, 3, 4, equal to the proved lower bounds. The trainability reading is weak. | coordinator, 112 min of training, $0 |
+| `rhm-toy-rerun` | Do both come out the same on a Runpod worker? | **Supported.** Every verdict equal; all 880 run files identical apart from wall-clock time. | one 16-vCPU CPU worker, 38 min, about $0.31 of $3 |
+
+Each folder under `studies/rhm/` has `README.md`, the PDF figures and a `SUPERVISOR.md`; the first two also have
+`NOTE.md` with embedded PNG figures. Each definition was reviewed once before launch (the rerun's review was skipped as
+a rerun of approved designs) and each write-up was fact-checked once; the dated update this session added to the
+rerun's README came after its fact check.
+
+## What was found
+
+**`rhm-forced-synonyms`** ([write-up](studies/rhm/rhm-forced-synonyms/README.md)). 160 aligned trees on `sym`: widths
+1 to 4, two inits, 20 seeds, full-batch Adam on the 24 legal prefixes and an L-BFGS polish. "Exact" means an excess
+loss below 1e-10 nats after the polish.
+
+- **Width 1 cannot solve it and width 2 can.** The smallest excess loss of the 40 width-1 runs is 8.39e-3 nats. At width 2, 38 of
+  40 runs are exact (20 of 20 with the variance init, 18 of 20 with the identity init), 37 of them by Adam alone.
+- **Every exact width-2 tree does what the theorems say (H2).** Over the 38: swapping a pair for its synonym moves
+  the output by at most 9.0e-5 of the distance between two targets, also beside a sibling that never occurs with it;
+  the within-symbol share of each whitened bond is at most 1.7e-12; all six valid compositions read out as the right
+  parent, with error at most 1.35e-6.
+- **Forbidden pairs respond, by an amount two numbers fix (H4).** Writing the code of symbol 0 as x times the code of
+  symbol 1 plus y times the code of symbol 2, the left and right bonds have the same (x, y) to 5.8e-6, and the three
+  forbidden responses match the closed forms in (x, y) to a relative 9.1e-7. This formula was derived for the
+  experiment and was not in your text. Its corollary: in any exact width-2 tree at most one forbidden pair can
+  respond below 0.87 of a valid response.
+- **Training does not silence the one pair it could (H3), with less room than the other criteria.** Over the 37
+  exact runs Adam found, the median of the per-run smallest response is 0.83 (bar 0.5) and the smallest single
+  response is 0.086 (bar 0.01). 12 of the 37 have one response below 0.5, and the three width-2 runs Adam left at
+  3.1e-3 nats, which the criterion excludes, each have one response below 0.001 at Adam's last update (the polish
+  then made one of the three exact, with a smallest response of 0.12).
+- **Training does not pick the symmetric tree.** None of the 38 exact runs is within 0.1 of x = y = −1.
+- **Where nothing is forced, collapsing synonyms is no longer universal, and the tree never finds the grammar's
+  zero.** All 80 runs at
+  widths 3 and 4 are exact. The synonym is kept, in a direction only a forbidden context reads, in 8 of 40 runs at
+  width 3 (none of the 20 with the identity init) and 36 of 40 at width 4. 0 of 240 forbidden responses are below 0.01, although at width 3 the grammar's own
+  message passing, which gives zero, is an exact solution.
+- **One error in the definition's theory text**, found by the supervisor and left as written: the smallest forbidden
+  response ranges up to 1.466, not 1.43. No criterion uses it.
+
+**`rhm-crossed-rank`** ([write-up](studies/rhm/rhm-crossed-rank/README.md)). 720 trees: 480 in the main grid (two
+grammars, aligned and crossed pairing, widths 1 to 6, two inits, 10 seeds) and 240 in a learning-rate arm.
+
+- **The bounds hold (H1).** In the 7 cells below their bound, the smallest excess loss of the 140 runs is 1.15e-3
+  nats.
+- **Alignment saves one bond dimension on `mod` (H2, H4).** At width 3 the aligned tree is exact in 20 of 20 runs
+  and the crossed tree in 0 of 20, with its best run 1.15e-3 nats above Bayes (7% of a uniform predictor's excess).
+  At width 4 the crossed tree is exact in 10 of 20 runs. The lower bounds 3 and 4 are proved; that 3 suffices is
+  shown by a hand-built tree; that 4 suffices for the crossed tree rests on ten trained trees (largest weight 2.73
+  and logit error 1.8e-7 in the best), not on a construction.
+- **The control behaves (H3).** On `sym`, where both pairings need width 2, both are exact at width 2: aligned 19 of
+  20, crossed 14 of 20.
+- **Trainability at the bound did not get one answer.** By the rule fixed before the run (each pairing at its own
+  bound and its own best rate per init, Fisher exact test at 0.05) the crossed tree is harder to train on `sym` (15
+  of 20 against 20 of 20, p = 0.047) and shows no detectable difference on `mod` (17 against 20 of 20, p = 0.23). At
+  the default rates the two verdicts swap (`sym` p = 0.091; `mod` 10 against 20 of 20, p = 0.0004). The `sym`
+  verdict rests on one run.
+- **Observed after the run, by the supervisor's `posthoc.py`:** the ten crossed width-4 runs that miss on `mod` (all
+  identity init) end at 1.149171e-3 nats, the width-3 floor to seven digits, with logits within 1.0e-6 of the best
+  width-3 tree's. They converged to the width-3 solution, with the fourth channel of the (x_1, x_3) bond unused on legal prefixes.
+
+**`rhm-toy-rerun`** ([write-up](studies/rhm/rhm-toy-rerun/README.md)). Both grids from scratch on a worker, into
+their own folder.
+
+- Every verdict string equals the coordinator's for both experiments; 118 of 160 and 513 of 720 runs are exact on
+  both machines and none on one only.
+- All 880 run files are equal in every saved entry except the wall-clock time. So the rerun shows that the results
+  reproduce; it says nothing about sensitivity to numerical noise, because the arithmetic did not differ.
+- The comparison for `rhm-crossed-rank` was made by this session at 01:12, after the coordinator's run ended at
+  00:51; the rerun's README carries a dated update for it.
+- A run took a median of 33 s on the worker against 19 s on the coordinator, so the CPU worker was no faster per core.
+  No GPU was used: these trees have at most 1,596 parameters and 24 inputs.
+
+## What the batch says, in one paragraph
+
+The RHM studies now have a setting where what a Bayes-optimal tree must encode is proved, and trained trees can be
+held against it. At the smallest sufficient width the tree is forced to give synonyms one code
+and to compose codes as the grammar does, and it is forced not to implement the grammar's message passing on
+forbidden pairs: a nonzero response there is a theorem, which gives the "invalid pairs keep their mass" finding of
+`rhm-ttn-messages` and `rhm-ttn-masks` an exact counterpart, though not an explanation, since those trees were wider
+than their symbol count. With width to spare the tree often keeps the synonym where only a forbidden context reads it (8 of 40
+runs at width 3, 36 of 40 at width 4), and in none of 80 runs finds the message-passing solution. And whether a
+tree's pairing matches the grammar changes the width it needs: provably by at least one bond dimension on `mod`, by
+exactly one if the ten trained width-4 trees are taken as exact, and provably by none on `sym`.
+
+## Runpod: what broke and what was done
+
+- **Runpod's REST v1 is gone.** Runpod's migration guide gives 2026-11-15 as its retirement date; the last v1 call
+  in this project's audit log succeeded at 2026-11-16 00:43, and on 2026-11-17 `rest.runpod.io` no longer resolved. The toolkit created pods through
+  v2 already, but listed, looked up, deleted, stopped and started them through v1, so no worker could be launched or
+  cleaned up. That is why the first two experiments ran on the coordinator.
+- **The toolkit's remaining pod calls are now on v2**, on branch `rest-v2-pods` of `/workspace/runpod-research`,
+  commit `67c41e5`. Checked live twice: a 2-vCPU test worker (up, exec, finish, gone afterwards with HTTP 404) and
+  the rerun's full launch, three jobs, publish, merge and delete. `tests/test_experiments.py`,
+  `tests/test_worker_local.py` and `tests/test_results_flow.py` passed on the ported files on 2026-11-17, before
+  the commit; the toolkit's other test scripts were not run by me. The "404 afterwards" is from my own check at the
+  time; the audit log records the two deletes as HTTP 204. The commit message and a code comment say v1 "was retired
+  on 2026-11-15", which is the announced date, not the observed one.
+- **The Runpod key.** `/workspace/.env` holds a key for the new cohort's account, which does not own this
+  coordinator or the two volumes in `orch.toml`. At your instruction the old key is back in the project's `.env`,
+  which takes precedence.
+
+## Decisions that are yours
+
+- **The toolkit branch `rest-v2-pods` is unmerged and unpushed.** The toolkit was on your branch `shared-env`; I
+  branched from it and left it checked out, since without it no pod command works. Two things in it are not done:
+  `orch coordinator stop` and `start` were ported and not tested (testing would stop this machine), and two
+  self-delete paths still call the GraphQL API, which Runpod's documentation lists as deprecated: the timer each pod
+  starts to delete itself at its time cap (`engine/rp-up`, its output discarded, so a failure there is silent) and
+  the worker's own self-delete (`engine/worker.sh`, which logs the response). GraphQL answered a test query from
+  this machine on 2026-11-17, and the coordinator's own watcher also acts at the cap, so nothing is unguarded today;
+  both paths should move to v2 before GraphQL is retired.
+- **Which Runpod account this project lives on.** It is back on the old account's key. Moving to the new cohort's
+  account means new volumes and a new coordinator there and copying `/workspace` across; the old global volume also
+  holds the only copy of eight older experiments' checkpoints.
+- **Nothing from this batch is pushed.** `main` is 13 commits ahead of `origin/main` once this file is committed.
+- **`results.keep_days` in `orch.toml`** is still the uncommitted edit described in the handoff below.
+- **The experiment log has no row for the two coordinator runs.** `orch log` builds the table from workers, and they
+  used none. The rerun's row says so; the two folders hold the record.
+- **Follow-ups the write-ups list and did not start:** the 40 width-2 seeds under another optimizer or rate, which
+  decides how much of H3's median of 0.83 belongs to Adam (about 15 minutes); an init-scale and seed grid on the two
+  crossed cells at their bound, to settle trainability; a closed-form width-4 crossed tree for `mod`, read off the
+  saved witnesses; and the same rank bounds on the larger grammars of `rhm-controls`.
+
+## Things to know
+
+- **Changes from what you specified.** Added without asking, and recorded in the definitions: the L-BFGS polish
+  after Adam; a second init; widths 3 and 4 as a descriptive arm in the first experiment and widths up to 6 in the
+  second; `sym` crossed as the second experiment's control; the (x, y) formula with its corollary; and, from the two
+  pre-launch reviews, the trainability reading, a criterion on the per-run smallest forbidden response (the first version's median
+  could not fail), the "found by Adam" cut, the attainment criterion for the crossed bound, and the learning-rate arm.
+- **The rerun is a separate experiment, on a CPU worker.** You asked for a rerun "with the gpu access back". These
+  runs gain nothing from a GPU, and the coordinator's `rhm-crossed-rank` run was still under way, so both grids ran
+  from scratch in `studies/rhm/rhm-toy-rerun/`, which left the originals intact for the comparison.
+- **The revised definitions were not reviewed a second time.** Each review's fixes were applied and the checks and
+  smoke grids rerun, without sending the revision back.
+- **Time estimates were low.** A run took 18 to 19 s on the coordinator and 33 s on the worker against 13 s measured
+  alone, so `rhm-crossed-rank` trained for 112 minutes against 80 estimated. Nothing was dropped.
+- **Trained trees are outside git:** `runs/rhm-forced-synonyms/` (7 MB), `runs/rhm-crossed-rank/` (36 MB) and
+  `runs/rhm-toy-rerun/` on the coordinator. The polished trees of the first and the best tree of every cell of the
+  second are in git under `results/`.
+- **Nothing failed.** No run diverged or raised in any of the three experiments.
+- **This section was fact-checked once.** An independent pass checked about 135 claims against the result files, the
+  logs and both repositories; every experimental number, count, p-value and verdict held, and 12 statements were
+  reworded (a commit count, the v1 retirement date, two timestamps written ahead of the event, and eight
+  overstatements). The corrections were applied and not re-checked. What it could not verify from files: what was
+  said in conversation, which account each key belongs to, the 404 after the test worker's delete, and that GraphQL
+  answered on 2026-11-17.
+
+---
+
 # Handoff: follow-up batch on the theory notes
 
 Written by the tmux session `wrapup`, which took over the planning conversation on 2026-11-15 at 19:55 UTC. Times are
