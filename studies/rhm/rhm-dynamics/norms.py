@@ -38,14 +38,18 @@ def run(a):
     cfg = dict(model='tree', r=a.r, tie='none', perm=None, seed=0, task=a.task, grammar=g, init='identity')
     torch.manual_seed(0)
     model = C.build(cfg)
-    opt = T.make_opt(list(model.parameters()), a.lr)
+    # --amsgrad keeps the running maximum of Adam's second-moment estimate, so the step does not grow back after a
+    # stretch of near-zero gradients (the one change from T.make_opt, to test that account of the loss spikes).
+    opt = (torch.optim.Adam(list(model.parameters()), lr=a.lr, amsgrad=True) if a.amsgrad
+           else T.make_opt(list(model.parameters()), a.lr))
     rules = C.rules(g)
     batch_fn = T.online_batches(cfg, rules, 'cpu', T.ONLINE_SEED + 1000 * g['seed'] + 100 * g['m'] + cfg['seed'])
-    rec = dict(cfg=cfg, lr=a.lr, schedule_total=40_000, step=[], loss=[],
+    rec = dict(cfg=cfg, lr=a.lr, amsgrad=a.amsgrad, schedule_total=40_000, step=[], loss=[],
                act={k: [] for k in LEVELS}, grad={k: [] for k in LEVELS}, upd={k: [] for k in LEVELS},
                param={k: [] for k in LEVELS})
     total = 40_000
-    out = HERE / 'results' / f"norms_{a.task}_g{a.gseed}_r{a.r}_lr{a.lr:.0e}.json".replace('e-0', 'e-')
+    out = HERE / 'results' / (f"norms_{a.task}_g{a.gseed}_r{a.r}_lr{a.lr:.0e}".replace('e-0', 'e-')
+                              + ('_amsgrad' if a.amsgrad else '') + '.json')
     t0 = time.time()
     for step in range(a.steps + 1):
         lr = T.lr_at(step, a.lr, total)
@@ -130,6 +134,7 @@ if __name__ == '__main__':
     p.add_argument('--steps', type=int, default=10_000)
     p.add_argument('--every', type=int, default=10)
     p.add_argument('--threads', type=int, default=2)
+    p.add_argument('--amsgrad', action='store_true')
     p.add_argument('--plot', default=None)
     a = p.parse_args()
     if a.plot:

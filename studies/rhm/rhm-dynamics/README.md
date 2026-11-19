@@ -97,3 +97,7 @@ The exact commands, grid order and rules are in [EXPERIMENT.md](EXPERIMENT.md). 
 The TreeTN with identity init is a working model of the RHM, so the checkpoints here are a reasonable basis for the interpretation analysis and for the follow-up experiments that reuse this training code. At this grammar size width mostly buys speed: r = 8 matches the Bayes error rate on both tasks, though its last-token KL is about twice that of r = 16. The r = 64 instability means later experiments that use wide trees should pilot over the full training length, or at least past update 10,000, rather than 4,000 updates, or use a lower LR for wide trees.
 
 Cost: one RTX A6000 for 4.63 h at $0.69/h, about $3.19, against an 8 h cap and a $9 budget. That covers setup, pilots and training (about 50 minutes), interpretation (3.5 h) and the rerun (about 15 min).
+
+## Follow-up, 2026-11-19: the root task by width
+
+[WIDTH_FOLLOWUP.md](WIDTH_FOLLOWUP.md) reads the saved root runs again, with [figures/root_widths.pdf](figures/root_widths.pdf) separating the update at which a run first reaches 0.9 from how far it falls afterwards and where it ends. It adds the matched-rate comparison with the tied tree of `rhm-controls`, CPU replays of the width-64 run with per-level norms (`norms.py`, `norms_summary.py`), and two proposed runs that have not been launched. Nothing in the verdicts above changes.
