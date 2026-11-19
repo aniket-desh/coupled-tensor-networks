@@ -234,8 +234,70 @@ def stack_beliefs():
               f'max |b - enum| = {err_b:.1e}, max |P(next) - enum| = {err_next:.1e}, {len(trees)} trees')
 
 
+def grammar_rules():
+    """The generator's three structural properties, for the grammars the experiments train on (v16m4s2L4 and
+    v8m2s2L4, n = v, grammar seeds 0-2):
+
+    1. unique parent: at each level the v_l * m productions are distinct s-tuples, so each legal tuple has exactly one
+       parent symbol (and one production index), and `inverse` returns that parent;
+    2. one table per level: in sampled trees, the children at every position p of level l are rules[l][a, k] for the
+       parent a and recorded production k, with the same rules[l] at every p, and `parse` recovers every level;
+    3. uniform productions: for each (level, position, parent symbol), the production index decoded from the observed
+       child pair (not the recorded k) is uniform over the m allowed tuples. Pearson chi-square per cell with m - 1
+       degrees of freedom; the minimum p-value must exceed 1e-3 / (number of cells) (Bonferroni), and the chi-square
+       summed over all cells (df = cells * (m - 1)) must have p > 1e-3. Chi-square survival: Q(df/2, x/2)."""
+    B = 200_000
+    for v, m in ((16, 4), (8, 2)):
+        s, L, n = 2, 4, v
+        for seed in range(3):
+            name = f'v{v}m{m}s{s}L{L} seed {seed}'
+            rules = G.sample_rules(v, n, m, s, L, seed=seed)
+            inv = G.inverse(rules, v)
+            uniq = True
+            for l, R in rules.items():
+                code = (R * v ** torch.arange(s - 1, -1, -1)).sum(-1)  # (k, m) tuple codes
+                k = R.shape[0]
+                uniq &= code.unique().numel() == k * m and bool((R >= 0).all() and (R < v).all())
+                uniq &= bool((inv[l][code] == torch.arange(k)[:, None]).all())  # each tuple maps back to its parent
+                uniq &= int((inv[l] >= 0).sum()) == k * m  # and no other tuple is legal
+            check(f'grammar {name}: each legal pair has a unique parent at its level', uniq)
+
+            tr = G.sample_trees(B, rules, seed=100 + seed)
+            same, chi_tot, df_tot, p_min, cells = True, 0.0, 0, 1.0, 0
+            for l in range(L):
+                a, kr = tr[l], tr[('rule', l)]  # (B, s^l)
+                pairs = tr[l + 1].reshape(B, -1, s)  # (B, s^l, s): children of each node at level l
+                same &= bool((pairs == rules[l][a, kr]).all())  # same table rules[l] at every position
+                # Decode the production index from the observed pair: the unique k with rules[l][a, k] == pair.
+                match = (rules[l][a] == pairs[:, :, None, :]).all(-1)  # (B, s^l, m)
+                same &= bool((match.sum(-1) == 1).all())
+                kd = match.float().argmax(-1)
+                for p in range(a.shape[1]):
+                    cnt = torch.zeros(rules[l].shape[0], m, dtype=torch.float64)
+                    cnt.index_put_((a[:, p], kd[:, p]), torch.ones(B, dtype=torch.float64), accumulate=True)
+                    tot = cnt.sum(1, keepdim=True)
+                    ok_rows = tot[:, 0] > 0
+                    exp = tot / m
+                    chi = ((cnt - exp) ** 2 / exp)[ok_rows].sum(1)  # (parents present,)
+                    pv = torch.special.gammaincc(torch.tensor((m - 1) / 2, dtype=torch.float64), chi / 2)
+                    chi_tot += chi.sum().item()
+                    df_tot += int(ok_rows.sum()) * (m - 1)
+                    p_min = min(p_min, pv.min().item())
+                    cells += int(ok_rows.sum())
+            parsed = G.parse(tr[L], rules, v)
+            same &= all(bool((parsed[l] == tr[l]).all()) for l in range(L + 1))
+            check(f'grammar {name}: one rule table per level, reused at every position; parse recovers every level',
+                  same, f'{B} trees')
+            p_tot = torch.special.gammaincc(torch.tensor(df_tot / 2, dtype=torch.float64),
+                                            torch.tensor(chi_tot / 2, dtype=torch.float64)).item()
+            check(f'grammar {name}: each parent picks uniformly among its {m} allowed pairs',
+                  p_min > 1e-3 / cells and p_tot > 1e-3,
+                  f'{cells} (level, position, parent) cells, min p {p_min:.3g} (Bonferroni bound {1e-3 / cells:.1e}), '
+                  f'pooled chi2 {chi_tot:.0f} on {df_tot} df, p {p_tot:.3g}')
+
+
 if __name__ == '__main__':
-    for f in (tiny_posteriors, stack_beliefs, parse_and_tasks, checkpoints, training_step, freezing, transfer_parts, schedule):
+    for f in (grammar_rules, tiny_posteriors, stack_beliefs, parse_and_tasks, checkpoints, training_step, freezing, transfer_parts, schedule):
         try:
             f()
         except Exception as e:  # a crashing check is a failed check
