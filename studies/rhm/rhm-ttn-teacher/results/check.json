@@ -1,0 +1,98 @@
+{
+ "v3n3m2L3: teacher = e_root on S (parse), = posterior_root on S, = 0 off S, = n m^(2^L-1) P(x, root) on X": {
+  "ok": true,
+  "detail": "max errors 0.0e+00, 0.0e+00, 0.0e+00; |S| = 384, |X| = 6561"
+ },
+ "v3n3m2L3: untied copy of the teacher is the same function": {
+  "ok": true,
+  "detail": ""
+ },
+ "v3n3m2L3: 384 derivations, each of probability 1/(n m^(2^L-1)), map one-to-one onto S": {
+  "ok": true,
+  "detail": "n m^(2^L-1) = 384"
+ },
+ "v3n3m2L3: student (tie=none, r=3): E_derivations 1/2 |T(x) - e_y|^2 = |P_S(T - T*)|_F^2 / (2|S|), loss and gradient": {
+  "ok": true,
+  "detail": "loss 0.788016, |diff| 1.1e-16; grad norm 2.568, max |diff| 5.6e-16 over 261 parameters"
+ },
+ "v3n3m2L3: student (tie=none, r=3): L_X = (|S|/|X|) L_S + sum_(x not in S) |T(x)|^2 / (2|X|), loss and gradient; grad L_X not parallel to grad L_S": {
+  "ok": true,
+  "detail": "L_S 0.78802, L_X 1.1235, off-support share of L_X 0.959, of |grad L_X| 0.986; cos(grad L_X, grad L_S) = 0.839"
+ },
+ "v3n3m2L3: student (tie=level, r=2): E_derivations 1/2 |T(x) - e_y|^2 = |P_S(T - T*)|_F^2 / (2|S|), loss and gradient": {
+  "ok": true,
+  "detail": "loss 0.502395, |diff| 0.0e+00; grad norm 0.07339, max |diff| 2.1e-17 over 34 parameters"
+ },
+ "v3n3m2L3: student (tie=level, r=2): L_X = (|S|/|X|) L_S + sum_(x not in S) |T(x)|^2 / (2|X|), loss and gradient; grad L_X not parallel to grad L_S": {
+  "ok": true,
+  "detail": "L_S 0.5024, L_X 0.031656, off-support share of L_X 0.071, of |grad L_X| 0.948; cos(grad L_X, grad L_S) = 0.993"
+ },
+ "v3n3m2L3: teacher with its 27 forbidden-pair entries filled with N(0, 1) noise: L_S = 0 and grad L_S = 0 exactly, L_X > 0 and grad L_X != 0": {
+  "ok": true,
+  "detail": "L_S 0.0e+00, |grad L_S| 0.0e+00, L_X 3.489, |grad L_X| 38.51; nonzero outputs on 6177 of 6177 off-support strings"
+ },
+ "v3n3m2L3: cross-entropy over derivations = mean KL(p_Bayes || softmax T) on S; at beta * teacher it is log(1 + (n-1) e^-beta), accuracy 1": {
+  "ok": true,
+  "detail": "CE 1.130040, |CE - KL| 0.0e+00; beta = 1, 5, 20 errors 1.1e-16, 1.3e-16, 6.5e-17"
+ },
+ "v4n2m2L2: teacher = e_root on S (parse), = posterior_root on S, = 0 off S, = n m^(2^L-1) P(x, root) on X": {
+  "ok": true,
+  "detail": "max errors 0.0e+00, 0.0e+00, 0.0e+00; |S| = 16, |X| = 256"
+ },
+ "v4n2m2L2: untied copy of the teacher is the same function": {
+  "ok": true,
+  "detail": ""
+ },
+ "v4n2m2L2: 16 derivations, each of probability 1/(n m^(2^L-1)), map one-to-one onto S": {
+  "ok": true,
+  "detail": "n m^(2^L-1) = 16"
+ },
+ "v4n2m2L2: student (tie=none, r=3): E_derivations 1/2 |T(x) - e_y|^2 = |P_S(T - T*)|_F^2 / (2|S|), loss and gradient": {
+  "ok": true,
+  "detail": "loss 5.40729, |diff| 0.0e+00; grad norm 29.51, max |diff| 1.8e-15 over 120 parameters"
+ },
+ "v4n2m2L2: student (tie=none, r=3): L_X = (|S|/|X|) L_S + sum_(x not in S) |T(x)|^2 / (2|X|), loss and gradient; grad L_X not parallel to grad L_S": {
+  "ok": true,
+  "detail": "L_S 5.4073, L_X 2.9463, off-support share of L_X 0.885, of |grad L_X| 0.887; cos(grad L_X, grad L_S) = 0.816"
+ },
+ "v4n2m2L2: student (tie=level, r=2): E_derivations 1/2 |T(x) - e_y|^2 = |P_S(T - T*)|_F^2 / (2|S|), loss and gradient": {
+  "ok": true,
+  "detail": "loss 0.500848, |diff| 0.0e+00; grad norm 0.01905, max |diff| 1.7e-18 over 24 parameters"
+ },
+ "v4n2m2L2: student (tie=level, r=2): L_X = (|S|/|X|) L_S + sum_(x not in S) |T(x)|^2 / (2|X|), loss and gradient; grad L_X not parallel to grad L_S": {
+  "ok": true,
+  "detail": "L_S 0.50085, L_X 0.036475, off-support share of L_X 0.142, of |grad L_X| 0.991; cos(grad L_X, grad L_S) = 0.853"
+ },
+ "v4n2m2L2: teacher with its 56 forbidden-pair entries filled with N(0, 1) noise: L_S = 0 and grad L_S = 0 exactly, L_X > 0 and grad L_X != 0": {
+  "ok": true,
+  "detail": "L_S 0.0e+00, |grad L_S| 0.0e+00, L_X 2.395, |grad L_X| 11.05; nonzero outputs on 240 of 240 off-support strings"
+ },
+ "v4n2m2L2: cross-entropy over derivations = mean KL(p_Bayes || softmax T) on S; at beta * teacher it is log(1 + (n-1) e^-beta), accuracy 1": {
+  "ok": true,
+  "detail": "CE 0.933381, |CE - KL| 0.0e+00; beta = 1, 5, 20 errors 0.0e+00, 1.0e-16, 7.0e-17"
+ },
+ "main grammar seed 0, common.build tie=level, r = 16: teacher = one-hot root on the diagnostic trees, 0 on one-token corruptions that do not parse": {
+  "ok": true,
+  "detail": "20000 trees, 19614 corrupted strings off the support, 16640 parameters"
+ },
+ "main grammar seed 0, common.build tie=none, r = 16: teacher = one-hot root on the diagnostic trees, 0 on one-token corruptions that do not parse": {
+  "ok": true,
+  "detail": "20000 trees, 19614 corrupted strings off the support, 65536 parameters"
+ },
+ "main grammar seed 1, common.build tie=level, r = 16: teacher = one-hot root on the diagnostic trees, 0 on one-token corruptions that do not parse": {
+  "ok": true,
+  "detail": "20000 trees, 19720 corrupted strings off the support, 16640 parameters"
+ },
+ "main grammar seed 1, common.build tie=none, r = 16: teacher = one-hot root on the diagnostic trees, 0 on one-token corruptions that do not parse": {
+  "ok": true,
+  "detail": "20000 trees, 19720 corrupted strings off the support, 65536 parameters"
+ },
+ "main grammar seed 2, common.build tie=level, r = 16: teacher = one-hot root on the diagnostic trees, 0 on one-token corruptions that do not parse": {
+  "ok": true,
+  "detail": "20000 trees, 19670 corrupted strings off the support, 16640 parameters"
+ },
+ "main grammar seed 2, common.build tie=none, r = 16: teacher = one-hot root on the diagnostic trees, 0 on one-token corruptions that do not parse": {
+  "ok": true,
+  "detail": "20000 trees, 19670 corrupted strings off the support, 65536 parameters"
+ }
+}
