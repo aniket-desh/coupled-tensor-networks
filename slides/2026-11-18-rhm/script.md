@@ -32,6 +32,17 @@ Notes on what to say over each slide of `slides.pdf`. The numbers come from the 
 - Left: root accuracy against the size of a fixed training set, three grammars per size. The tree fails at 2^12 = P*
   (median accuracy 0.15, chance is 1/16) and is at 0.9999 by 2^14. So its sample complexity is within a factor of 4
   of P*. The runs that fail fit their training set exactly, so they're short of data, not badly optimized.
+- Why P* is the threshold, if asked. The grammar has 16 · 4^15 ≈ 1.7 × 10^10 distinct sequences, so 4,096 trees
+  can't be memorized and the network has to find the structure. A bottom pair has one parent, but that parent appears
+  in about m possible grandparents, and so on up, so what the pair says about the class is averaged over about m^L
+  random paths spread across n classes. That correlation scales like 1/√(n m^L), and the noise in estimating it from
+  P samples scales like 1/√P, so it becomes visible at P ≈ n m^L (Cagnetta et al.).
+- Once the correlation is visible, the 4 productions of a symbol show the same statistics against the label and can
+  be merged as synonyms. For the tree, that means the bottom fusion core sends them to the same bond vector. What's
+  left is a depth-3 RHM that needs only about n m^(L−1) samples, so the bottom level is the expensive one and P* marks
+  where learning happens overall.
+- If pushed: one (m, L) and three grammars show the tree's sample complexity is of the same order as P*. They don't
+  test the m^L scaling, which needs a sweep over m or L.
 - Right: four architectures on fresh data. The tree and the tied tree (one shared core per level, a quarter of the
   parameters) reach accuracy 1 within a few hundred updates. The same tree with permuted leaves levels off at 0.60 to
   0.72, and a parameter-matched chain is still climbing at 0.82 to 0.95 after 40,000 updates.
