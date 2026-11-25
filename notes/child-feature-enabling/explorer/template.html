@@ -1,0 +1,393 @@
+<title>Child Feature Explorer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+/* Layout: one reading column; each of the two tools is a controls rail beside its chart, stacked on a phone. */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --ink: #14181e; --ink2: #586170; --rule: #dde2e8; --grid: #e9edf1;
+  --intact: #2468c4; --detached: #cf4f1b; --left: #12865d; --right: #7b55c7; --pick: #eaf1fb;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --text: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141a; --surface: #181d25; --ink: #e7ebf0; --ink2: #9aa4b2; --rule: #2a313b; --grid: #222932;
+    --intact: #6ea8f2; --detached: #f08a5d; --left: #4fc79c; --right: #b79cf2; --pick: #1f2a3a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141a; --surface: #181d25; --ink: #e7ebf0; --ink2: #9aa4b2; --rule: #2a313b; --grid: #222932;
+  --intact: #6ea8f2; --detached: #f08a5d; --left: #4fc79c; --right: #b79cf2; --pick: #1f2a3a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--text); font-size: 15px; line-height: 1.5; }
+.page { max-width: 1060px; margin: 0 auto; padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 36px; }
+h1, h2 { font-family: var(--display); font-weight: 500; text-wrap: balance; margin: 0; }
+h1 { font-size: 2rem; line-height: 1.15; }
+h2 { font-size: 1.45rem; line-height: 1.2; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--ink2); margin-top: 8px; }
+section { display: flex; flex-direction: column; gap: 14px; }
+.tool { display: grid; grid-template-columns: minmax(230px, 290px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 760px) { .tool { grid-template-columns: minmax(0, 1fr); } }
+.rail { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); }
+.label .plain { text-transform: none; letter-spacing: 0; font-size: 0.86rem; color: var(--ink); }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.seg button { flex: 1 1 0; min-width: 0; padding: 7px 8px; border: 0; background: transparent; color: var(--ink2);
+  font: inherit; font-size: 0.88rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+button:focus-visible, input:focus-visible, tr:focus-visible { outline: 2px solid var(--intact); outline-offset: 2px; }
+input[type="range"] { width: 100%; accent-color: var(--intact); }
+.num { font-family: var(--data); font-variant-numeric: tabular-nums; }
+dl { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 12px; font-size: 0.9rem; }
+dt { color: var(--ink2); min-width: 0; }
+dd { margin: 0; text-align: right; font-family: var(--data); font-variant-numeric: tabular-nums; }
+.note { font-size: 0.85rem; color: var(--ink2); }
+.plot { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 10px 4px; min-width: 0; }
+.plot + .plot { margin-top: 14px; }
+.plot h3 { margin: 0 0 2px 4px; font: 500 0.9rem var(--text); }
+svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--data); font-size: 11px; fill: var(--ink2); }
+svg .axis { stroke: var(--ink2); stroke-width: 1; fill: none; }
+svg .grid { stroke: var(--grid); stroke-width: 1; fill: none; }
+svg .ref { stroke: var(--ink2); stroke-width: 1; stroke-dasharray: 2 4; fill: none; }
+svg .line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+svg .thin { stroke-width: 1.3; }
+svg .dash { stroke-dasharray: 6 4; }
+svg .faint { opacity: 0.35; }
+.c-intact { stroke: var(--intact); } .c-detached { stroke: var(--detached); }
+.c-left { stroke: var(--left); } .c-right { stroke: var(--right); } .c-ink { stroke: var(--ink); }
+.f-intact { fill: var(--intact); } .f-detached { fill: var(--detached); } .f-left { fill: var(--left); }
+.f-right { fill: var(--right); } .f-ink { fill: var(--ink); }
+svg text.f-intact, svg text.f-detached, svg text.f-left, svg text.f-right, svg text.f-ink { font-weight: 500; }
+svg text.f-intact { fill: var(--intact); } svg text.f-detached { fill: var(--detached); }
+svg text.f-left { fill: var(--left); } svg text.f-right { fill: var(--right); } svg text.f-ink { fill: var(--ink); }
+.key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.82rem; color: var(--ink2); padding: 0 4px 6px; }
+.key > span { display: inline-flex; align-items: center; gap: 6px; }
+.key i { display: inline-block; width: 22px; border-top: 2px solid var(--ink2); }
+.key i.d { border-top-style: dashed; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+th, td { padding: 6px 8px; text-align: right; white-space: nowrap; }
+th { font-weight: 500; color: var(--ink2); font-size: 0.74rem; letter-spacing: 0.05em; text-transform: uppercase;
+  border-bottom: 1px solid var(--rule); }
+th:first-child, td:first-child { text-align: left; }
+td { font-family: var(--data); font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--grid); }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--pick); }
+tbody tr[aria-selected="true"] { background: var(--pick); box-shadow: inset 3px 0 0 var(--intact); }
+tbody tr:last-child td { border-bottom: 0; }
+.swatch { color: var(--intact); font-weight: 600; } .swatch.d { color: var(--detached); }
+footer { font-size: 0.85rem; color: var(--ink2); border-top: 1px solid var(--rule); padding-top: 14px; }
+</style>
+
+<div class="page">
+  <header>
+    <h1>Does an easy root contrast teach the feature a hard one needs?</h1>
+    <p class="lede">Two tools for the child-feature-enabling study on tree tensor networks. The first integrates the planted
+      model's gradient flow in your browser. The second replays the saved depth-four runs in which the easy head's
+      gradient into the lower cores was cut.</p>
+  </header>
+
+  <section aria-labelledby="planted-h">
+    <h2 id="planted-h">Planted model: one sign per child, a root that needs their product</h2>
+    <p>The left child hides a sign <span class="num">U</span> and the right child a sign <span class="num">V</span>. The
+      easy target is <span class="num">U</span> and the hard target is <span class="num">UV</span>. Each child table starts
+      with alignment <span class="num">δ</span> to its sign. The ceiling <span class="num">A<sub>h</sub> =
+      r<sub>L</sub>²r<sub>R</sub>²</span> is the most a refitted root could explain with the children frozen, and
+      <span class="num">D<sub>h</sub></span> is what the trained root explains.</p>
+    <div class="tool">
+      <div class="rail">
+        <div class="field">
+          <label class="label" for="delta">Initial alignment <span class="plain">δ = <span class="num" id="delta-val"></span></span></label>
+          <input type="range" id="delta" min="-2.5" max="-0.7" step="0.01" value="-1.7">
+        </div>
+        <div class="field">
+          <span class="label" id="tie-l">Child tables</span>
+          <div class="seg" role="group" aria-labelledby="tie-l" id="tie">
+            <button type="button" data-v="tied">tied</button><button type="button" data-v="untied">untied</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="easy-l">Easy target U</span>
+          <div class="seg" role="group" aria-labelledby="easy-l" id="easy">
+            <button type="button" data-v="1">trained (s = 1)</button><button type="button" data-v="0">absent (s = 0)</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="axis-l">Time axis</span>
+          <div class="seg" role="group" aria-labelledby="axis-l" id="axis">
+            <button type="button" data-v="linear">linear</button><button type="button" data-v="log">log</button>
+          </div>
+        </div>
+        <dl id="planted-out"></dl>
+        <p class="note" id="planted-law"></p>
+      </div>
+      <div>
+        <div class="plot">
+          <h3>Trajectory at this setting</h3>
+          <div class="key">
+            <span><i style="border-color: var(--intact)"></i><span>trained fit D<sub>h</sub></span></span>
+            <span><i class="d" style="border-color: var(--intact)"></i><span>ceiling A<sub>h</sub></span></span>
+            <span><i style="border-color: var(--left)"></i><span>left alignment r<sub>L</sub></span></span>
+            <span><i style="border-color: var(--right)"></i><span>right alignment r<sub>R</sub></span></span>
+          </div>
+          <svg id="traj" role="img" aria-label="Alignments, ceiling and trained hard fit against gradient-flow time"></svg>
+        </div>
+        <div class="plot">
+          <h3>Half-fit time of the hard target against δ, all four arms</h3>
+          <svg id="sweep" role="img" aria-label="Half-fit time against initial alignment for the four arms"></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="iv-h">
+    <h2 id="iv-h">Depth-four grammars: cutting the easy head's gradient</h2>
+    <p>Two heads read the same product features of a 16-leaf tree and fit two contrasts of the root label: the one an
+      additive function of the true child symbols explains best (easy) and the one it explains worst (hard). In the
+      <span class="swatch">intact</span> arm both errors train the lower cores. In the
+      <span class="swatch d">detached</span> arm the easy head still trains, but its error no longer reaches the lower
+      cores. Both arms of a pair share their starting weights and their batches.</p>
+    <div class="tool">
+      <div class="rail">
+        <div class="field">
+          <span class="label" id="proto-l">Protocol</span>
+          <div class="seg" role="group" aria-labelledby="proto-l" id="proto"></div>
+        </div>
+        <div class="field">
+          <span class="label" id="contrast-l">Contrast shown</span>
+          <div class="seg" role="group" aria-labelledby="contrast-l" id="contrast">
+            <button type="button" data-v="h">hard</button><button type="button" data-v="e">easy</button>
+          </div>
+        </div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>pair</th><th>intact</th><th>detached</th><th>ratio</th></tr></thead>
+            <tbody id="pairs"></tbody>
+          </table>
+        </div>
+        <p class="note" id="iv-note"></p>
+      </div>
+      <div>
+        <div class="plot">
+          <h3 id="iv-title"></h3>
+          <div class="key">
+            <span><i style="border-color: var(--intact)"></i><span>intact, trained fit</span></span>
+            <span><i class="d" style="border-color: var(--intact)"></i><span>intact, ceiling</span></span>
+            <span><i style="border-color: var(--detached)"></i><span>detached, trained fit</span></span>
+            <span><i class="d" style="border-color: var(--detached)"></i><span>detached, ceiling</span></span>
+          </div>
+          <svg id="iv" role="img" aria-label="Trained fit and frozen-child ceiling of both arms against SGD updates"></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Planted curves are computed here from the reduced equations of the theory note; their half-fit times agree with
+      the saved Radau integration to better than one part in 10⁹. Depth-four curves are the saved exact population fits, every
+      second evaluation. Source, protocol and limits: <span class="num">studies/rhm/child_feature_enabling/README.md</span>
+      on the branch <span class="num">codex/child-feature-enabling</span>.</p>
+  </footer>
+</div>
+
+<script>
+/*__PLANTED_JS__*/
+</script>
+<script>
+const DATA = /*__DATA_JSON__*/;
+
+// ------------------------------------------------------------------------------------------------ small helpers
+const $ = (id) => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, text) => {
+  const node = document.createElementNS(NS, tag);
+  for (const k in attrs) node.setAttribute(k, attrs[k]);
+  if (text !== undefined) node.textContent = text;
+  return node;
+};
+const fmt = (x, digits) => (x === null || x === undefined) ? 'not reached'
+  : x.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+
+function segmented(id, value, onChange) {
+  const buttons = [...$(id).querySelectorAll('button')];
+  const set = (v) => buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  buttons.forEach((b) => b.addEventListener('click', () => { set(b.dataset.v); onChange(b.dataset.v); }));
+  set(value);
+}
+
+function niceTicks(lo, hi, n) {
+  const span = hi - lo, raw = span / n, mag = 10 ** Math.floor(Math.log10(raw));
+  const stepSize = [1, 2, 5, 10].map((m) => m * mag).find((s) => span / s <= n) || 10 * mag;
+  const out = [];
+  for (let v = Math.ceil(lo / stepSize - 1e-9) * stepSize; v <= hi + 1e-9 * span; v += stepSize) out.push(v);
+  return out;
+}
+const logTicks = (lo, hi) => {
+  const out = [];
+  for (let e = Math.ceil(Math.log10(lo) - 1e-9); e <= Math.floor(Math.log10(hi) + 1e-9); e++) out.push(10 ** e);
+  return out;
+};
+const tickLabel = (v, log) => {
+  if (v === 0) return '0';
+  const a = Math.abs(v);
+  if (a < 1e-4 || (log && a >= 1e4)) return v.toExponential(0).replace('e+', 'e');
+  return a >= 1e3 ? Math.round(v).toLocaleString('en-US') : String(+v.toPrecision(4));
+};
+
+// Draw a line chart into an svg sized to its container, so text stays 11px at every width.
+function chart(svg, o) {
+  const W = Math.max(280, svg.parentNode.clientWidth - 20), Ht = Math.round(Math.min(340, Math.max(220, W * 0.52)));
+  const m = { l: 68, r: o.rightPad || 24, t: 10, b: 38 };
+  svg.setAttribute('viewBox', `0 0 ${W} ${Ht}`);
+  svg.replaceChildren();
+  const tx = o.xlog ? Math.log10 : (v) => v, ty = o.ylog ? Math.log10 : (v) => v;
+  const x = (v) => m.l + (tx(v) - tx(o.xlim[0])) / (tx(o.xlim[1]) - tx(o.xlim[0])) * (W - m.l - m.r);
+  const y = (v) => Ht - m.b - (ty(v) - ty(o.ylim[0])) / (ty(o.ylim[1]) - ty(o.ylim[0])) * (Ht - m.t - m.b);
+  for (const v of (o.ylog ? logTicks(...o.ylim) : niceTicks(o.ylim[0], o.ylim[1], 5))) {
+    svg.append(el('line', { class: 'grid', x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }));
+    svg.append(el('text', { x: m.l - 6, y: y(v) + 4, 'text-anchor': 'end' }, tickLabel(v, o.ylog)));
+  }
+  for (const v of (o.xlog ? logTicks(...o.xlim) : niceTicks(o.xlim[0], o.xlim[1], W < 420 ? 4 : 7))) {
+    svg.append(el('line', { class: 'axis', x1: x(v), x2: x(v), y1: Ht - m.b, y2: Ht - m.b + 4 }));
+    svg.append(el('text', { x: x(v), y: Ht - m.b + 16, 'text-anchor': 'middle' }, tickLabel(v, o.xlog)));
+  }
+  svg.append(el('line', { class: 'axis', x1: m.l, x2: W - m.r, y1: Ht - m.b, y2: Ht - m.b }));
+  svg.append(el('text', { x: (m.l + W - m.r) / 2, y: Ht - 5, 'text-anchor': 'middle' }, o.xlabel));
+  svg.append(el('text', { x: 11, y: (Ht - m.b + m.t) / 2, 'text-anchor': 'middle',
+                          transform: `rotate(-90 11 ${(Ht - m.b + m.t) / 2})` }, o.ylabel));
+  for (const h of (o.hlines || [])) svg.append(el('line', { class: 'ref', x1: m.l, x2: W - m.r, y1: y(h), y2: y(h) }));
+  const inside = (p) => p[0] >= o.xlim[0] && p[0] <= o.xlim[1] && isFinite(p[1]);
+  for (const s of o.series) {
+    const pts = s.pts.filter(inside).map((p) => `${x(p[0]).toFixed(1)},${y(Math.min(Math.max(p[1], o.ylim[0]), o.ylim[1])).toFixed(1)}`);
+    if (pts.length > 1) svg.append(el('polyline', { class: 'line ' + s.cls, points: pts.join(' ') }));
+    if (s.label && pts.length) {  // direct label at the left end of the line, where the arms are furthest apart
+      const first = s.pts.filter(inside)[0];
+      svg.append(el('text', { class: s.labelCls || '', x: x(first[0]) + 6,
+                              y: y(Math.min(Math.max(first[1], o.ylim[0]), o.ylim[1])) + (s.dy || -6) }, s.label));
+    }
+  }
+  for (const mk of (o.marks || [])) {
+    if (mk.x === null || mk.x < o.xlim[0] || mk.x > o.xlim[1]) continue;
+    if (mk.y === undefined) {
+      svg.append(el('line', { class: 'line thin ' + mk.cls, x1: x(mk.x), x2: x(mk.x), y1: Ht - m.b, y2: Ht - m.b - 9 }));
+    } else {
+      svg.append(el('circle', { class: mk.fill, cx: x(mk.x), cy: y(Math.min(Math.max(mk.y, o.ylim[0]), o.ylim[1])), r: 4 }));
+    }
+  }
+}
+
+// ------------------------------------------------------------------------------------------------ planted model
+const P = { tied: 'untied', s: '1', axis: 'linear', delta: 10 ** -1.7 };
+const ARMS = [
+  { tied: true, s: 1, label: 'tied, both', cls: 'c-intact', lab: 'f-intact' },
+  { tied: false, s: 1, label: 'untied, both', cls: 'c-left', lab: 'f-left' },
+  { tied: true, s: 0, label: 'tied, hard only', cls: 'c-detached', lab: 'f-detached' },
+  { tied: false, s: 0, label: 'untied, hard only', cls: 'c-right', lab: 'f-right' },
+];
+const SWEEP = [];
+for (let e = -2.5; e <= -0.699; e += 0.075) SWEEP.push(10 ** e);
+let sweepCache = null;
+
+function drawPlanted() {
+  const tied = P.tied === 'tied', s = Number(P.s);
+  $('delta-val').textContent = P.delta.toPrecision(3);
+  const run = integrate(tied, s, P.delta);
+  const ev = run.events;
+  const wait = (ev.hard !== null && ev.left !== null) ? ev.hard - ev.left : null;
+  const rows = [['r<sub>L</sub> reaches 1/2', fmt(ev.left, 2)], ['r<sub>R</sub> reaches 1/2', fmt(ev.right, 2)],
+                ['D<sub>h</sub> reaches 1/2', fmt(ev.hard, 2)], ['wait from r<sub>L</sub> to D<sub>h</sub>', fmt(wait, 2)]];
+  const lead = law(tied, s, P.delta);
+  rows.push(['leading terms of the law', fmt(lead, 2)]);
+  rows.push(['remainder', ev.hard === null ? 'n/a' : fmt(ev.hard - lead, 2)]);
+  $('planted-out').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  const L = 'log(1/δ)';
+  const text = s === 1
+    ? (tied ? `Law: T = ${L}/λ₁ + O(1), with λ₁ = ${LAMBDA_1.toFixed(3)}. The shared table hands the right child the feature the easy target taught the left one, so the wait stays bounded as δ shrinks.`
+            : `Law: T = (1/λ₁ + 1/λ₂)·${L} + O(1), with λ₂ = ${LAMBDA_2.toFixed(3)}. The right table is still at alignment of order δ when the left one has learned, and escapes at rate λ₂, so the wait grows as ${L}/λ₂.`)
+    : (tied ? `Law: T = 1/(4δ²) + (5/2)·${L} + O(1). With no easy target the only signal is second order in the alignment.`
+            : `Law: T = 1/(2δ²) + 3·${L} + O(1). Each table now sees half the signal a tied one would.`);
+  $('planted-law').textContent = text;
+
+  const tMax = run.tFinal, tMin = Math.max(1e-2, Math.min(1, tMax / 1e4));
+  const col = (k) => run.path.map((p) => [P.axis === 'log' ? Math.max(p[0], tMin) : p[0], p[k]]);
+  const series = [{ pts: col(1), cls: 'c-left thin' }];
+  if (!tied) series.push({ pts: col(2), cls: 'c-right thin' });
+  series.push({ pts: col(4), cls: 'c-intact dash thin' }, { pts: col(3), cls: 'c-intact' });
+  chart($('traj'), { series, xlim: [P.axis === 'log' ? tMin : 0, tMax], ylim: [0, 1.02], xlog: P.axis === 'log',
+    xlabel: 'gradient-flow time t', ylabel: 'alignment, fraction of variance', hlines: [0.5],
+    marks: [{ x: ev.left, cls: 'c-left' }, { x: tied ? null : ev.right, cls: 'c-right' }, { x: ev.hard, cls: 'c-intact' }] });
+
+  if (!sweepCache) sweepCache = ARMS.map((a) => SWEEP.map((d) => [d, integrate(a.tied, a.s, d, { keep: false }).events.hard]));
+  const current = ARMS.findIndex((a) => a.tied === tied && a.s === s);
+  chart($('sweep'), {
+    series: ARMS.map((a, i) => ({ pts: sweepCache[i], cls: a.cls + (i === current ? '' : ' thin faint'), label: a.label,
+                                  labelCls: a.lab, dy: [14, -6, 14, -6][i] })),
+    xlim: [SWEEP[0], 0.2], ylim: [1, 1e5], xlog: true, ylog: true, xlabel: 'initial alignment δ',
+    ylabel: 'half-fit time', marks: [{ x: P.delta, y: ev.hard === null ? 1e5 : ev.hard, fill: 'f-ink' }],
+  });
+}
+
+// --------------------------------------------------------------------------------------- depth-four intervention
+const I = { proto: DATA.protocols[0].key, contrast: 'h', pair: 0 };
+const proto = () => DATA.protocols.find((p) => p.key === I.proto);
+
+function drawIntervention() {
+  const pr = proto();
+  I.pair = Math.min(I.pair, pr.pairs.length - 1);
+  $('pairs').innerHTML = pr.pairs.map((p, i) => {
+    const t = (a) => p[a].T === null ? `&gt; ${fmt(p[a].last, 0)}` : fmt(p[a].T, 0);
+    const ratio = (p.intact.T && p.detached.T) ? (p.detached.T / p.intact.T).toFixed(2) : 'n/a';
+    return `<tr tabindex="0" data-i="${i}" aria-selected="${i === I.pair}"><td>g${p.g} s${p.s}</td>` +
+           `<td>${t('intact')}</td><td>${t('detached')}</td><td>${ratio}</td></tr>`;
+  }).join('');
+  [...$('pairs').children].forEach((tr) => {
+    const pick = () => { I.pair = Number(tr.dataset.i); drawIntervention(); };
+    tr.addEventListener('click', pick);
+    tr.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  });
+  $('iv-note').textContent = pr.note + ' Rows are pairs: g is the grammar and s the init seed. Entries are the first ' +
+    'evaluation (every 25 updates) at which the trained hard fit is at least 1/2; pick a row to plot it.';
+  const p = pr.pairs[I.pair], k = I.contrast;
+  $('iv-title').textContent = `${k === 'h' ? 'Hard' : 'Easy'} contrast, grammar ${p.g}, init seed ${p.s}, SGD rate ${pr.lr}`;
+  const series = [], marks = [];
+  let top = 0;
+  for (const arm of ['intact', 'detached']) {
+    const a = p[arm], cls = 'c-' + arm;
+    series.push({ pts: a.step.map((st, i) => [st, a['A_' + k][i]]), cls: cls + ' dash thin' });
+    series.push({ pts: a.step.map((st, i) => [st, a['D_' + k][i]]), cls });
+    top = Math.max(top, ...a['A_' + k]);
+    if (k === 'h') marks.push({ x: a.T, cls });
+  }
+  const xmax = Math.max(...pr.pairs.map((q) => Math.max(q.intact.last, q.detached.last)));
+  const full = top > 0.2;
+  chart($('iv'), { series, marks, xlim: [0, xmax], ylim: [0, full ? 1.02 : top * 1.25], hlines: full ? [0.5] : [],
+    xlabel: 'SGD update', ylabel: 'fraction of variance' });
+}
+
+// ------------------------------------------------------------------------------------------------------- wiring
+function start() {
+  segmented('tie', P.tied, (v) => { P.tied = v; drawPlanted(); });
+  segmented('easy', P.s, (v) => { P.s = v; drawPlanted(); });
+  segmented('axis', P.axis, (v) => { P.axis = v; drawPlanted(); });
+  $('delta').addEventListener('input', (e) => { P.delta = 10 ** Number(e.target.value); drawPlanted(); });
+  $('proto').innerHTML = DATA.protocols.map((p) => `<button type="button" data-v="${p.key}">${p.label}</button>`).join('');
+  segmented('proto', I.proto, (v) => { I.proto = v; I.pair = 0; drawIntervention(); });
+  segmented('contrast', I.contrast, (v) => { I.contrast = v; drawIntervention(); });
+  drawPlanted();
+  drawIntervention();
+  let pending = 0;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(pending);
+    pending = requestAnimationFrame(() => { drawPlanted(); drawIntervention(); });
+  });
+}
+start();
+</script>
