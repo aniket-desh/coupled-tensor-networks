@@ -113,6 +113,11 @@ def intervention(folder):
                             final_A_e=cols['A_e'][-1], max_D_h=max(cols['D_h']),
                             max_D_minus_A=p['arms'][arm]['max_D_minus_A'], final_lower_shift=cols['lower_shift'][-1],
                             last_step=cols['step'][-1])
+            if not cross['censored']:  # state of the arm at its own half-fit evaluation
+                k = cols['step'].index(cross['T'])
+                row[arm]['at_T'] = dict(A_h=cols['A_h'][k], A_e=cols['A_e'][k], D_e=cols['D_e'][k],
+                                        lower_shift=cols['lower_shift'][k])
+            row[arm]['max_ceiling_gap'] = max(a - d for a, d in zip(cols['A_h'], cols['D_h']))
             # the largest single-evaluation fall of the trained hard fit: an instability shows up here
             row[arm]['largest_drop_D_h'] = float(-np.diff(cols['D_h']).min())
         a, b = row['intact'], row['detached']
@@ -147,6 +152,12 @@ def intervention(folder):
         if lags:
             out[f'ceiling_to_fit_lag_{arm}'] = dict(n=len(lags), median=statistics.median(lags), min=min(lags),
                                                     max=max(lags))
+    for arm in ARMS:
+        at = [r[arm]['at_T'] for r in rows if 'at_T' in r[arm]]
+        if at:
+            out[f'at_T_{arm}'] = {k: dict(n=len(at), median=statistics.median(x[k] for x in at),
+                                          min=min(x[k] for x in at), max=max(x[k] for x in at)) for k in at[0]}
+    out['max_ceiling_gap'] = {arm: max(r[arm]['max_ceiling_gap'] for r in rows) for arm in ARMS}
     out['max_D_minus_A'] = max(r[arm]['max_D_minus_A'] for r in rows for arm in ARMS)
     out['largest_drop_D_h'] = {arm: max(r[arm]['largest_drop_D_h'] for r in rows) for arm in ARMS}
     out['final_D_h_range'] = {arm: [min(r[arm]['final_D_h'] for r in rows), max(r[arm]['final_D_h'] for r in rows)]
@@ -156,7 +167,8 @@ def intervention(folder):
     out['final_A_e_range'] = {arm: [min(r[arm]['final_A_e'] for r in rows), max(r[arm]['final_A_e'] for r in rows)]
                               for arm in ARMS}
     for key in ('censored', 'nonfinite', 'intact_first', 'detached_first', 'capped_difference', 'ratio', 'T_intact',
-                'T_detached', 'ceiling_to_fit_lag_intact', 'ceiling_to_fit_lag_detached', 'max_D_minus_A',
+                'T_detached', 'ceiling_to_fit_lag_intact', 'ceiling_to_fit_lag_detached', 'at_T_intact', 'at_T_detached', 'max_ceiling_gap',
+                'max_D_minus_A',
                 'largest_drop_D_h', 'final_D_h_range', 'final_A_h_range', 'final_A_e_range', 'commits', 'uncommitted'):
         if key in out:
             print(f'{key}: {out[key]}')

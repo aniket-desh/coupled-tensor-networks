@@ -288,12 +288,48 @@ def intervention(folder, out, fit_ylim=(-0.03, 1.03)):
     save(fig, FIG / out)
 
 
+def ceilings(folder, out):
+    """Two parametric views of the same runs. (a) Trained hard fit against its frozen-child ceiling: points on the
+    diagonal mean the head has already fitted what the current children allow. (b) The path through the two ceilings
+    (A_e, A_h): which contrast becomes linearly available first in each arm, with the CE/Adam checkpoints of the
+    original classifiers on the same axes."""
+    pairs = load_pairs(folder)
+    if not pairs:
+        return
+    fig, (fit_ax, path_ax) = plt.subplots(1, 2, figsize=(6.6, 3.2), layout='constrained')
+    for ax in (fit_ax, path_ax):
+        ax.plot([0, 1], [0, 1], color=INK2, lw=0.6, ls=(0, (1, 2)))
+        ax.set(xlim=(-0.02, 1.02), ylim=(-0.02, 1.02), aspect='equal')
+    for pair in pairs.values():
+        for arm, color in ARM_COLORS.items():
+            cols = pair['arms'][arm]['columns']
+            fit_ax.plot(cols['A_h'], cols['D_h'], color=color, lw=0.7, alpha=0.8)
+            path_ax.plot(cols['A_e'], cols['A_h'], color=color, lw=0.7, alpha=0.8)
+    handles = [Line2D([], [], color=c, lw=1.2, label=f'{arm} ({len(pairs)} pairs)') for arm, c in ARM_COLORS.items()]
+    saved = load('results/checkpoints/checkpoints.json')
+    if saved is not None:
+        rows = [r for r in saved['rows'] if r['status'] == 'ok' and r['step'] <= 300]
+        path_ax.plot([r['A_e'] for r in rows], [r['A_h'] for r in rows], ls='none', marker='x', ms=4, mew=0.9,
+                     color=INK, zorder=4)
+        handles.append(Line2D([], [], color=INK, ls='none', marker='x', ms=4,
+                              label='CE/Adam checkpoints,\nupdates 0 to 300'))
+    fit_ax.set(xlabel='Frozen-child ceiling $A_h$', ylabel='Trained hard fit $D_h$')
+    fit_ax.annotate('head has fitted all\nthe children allow', (0.55, 0.55), xytext=(0.14, 0.8), fontsize=7,
+                    color=INK2, arrowprops=dict(arrowstyle='-', color=INK2, lw=0.5))
+    path_ax.set(xlabel='Easy ceiling $A_e$', ylabel='Hard ceiling $A_h$')
+    path_ax.legend(handles=handles, loc='lower right', fontsize=7)
+    fit_ax.set_title(r'$\mathbf{a}$  Trained fit against its ceiling', loc='left', fontsize=8)
+    path_ax.set_title(r'$\mathbf{b}$  Which contrast the children expose first', loc='left', fontsize=8)
+    save(fig, FIG / out)
+
+
 def main():
     theory()
     planted()
     checkpoints()
     intervention('results/intervention', 'intervention-as-written.pdf', fit_ylim=None)
     intervention('results/intervention-extended', 'intervention-extended.pdf')
+    ceilings('results/intervention-extended', 'intervention-ceilings.pdf')
     intervention('results/intervention-extended-lr0.1', 'intervention-extended-lr0.1.pdf')
 
 
