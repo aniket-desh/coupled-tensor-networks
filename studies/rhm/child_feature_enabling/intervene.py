@@ -119,8 +119,10 @@ def evaluate(model, heads, rules, c, start):
     return row
 
 
-def run_pair(g, i, lr, steps, runs, seed=None, save_dir=None):
-    """Train both arms on one batch stream. Returns the per-evaluation rows of each arm and the pair's record."""
+def run_pair(g, i, lr, steps, runs, seed=None, save_dir=None, stop_fit=None):
+    """Train both arms on one batch stream. Returns the per-evaluation rows of each arm and the pair's record.
+    With stop_fit, the pair ends at the first evaluation where both arms have D_h >= stop_fit (a level above the
+    endpoint's 1/2, so both half-fit times are already determined); otherwise it runs all `steps` updates."""
     t0 = time.time()
     gcfg = dict(common.GRAMMAR, seed=g)
     rules = common.rules(gcfg)
@@ -132,7 +134,7 @@ def run_pair(g, i, lr, steps, runs, seed=None, save_dir=None):
     seed = data_seed(g, i) if seed is None else seed
     gen = torch.Generator().manual_seed(seed)
     rows = {arm: [] for arm in ARMS}
-    status = 'finished'
+    status, last = 'finished', steps
     for step in range(steps + 1):
         batch = None
         if step < steps:  # one batch per update, drawn once and given to both arms
@@ -147,7 +149,10 @@ def run_pair(g, i, lr, steps, runs, seed=None, save_dir=None):
                                grad_cos=(ge @ gh / (ge.norm() * gh.norm())).item())
                 rows[arm].append(row)
             if not all(math.isfinite(rows[arm][-1]['pop_loss']) for arm in ARMS):
-                status = 'nonfinite'
+                status, last = 'nonfinite', step
+                break
+            if stop_fit is not None and all(rows[arm][-1]['D_h'] >= stop_fit for arm in ARMS):
+                last = step
                 break
             if step % (20 * EVAL) == 0:
                 print(f'g{g} s{i} lr {lr:g} step {step:>6}  ' + '  '.join(
@@ -156,8 +161,9 @@ def run_pair(g, i, lr, steps, runs, seed=None, save_dir=None):
         if batch is not None:
             for arm in ARMS:
                 sgd_step(models[arm], heads[arm], *batch, c, lr, detach_easy=(arm == 'detached'))
-    out = dict(grammar=g, seed=i, lr=lr, steps=steps, batch=BATCH, eval_every=EVAL, data_seed=seed, status=status,
-               init=source, contrasts=spec, seconds=time.time() - t0, arms={})
+    out = dict(grammar=g, seed=i, lr=lr, steps=steps, steps_done=last, stop_fit=stop_fit, batch=BATCH,
+               eval_every=EVAL, data_seed=seed, status=status, init=source, contrasts=spec,
+               seconds=time.time() - t0, arms={})
     for arm in ARMS:
         cols = {k: [row.get(k) for row in rows[arm]] for k in rows[arm][0]}
         slack = max(d - a for d, a in zip(cols['D_h'] + cols['D_e'], cols['A_h'] + cols['A_e']))
@@ -167,7 +173,7 @@ def run_pair(g, i, lr, steps, runs, seed=None, save_dir=None):
             path = Path(save_dir) / f'g{g}_s{i}_{arm}_final.pt'
             path.parent.mkdir(parents=True, exist_ok=True)
             torch.save(dict(lower=[p.detach() for p in lower(models[arm])],
-                            heads=[w.detach() for w in heads[arm]], step=steps, lr=lr), path)
+                            heads=[w.detach() for w in heads[arm]], step=last, lr=lr), path)
             out['arms'][arm]['final_state'] = dict(file=str(path), sha256=record.sha256(path))
     return out
 
@@ -230,6 +236,7 @@ def check():
 def pilot(a, out):
     """Grammar 0, init seed 9, 300 updates per rate. Eligible: finite, both arms' population loss < 10 at every
     evaluation. Choice: smallest mean final hard MSE (1 - D_h) over the two arms, ties toward the smaller rate."""
+    meta = record.provenance(__file__, population.__file__)
     results = []
     for lr in a.rates:
         pair = run_pair(0, PILOT_SEED, lr, a.pilot_steps, None)
@@ -242,7 +249,7 @@ def pilot(a, out):
               flush=True)
     ok = [r for r in results if r['eligible']]
     choice = min(ok, key=lambda r: (r['mean_final_hard_mse'], r['lr']))['lr'] if ok else None
-    record.dump(out / 'pilot.json', dict(meta=record.provenance(__file__, population.__file__), rates=list(a.rates),
+    record.dump(out / 'pilot.json', dict(meta=meta, rates=list(a.rates),
                                          steps=a.pilot_steps, seed=PILOT_SEED, grammar=0, loss_cap=LOSS_CAP,
                                          choice=choice, results=results), indent=None)
     if choice is None:
@@ -262,10 +269,12 @@ def main():
     parser.add_argument('--rates', type=float, nargs='+', default=RATES)
     parser.add_argument('--pilot-steps', type=int, default=PILOT_STEPS)
     parser.add_argument('--lr', type=float, help='override the pilot choice (recorded)')
+    parser.add_argument('--stop-fit', type=float, help='end a pair once both arms have D_h at or above this level')
     parser.add_argument('--threads', type=int, default=1)
     a = parser.parse_args()
     torch.set_num_threads(a.threads)
     out = Path(a.out)
+    meta = record.provenance(__file__, population.__file__)
     states = a.states or f'runs/child-feature-enabling/{out.name}'
     if a.check:
         check()
@@ -274,8 +283,8 @@ def main():
     for pair in a.pairs:
         g, i = map(int, pair.split(':'))
         lr = a.lr if a.lr is not None else json.loads((out / 'pilot.json').read_text())['choice']
-        result = run_pair(g, i, lr, a.steps, a.runs, save_dir=states)
-        result['meta'] = dict(record.provenance(__file__, population.__file__), lr_source='--lr' if a.lr else 'pilot',
+        result = run_pair(g, i, lr, a.steps, a.runs, save_dir=states, stop_fit=a.stop_fit)
+        result['meta'] = dict(meta, lr_source='--lr' if a.lr else 'pilot',
                               precision='float64 CPU', optimizer='plain SGD, constant rate, no momentum/decay/clipping')
         record.dump(out / 'pairs' / f'g{g}_s{i}.json', result, indent=None)
 

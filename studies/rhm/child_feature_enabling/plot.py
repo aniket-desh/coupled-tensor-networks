@@ -186,10 +186,115 @@ def checkpoints():
     save(fig, FIG / 'checkpoint-readout.pdf')
 
 
+# ------------------------------------------------------------------------------------------------- intervention
+
+ARM_COLORS = {'intact': BLUE, 'detached': ORANGE}
+GRAMMAR_MARKERS = ('o', 's', '^')
+
+
+def load_pairs(folder):
+    """{(grammar, seed): pair record} from <folder>/pairs/*.json; folder is relative to this study unless absolute."""
+    folder = Path(folder) if Path(folder).is_absolute() else HERE / folder
+    files = sorted((folder / 'pairs').glob('g*_s*.json'))
+    if not files:
+        print('skipped (no results):', folder / 'pairs')
+    pairs = [json.loads(f.read_text()) for f in files]
+    return {(p['grammar'], p['seed']): p for p in pairs}
+
+
+def intervention(folder, out, fit_ylim=(-0.03, 1.03)):
+    """Per pair: trained hard fit D_h and frozen-child ceiling A_h of both arms against the update; then the two
+    half-fit times of each pair joined by a line, with an arrow where an arm is censored at the horizon."""
+    pairs = load_pairs(folder)
+    if not pairs:
+        return
+    grammars = sorted({g for g, _ in pairs})
+    seeds = sorted({s for _, s in pairs})
+    any_pair = next(iter(pairs.values()))
+    horizon, every, lr = any_pair['steps'], any_pair['eval_every'], any_pair['lr']
+    shown = max(p['arms'][arm]['columns']['step'][-1] for p in pairs.values() for arm in ARM_COLORS)
+    fig = plt.figure(figsize=(7.2, 1.45 * len(grammars) + 0.5), layout='constrained')
+    grid = fig.add_gridspec(len(grammars), len(seeds) + 1, width_ratios=[1] * len(seeds) + [1.3])
+    first = None
+    for row, g in enumerate(grammars):
+        for col, s in enumerate(seeds):
+            ax = fig.add_subplot(grid[row, col], sharex=first, sharey=first)
+            first = first or ax
+            pair = pairs.get((g, s))
+            if pair is None:
+                ax.text(0.5, 0.5, 'not run', transform=ax.transAxes, ha='center', color=INK2)
+                continue
+            for arm, color in ARM_COLORS.items():
+                cols = pair['arms'][arm]['columns']
+                x = np.maximum(cols['step'], every)  # update 0 is drawn at the first evaluation interval
+                ax.plot(x, cols['A_h'], '--', color=color, lw=0.9)
+                ax.plot(x, cols['D_h'], '-', color=color, lw=1.4)
+            if fit_ylim is not None:
+                ax.axhline(0.5, color=INK2, lw=0.6, ls=(0, (1, 2)))
+            ax.text(0.04, 0.93, f'grammar {g}, init {s}' + ('' if pair['status'] == 'finished' else ', ' + pair['status']),
+                    transform=ax.transAxes, va='top', fontsize=7, color=INK2)
+            ax.tick_params(labelbottom=row == len(grammars) - 1, labelleft=col == 0)
+            if row == len(grammars) - 1:
+                ax.set_xlabel('SGD update')
+            if col == 0:
+                ax.set_ylabel('Fraction of $c_h$ variance')
+    first.set_xscale('log')
+    first.set_xlim(every, shown * 1.15)
+    if fit_ylim is not None:
+        first.set_ylim(*fit_ylim)
+    else:
+        first.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+    fig.axes[0].set_title(r'$\mathbf{a}$  Hard contrast, per pair: trained fit $D_h$ (solid), ceiling $A_h$ (dashed)',
+                          loc='left', fontsize=8)
+
+    ax = fig.add_subplot(grid[:, -1])
+    censored_any = False
+    for (g, s), pair in sorted(pairs.items()):
+        cross = {arm: pair['arms'][arm]['crossing'] for arm in ARM_COLORS}
+        y = [horizon if cross[arm]['censored'] else cross[arm]['T'] for arm in ARM_COLORS]
+        jitter = (seeds.index(s) - (len(seeds) - 1) / 2) * 0.05
+        ax.plot([jitter, 1 + jitter], y, color=INK2, lw=0.7, alpha=0.7, zorder=1)
+        for k, arm in enumerate(ARM_COLORS):
+            hollow = cross[arm]['censored']
+            censored_any |= hollow
+            ax.plot([k + jitter], [y[k]], marker=GRAMMAR_MARKERS[grammars.index(g) % 3], ms=5, color=ARM_COLORS[arm],
+                    mfc='white' if hollow else ARM_COLORS[arm], mew=1.1, zorder=3)
+            if hollow:  # censored: the true time lies above the horizon
+                ax.annotate('', (k + jitter, horizon * 1.45), (k + jitter, horizon * 1.05),
+                            arrowprops=dict(arrowstyle='->', color=ARM_COLORS[arm], lw=0.9))
+    ax.set_yscale('log')
+    ax.set_xticks([0, 1], ['intact', 'easy gradient\ndetached'])
+    for label, color in zip(ax.get_xticklabels(), ARM_COLORS.values()):  # the tick labels are the colour key
+        label.set_color(color)
+        label.set_fontweight('bold')
+    ax.set_xlim(-0.4, 1.4)
+    ax.set_ylabel('Updates until $D_h\\geq 1/2$')
+    low = min([c['T'] for p in pairs.values() for c in (p['arms'][a]['crossing'] for a in ARM_COLORS)
+               if not c['censored']] + [horizon])
+    ax.set_ylim(low / 1.8, horizon * (1.7 if censored_any else 1.15))
+    ax.axhline(horizon, color=INK2, lw=0.6, ls=(0, (1, 2)))
+    ax.annotate(f'horizon {horizon:,}', (1.4, horizon), xytext=(-2, -9), textcoords='offset points', ha='right',
+                fontsize=7, color=INK2)
+    ax.set_title(r'$\mathbf{b}$  Half-fit time, joined within a pair', loc='left', fontsize=8)
+    handles = [Line2D([], [], color=INK2, ls='none', marker=m, ms=4, label=f'grammar {g}')
+               for g, m in zip(grammars, GRAMMAR_MARKERS)]
+    if censored_any:
+        handles.append(Line2D([], [], color=INK2, ls='none', marker='o', mfc='white', ms=4, label='censored (open)'))
+    ax.legend(handles=handles, loc='lower right', fontsize=7)
+    stop = any_pair.get('stop_fit')
+    fig.suptitle(f'Plain SGD, rate {lr:g}, batch 256, horizon {horizon:,} updates per arm'
+                 + (f' (a pair ends once both arms have $D_h\\geq{stop:g}$)' if stop else ''),
+                 fontsize=8, x=0.01, ha='left')
+    save(fig, FIG / out)
+
+
 def main():
     theory()
     planted()
     checkpoints()
+    intervention('results/intervention', 'intervention-as-written.pdf', fit_ylim=None)
+    intervention('results/intervention-extended', 'intervention-extended.pdf')
+    intervention('results/intervention-extended-lr0.1', 'intervention-extended-lr0.1.pdf')
 
 
 if __name__ == '__main__':

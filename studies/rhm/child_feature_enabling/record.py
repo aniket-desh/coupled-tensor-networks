@@ -27,9 +27,16 @@ def _git(*args):
     return subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout
 
 
+# The code a driver can import: the shared packages and this study, without the plotting and table scripts.
+CODE = ('ctn', 'studies/rhm', ':(exclude)studies/rhm/child_feature_enabling/plot.py',
+        ':(exclude)studies/rhm/child_feature_enabling/summary.py', ':(exclude)*.md', ':(exclude)*.json',
+        ':(exclude)*.pdf', ':(exclude)*.sh')
+
+
 def provenance(*source_files):
-    """Commit, a hash of the uncommitted diff of tracked files (None when clean), and hashes of the driver sources."""
-    diff = _git('diff', 'HEAD')
+    """Commit, a hash of the uncommitted diff of the tracked code a driver can import (None when it is clean), and
+    hashes of the driver sources. Call it when the process starts, before the computation."""
+    diff = _git('diff', 'HEAD', '--', *CODE)
     return dict(
         commit=_git('rev-parse', 'HEAD').strip(),
         uncommitted_diff_sha256=hashlib.sha256(diff.encode()).hexdigest() if diff else None,

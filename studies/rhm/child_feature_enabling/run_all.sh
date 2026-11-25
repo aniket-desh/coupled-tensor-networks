@@ -26,7 +26,8 @@ $PY -m $M.intervene --check
 $PY -m $M.intervene --pilot --runs $RUNS
 $PY -m $M.intervene --pairs $PAIRS --runs $RUNS
 $PY -m $M.intervene --pilot --rates 0.01 0.03 0.1 0.3 1.0 --pilot-steps 4000 --runs $RUNS --out $R/intervention-extended
-$PY -m $M.intervene --pairs $PAIRS --steps 40000 --runs $RUNS --out $R/intervention-extended
-$PY -m $M.intervene --pairs 0:0 1:0 2:0 --steps 40000 --lr 0.1 --runs $RUNS --out $R/intervention-extended-lr0.1
+$PY -m $M.intervene --pairs $PAIRS --steps 40000 --stop-fit 0.9 --runs $RUNS --out $R/intervention-extended
+$PY -m $M.intervene --pairs 0:0 1:0 2:0 --steps 40000 --stop-fit 0.9 --lr 0.1 --runs $RUNS --out $R/intervention-extended-lr0.1
 
 $PY -m $M.plot
+$PY -m $M.summary
