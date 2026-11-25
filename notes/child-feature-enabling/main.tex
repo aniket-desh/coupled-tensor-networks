@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,booktabs,graphicx}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\setcounter{tocdepth}{1}
+\title{When learning a child feature enables a root computation}
+\author{Working derivations for the coupled tensor networks project}
+\date{November 24, 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+How much sooner can a tree learn an interaction when a simpler root
+contrast teaches it the child feature that the interaction uses?
+For an explicit two-level grammar, fitting the simpler contrast changes
+the interaction learning time from inverse square to logarithmic in the
+initial child alignment. Untying the children produces a second logarithmic waiting time after
+the first child has learned its feature. Each child starts with unit norm and receives
+only root supervision. Its alignment determines exactly how much
+interaction variance a refitted root can explain. We derive the joint
+RHM law and contract the exact squared loss of a general aligned TTN
+on its legal input distribution. For softmax training the same messages
+give a deterministic interval for cross-entropy and a local test for
+whether a child perturbation enables descent at a uniform stationary
+predictor. An exact rank calculation distinguishes the controlled
+grammar from the three rule tables used in the depth-four study.
+\end{abstract}
+\tableofcontents
+\input{distribution}
+\input{toy}
+\input{untied}
+\begin{figure}[htbp]\centering
+\includegraphics[width=.85\linewidth]{../../studies/rhm/child_feature_enabling/figures/frozen-root.pdf}
+\caption{The best bilinear root explains $r_L^2r_R^2$ of the interaction variance. Each contour holds that fraction fixed. The dashed diagonal in the right panel recovers the tied curve on the left. Half the variance requires $r\ge 2^{-1/4}$ in the tied model, and the same product threshold constrains the two alignments in the untied model. Both panels show formulas, with no simulation data.}
+\end{figure}
+\input{categorical}
+\input{interior}
+\input{escape}
+\input{rules}
+\begin{figure}[htbp]\centering
+\includegraphics[width=.74\linewidth]{../../studies/rhm/child_feature_enabling/figures/grammar-spectra.pdf}
+\caption{Additive predictability of fifteen orthogonal centered root contrasts per fixed grammar, computed over its 64 equiprobable top rules. The sorted eigenvalues belong to a different contrast basis for each grammar. A zero eigenvalue would give an exactly pure interaction, while an eigenvalue of one would identify a fully additive label contrast.}
+\end{figure}
+\input{shared}
+\end{document}

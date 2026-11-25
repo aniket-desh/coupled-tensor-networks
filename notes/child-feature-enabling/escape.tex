@@ -1,0 +1,113 @@
+\section{A local test for enabling in the softmax TTN}
+\label{sec:escape}
+The two-head example singles out a direction in a lower representation.
+For the categorical loss we can also decide exactly whether permitting
+a specified block of lower parameters to move creates a descending
+quadratic direction at the uniform predictor. This local result applies
+to the architecture in the training code. It requires a stationary point
+of a particular kind. A generic checkpoint need not satisfy the premise.
+
+Write $Z_\theta$ for the product of the two child features and
+$B(\theta)=\mathbb E[(e_Y-p)Z_\theta^\top]$.
+Consider a point $(C,\theta)=(0,\theta_0)$ with $B(\theta_0)=0$.
+The joint gradient vanishes there: resetting the root erases all
+first derivatives with respect to the children, and the root gradient
+also vanishes by hypothesis. Work in the softmax gauge
+$\mathbf1^\top C=0$. Let $v$ be a parameter perturbation supported on
+the allowed child block and $E$ a centered perturbation of the root.
+Set $Jv=\mathrm d B(\theta_0)[v]$ and $F_0=\mathbb E[Z_0Z_0^\top]$.
+The Hessian quadratic form in direction $(E,v)$ is
+\begin{equation}
+ Q(E,v)=n^{-1}\operatorname{tr}(E F_0 E^\top)-2\langle E,Jv\rangle_F .
+ \label{eq:escape-hessian}
+\end{equation}
+To derive it, expand $C=tE,\theta=\theta_0+tv$. The linear term
+in $C$ is $-t\langle E,B(\theta_0+tv)\rangle_F$. The quadratic softmax
+term at $C=0$ uses the class covariance $I/n-\mathbf1\mathbf1^\top/n^2$.
+All derivatives exist because the grammar has finite support and the
+TTN is polynomial before softmax. The child-only Hessian is zero since
+$\mathcal L(0,\theta)=\log n$ identically.
+
+\begin{proposition}
+At such a point the joint Hessian restricted to the chosen parameters
+has a negative eigenvalue if and only if $J$ is nonzero on the allowed
+child directions.
+\end{proposition}
+\begin{proof}
+If $Jv\ne0$, take $E=\alpha Jv$, with $\alpha>0$ sufficiently small.
+The negative term in \eqref{eq:escape-hessian} is linear in $\alpha$ and
+the nonnegative term is quadratic, so $Q(E,v)<0$. If $J=0$ the form is
+positive semidefinite. This argument also covers singular $F_0$.
+\end{proof}
+
+The grammar identifies the source of $J$. For each contrast $c$,
+differentiate~\eqref{eq:cat-contrast}:
+\[
+ \mathrm d (M_LK_cM_R^\top)[v]
+ =(\mathrm dM_L[v])K_cM_R^\top
+  +M_LK_c(\mathrm dM_R[v])^\top.
+\]
+For a tied parameter both contributions must be added before testing
+for a nonzero direction. For example, if $K_c=uv^\top$ and
+$M_Lu=M_Rv=0$, both terms vanish. If just the right side carries $v$,
+a perturbation giving $\mathrm dM_L[v_{\rm par}]u\ne0$ suffices.
+A different contrast with a one-child marginal can produce a negative
+eigenvalue at the very same representation. The test identifies which
+parameter changes have first-order access to the label. A nonzero
+derivative for another contrast does not by itself show that its
+unstable trajectory moves in the direction the interaction needs.
+
+\paragraph{What happens when the first derivative vanishes?}
+There is an exact leading-order law for the best local root fit.
+Assume $F_0$ is positive definite on the fixed feature coordinates being
+fit. For a smooth child path $\theta(t)$ through $\theta_0$ such that
+$B(\theta(t))=t^d B_d+o(t^d)$ with $B_d\ne0$,
+\begin{equation}
+ \min_C \mathcal L_{\rm CE}(C,\theta(t))
+ =\log n-\frac{n}{2}t^{2d}
+ \operatorname{tr}(B_d F_0^{-1} B_d^\top)+o(t^{2d}).
+ \label{eq:escape-profile}
+\end{equation}
+Indeed on centered rows the derivative of the root gradient at zero is
+$E\mapsto EF_0/n$, an invertible operator. For small $t$ the implicit
+function theorem yields a stationary root $C_*(t)$. Convexity in the
+root makes this a global minimizer. More explicitly the root gradient
+is $-B+C F(t)/n+O(\|C\|^2)$ with a uniform Taylor bound near the
+point. Uniform invertibility implies $C_*=O(\|B\|)$ and then
+$C_*=n B F_0^{-1}+o(\|B\|)$. Substitution into the quadratic expansion
+of the loss gives~\eqref{eq:escape-profile}.
+A product of two missing child contrasts therefore yields quartic
+improvement along a path where both turn on linearly, provided no lower
+order signal survives in the fitted logits. A one-child signal can give
+quadratic improvement. Constant null directions can be removed first.
+An emerging feature direction can change the rank of $F$ and invalidate
+this inverse expansion. The Hessian criterion itself
+(\eqref{eq:escape-hessian}, with a negative eigenvalue as above) does
+not need invertibility. Equation~\eqref{eq:escape-profile} describes a
+root refitted along a prescribed path. Converting its order to a joint-flow
+escape time requires a dynamical argument such as Section~\ref{sec:parity-toy}.
+
+\paragraph{An exact rank-changing obstruction.}
+Consider two classes $Y=\pm1$ uniformly and one scalar feature $Z_t=tY$.
+At $t=0$ every root predicts uniform class probabilities. For every $t>0$
+the one-dimensional feature separates the classes and the infimum of
+cross-entropy over unconstrained roots is zero: logits $(kZ_t,-kZ_t)$
+in the matching class order have loss $\log(1+e^{-2kt})$.
+Here $F(t)=t^2$ loses rank at the base point. Infinitesimal signal
+therefore permits an order-one improvement if root weights may grow
+without bound. The distinction between an optimally refitted root and
+the finite time required by a specified optimizer is essential.
+
+For a concrete nonsingular comparison, let $H,N$ be independent uniform
+signs on one subtree and take its feature to be $h_t=N+tH$ on a prescribed
+path. For a binary root contrast $Y=H$ with a single feature $Z=h_t$,
+$\mathbb E[YZ]=t$ and $\mathbb E[Z^2]=1+t^2$. For the pure interaction
+on two independent copies, use $Y=H_LH_R$ and $Z=h_{t,L}h_{t,R}$.
+Now $\mathbb E[YZ]=t^2$ and $\mathbb E[Z^2]=(1+t^2)^2$.
+For logits $(wZ,-wZ)$ and the matching sign convention the binary loss is
+$\mathbb E\log(2\cosh wZ)-w\mathbb E[YZ]$.
+Its curvature at $w=0,t=0$ is one in both cases. Thus the optimal CE
+improvement along this path is $t^2/2+o(t^2)$ with the one-child target
+and $t^4/2+o(t^4)$ with the interaction. This comparison specifies both
+the directions the children develop and the observable whose change
+is measured.

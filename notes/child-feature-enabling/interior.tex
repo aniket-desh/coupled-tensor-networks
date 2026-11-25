@@ -1,0 +1,61 @@
+\section{Which gradient reaches an interior core?}
+\label{sec:interior}
+The root calculation extends to every internal core of an aligned multilinear
+student under squared loss. An interior core receives information from both
+the child subtrees and the part of the network that uses its output.
+Conditioning on its grammar symbol separates those two contributions.
+
+At position $i$ put $z_i=h_{iL}\otimes h_{iR}$, $h_i=W_i z_i$,
+and write the student output as $f=A_i h_i$. Here $A_i$ maps changes
+at this occurrence of the bond to the logits, holding the other subtree
+activations fixed. It depends only on observations outside the subtree at $i$
+when parameters are fixed. Denote the grammar symbol by $S_i=s$,
+with probability $p_i(s)>0$, and define
+\[
+ d_i(s)=\mathbb E[z_i\mid s],\quad F_i(s)=\mathbb E[z_i z_i^\top\mid s],
+ \quad m_i(s)=\mathbb E[A_i^\top e_Y\mid s],\quad
+ N_i(s)=\mathbb E[A_i^\top A_i\mid s].
+\]
+Then the negative gradient from this occurrence is exactly
+\begin{equation}
+ -\nabla_{W_i}\mathcal L_2
+ =\sum_s p_i(s)\left[m_i(s)d_i(s)^\top-N_i(s)W_iF_i(s)\right].
+ \label{eq:interior}
+\end{equation}
+Indeed the sample gradient is
+$A_i^\top(e_Y-A_i W_i z_i)z_i^\top$ with the descent sign.
+Conditioned on $s$, the outside variables $(A_i,Y)$ are independent of
+the draws that expand this subtree. Taking the expectation of each product
+yields~\eqref{eq:interior}. If several occurrences share a table, sum all
+their partial derivatives. Freezing other occurrences while evaluating
+each partial derivative is precisely the chain rule for tying.
+
+The two inward messages $d_i,F_i$ are already available in
+Section~\ref{sec:categorical-root}. The two outward messages also have an
+exact recursion. At the root use $A=I$, $m(y)=e_y$, $N(y)=I$.
+For a left descent from parent $i$, let $B_i(v)$ denote the matrix
+mapping $u$ to $W_i(u\otimes v)$. For fixed sibling activation $h_R$,
+$A_L=A_i B_i(h_R)$. The probability that the parent is $a$ and the
+sibling symbol is $c$, conditional on the left symbol $b$, is
+\[
+ \omega(a,c\mid b)=\frac{p_i(a)G_{\ell(i)}(a,b,c)}
+ {\sum_{a',c'}p_i(a')G_{\ell(i)}(a',b,c')}.
+\]
+Unused symbols can be skipped. Writing $\mu_R(c)=\mathbb E[h_R\mid c]$,
+independence of the outer context and the parent production conditional
+on $a$, and independence of the sibling expansion given $c$, give
+\begin{align*}
+ m_L(b)&=\sum_{a,c}\omega(a,c\mid b)\,
+        B_i(\mu_R(c))^\top m_i(a),\\
+ N_L(b)&=\sum_{a,c}\omega(a,c\mid b)\,
+ \mathbb E[B_i(h_R)^\top N_i(a) B_i(h_R)\mid c].
+\end{align*}
+The last integrand is quadratic in $h_R$, so its conditional second
+moment suffices. Exchanging child roles gives the corresponding right
+messages. At the root, \eqref{eq:interior} reduces to $D/n-CF$ with the
+notation of \eqref{eq:full-square}. This argument needs neither independent
+child symbols marginally nor a diagonal student. It gives all population
+gradients without first selecting a set of teacher modes. A particular
+update can still cancel after summing over symbols or tied positions.
+For softmax loss the predicted-probability term depends on the entire
+logit vector, so this squared-loss factorization no longer follows.

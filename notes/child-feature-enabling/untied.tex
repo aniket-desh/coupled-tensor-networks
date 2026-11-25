@@ -1,0 +1,193 @@
+\section{Untying the children introduces a second escape}
+\label{sec:untied}
+
+Suppose the two subtrees have independent trainable tables $h_L,h_R$, with the
+same grammar, heads, objective and gradient-flow metric as in
+Section~\ref{sec:parity-toy}. The easy contrast $U$ is directly available
+only on the left. When the left table learns $U$, the right table must
+still learn $V$ to fit the interaction. In this model the time spent
+waiting for the right table grows logarithmically.
+
+Write $H_L=U,H_R=V$, and for $i=L,R$ put
+$a_i=\langle h_i,H_i\rangle$, $R_i=\langle h_i,h_i\rangle$ and
+$r_i=a_i/\sqrt{R_i}$. Initialize the tables with $R_L=R_R=1$,
+$r_L=r_R=\delta>0$, and $b=w=0$. The nuisance components of the two
+tables may have different directions. The hard variance fraction now obeys
+\[
+ D=r_L^2r_R^2-\big(w\sqrt{R_LR_R}-r_Lr_R\big)^2,
+ \qquad \max_w D=r_L^2r_R^2 .
+\]
+In particular $D\ge p$ implies $r_R\ge\sqrt p$ even if the left table has
+already learned its hidden sign perfectly.
+
+\paragraph{Equations.}
+By independence, the full population loss is
+\[
+ 2\mathcal L=s^2+1+b^2R_L+w^2R_LR_R-2sba_L-2wa_La_R.
+\]
+Taking its derivatives gives
+\begin{align*}
+ \dot b&=sa_L-bR_L,& \dot w&=a_La_R-wR_LR_R,\\
+ \dot h_L&=(sb+wa_R)H_L-(b^2+w^2R_R)h_L,&
+ \dot h_R&=wa_L H_R-w^2R_Lh_R .
+\end{align*}
+The inner products of the last two equations with $2h_L,2h_R$ give
+$\dot R_L=2b\dot b+2w\dot w$ and $\dot R_R=2w\dot w$.
+Projecting each table velocity perpendicular to the current table gives
+the alignment equations. Together these yield
+\begin{align}
+ R_L&=1+b^2+w^2, & R_R&=1+w^2,\nonumber\\
+ \dot r_L&=(1-r_L^2)(sb+wa_R)/\sqrt{R_L},&
+ \dot r_R&=(1-r_R^2)w a_L/\sqrt{R_R}.
+ \label{eq:untied-flow}
+\end{align}
+
+\begin{theorem}
+\label{thm:untied}
+Fix $q_L,q_R,p\in(0,1)$. Let $T_L(q_L),T_R(q_R),T_p(p)$ denote the
+first times that the left alignment reaches $q_L$, the right alignment
+reaches $q_R$, and the trained root explains $p$ of the interaction
+variance, respectively. All three thresholds are attained for sufficiently
+small $\delta>0$. If $s=1$, then, with constants in the remainders
+depending on the fixed thresholds,
+\begin{align*}
+ T_L(q_L)&=\lambda_1^{-1}\log(1/\delta)+O(1),\\
+ T_R(q_R),\ T_p(p)&=(\lambda_1^{-1}+\lambda_2^{-1})\log(1/\delta)+O(1),
+\end{align*}
+where $\lambda_1=(\sqrt5-1)/2$,
+$\phi=(1+\sqrt5)/2$, and
+$\lambda_2=(\sqrt{\phi^2+4\phi}-\phi)/2$.
+If $s=0$, each of the three times satisfies
+\[
+ T=\frac{1}{2\delta^2}+3\log(1/\delta)+O(1).
+\]
+\end{theorem}
+
+\begin{proof}
+The readout equations have equilibrium targets $sr_L/\sqrt{R_L}$
+and $r_Lr_R/\sqrt{R_LR_R}$. Both lie in $[0,1]$ on the positive unit
+cube. The alignment equations preserve the same cube, with both alignments
+nondecreasing, so $1\le R_L\le3$ and $1\le R_R\le2$. The solution exists
+globally. Integrating the damped readout equations from zero and using
+monotonicity yields the sharper bounds $b\le r_L$ and $w\le r_Lr_R$.
+
+\emph{The left table escapes first when $s=1$.}
+Let $t_1$ be the first time $r_L=\varepsilon$, for a small fixed
+$\varepsilon<q_L$, and put $x=r_L+\lambda_1 b$. Before $t_1$,
+$R_L=1+O(r_L^2)$, $R_R=1+O(r_L^2)$ and $r_L\le x\le(1+\lambda_1)r_L$.
+The $b$ equation gives $\dot b=r_L-b+O(r_L^3)$, and the positive
+interaction term in $\dot r_L$ gives $\dot r_L\ge b-O(r_L^3)$.
+Using $\lambda_1^2+\lambda_1=1$, we obtain
+$\dot x\ge\lambda_1x-O(x^3)\ge\lambda_1x/2$. This also proves
+that $t_1$ is finite. Hence $\int_0^{t_1}r_L^2\,dt$ is bounded
+independently of $\delta$, by integrating $x^2$ against
+$dt\le2\,dx/(\lambda_1x)$.
+The second alignment equation and $w\le r_Lr_R$ now give
+\[
+ 0\le\frac{d}{dt}\log r_R\le C r_L^2 .
+\]
+Thus $\delta\le r_R\le C\delta$ until $t_1$. It follows that
+$wa_R=O(r_L\delta^2)=O(r_L^3)$ on this interval, so the lower estimate
+for $\dot x$ sharpens to $\dot x=\lambda_1 x+O(x^3)$.
+Integration from $x(0)=\delta$ gives
+$t_1=\lambda_1^{-1}\log(1/\delta)+O(1)$.
+
+\emph{The right table escapes with a different exponent.}
+Measure time $t$ from $t_1$. We start with $r_R$ between $\delta$ and
+$C\delta$, and $0\le w\le r_R$. Since $r_L\ge\varepsilon$, the target
+of the $b$ equation stays above $\varepsilon/\sqrt3$. Comparison shows
+that $b$ is bounded below by a fixed positive constant after one time
+unit. Consequently $1-r_L\le Ce^{-\kappa t}$ for some $\kappa>0$, by
+the first alignment equation. In particular the left alignment passes
+any fixed $q_L<1$ within bounded time from $t_1$.
+
+With $r_L=1,w=0$, the easy readout would obey
+$\dot b=F(b)=\sqrt{1+b^2}-b(1+b^2)$.
+Its unique positive fixed point is $b_*=1/\sqrt\phi$, at which
+$R_L=\phi$ and $a_L=\sqrt\phi$. Its derivative
+$F'(b)=b/\sqrt{1+b^2}-1-3b^2$ is bounded strictly below zero on $[0,1]$.
+In the actual system the perturbation to $F(b)$ is
+$O(1-r_L+w^2)=O(e^{-\kappa t}+r_R^2)$.
+Scalar variation of constants, using monotonicity of $r_R$, therefore gives
+\[
+ |b-b_*|+|a_L-\sqrt\phi|+|R_L-\phi|
+ \le C(e^{-\kappa' t}+r_R^2)
+\]
+for some $\kappa'>0$. A decrease in the exponent absorbs the convolution
+of two decaying exponentials.
+
+While $r_R$ stays small, set $z=(r_R,w)^\top$. Since $a_R=r_R\sqrt{R_R}$
+and $R_R=1+O(r_R^2)$, the exact equations take the form
+\[
+ \dot z=
+ \begin{pmatrix}0&\sqrt\phi\\ \sqrt\phi&-\phi\end{pmatrix}z
+ +O\big((e^{-\kappa't}+r_R^2)\|z\|\big).
+\]
+The positive eigenvalue of this matrix is $\lambda_2$ in the theorem.
+For its unstable coordinate $y=r_R+(\lambda_2/\sqrt\phi)w$,
+positivity and $w\le r_R$ give $r_R\le y\le C r_R$ and
+\[
+ \frac{d}{dt}\log y=\lambda_2+O(e^{-\kappa't}+r_R^2).
+\]
+Choose a small fixed $\eta<\min(q_R,\sqrt p)$.
+The right alignment remains of order $\delta$ during any fixed initial
+interval after $t_1$, by $d\log r_R/dt\le C r_L^2\le C$. After a fixed
+transient, the last display gives $\dot y\ge\lambda_2 y/2$ until
+$r_R=\eta$. Its hitting time is finite, and $\int r_R^2\,dt$ over
+this interval is uniformly bounded using the same change of variable
+as for $x$. Thus the integral of the logarithmic-rate error is bounded.
+Since $y$ started at order $\delta$, the additional time to reach
+$r_R=\eta$ is $\lambda_2^{-1}\log(1/\delta)+O(1)$.
+
+\emph{Fitting the root after both escapes.}
+From $r_L\ge\varepsilon$, $r_R\ge\eta$, the target
+$r_Lr_R/\sqrt{R_LR_R}$ of the damped $w$ equation is bounded away from
+zero, so $w$ becomes bounded below in bounded time. The two positive
+alignment equations then give $r_L,r_R\to1$. At any accumulation point,
+the squared-loss gradient vanishes by boundedness and dissipation, as in
+Theorem~\ref{prop:toy-gap}. Thus $w\sqrt{R_LR_R}=1$ there and $D\to1$.
+The compactness and continuous-dependence argument in that theorem gives
+uniformly bounded additional times to each fixed $q_R,p<1$. The choice
+$\eta<\sqrt p$ and the frozen-child bound exclude an earlier hard
+crossing. This proves the two logarithmic estimates.
+
+\emph{Hard contrast alone.}
+For $s=0$, $b=0$ and identical initial alignments and norms give
+$r_L=r_R=r$ for all time by uniqueness. Set $u=r^2$, $R=1+w^2$ and
+$k=w/u$. Equation~\eqref{eq:untied-flow} and the root equation give
+\[
+ \dot u=2wu(1-u),\quad
+ \dot k=R-\big[R^2+2w(1-u)\big]k,\quad
+ \frac{d}{dt}u^{-1}=-2k(1-u).
+\]
+Choose $u_1>0$ small and below $q_L^2,q_R^2,\sqrt p$. It is reached
+for every sufficiently small $\delta>0$, since $r\ge\delta$ and the
+root equation eventually bounds $w$ below by a positive constant.
+On the interval up to this hitting time $t_1$, we have $0\le w\le u$.
+Use $g(u)=u-2u^2$, put $e=w-g(u)$, and write its exact equation as
+\[
+ \dot e=B(w,u),\qquad B(w,u)=R(u-Rw)-2g'(u)wu(1-u).
+\]
+Here $B(g(u),u)=O(u^3)$ and $\partial_wB=-1+O(u)$ uniformly for
+$0\le w\le u\le u_1$. Using $e(0)=-g(\delta^2)$ and monotonicity of $u$
+in variation of constants gives
+$|e(t)|\le C\delta^2 e^{-t/2}+Cu(t)^3$.
+With $F(u)=-1/(2u)+(3/2)\log u$ we therefore have
+\[
+ \frac{d}{dt}F(u(t))=(1+3u)(1-u)\frac{w}{u}
+ =1+O(u^2)+O(e^{-t/2}).
+\]
+The integral of $u^2$ to $t_1$ is bounded uniformly in $\delta$.
+Indeed $\dot k\ge1-C_1k$ bounds $k$ below by a positive constant
+after one time unit, and $\dot u=2ku^2(1-u)$ bounds the remaining integral.
+It follows that $t_1=F(u_1)-F(\delta^2)+O(1)$. The uniformly bounded
+remaining time to any of the three thresholds gives the stated expansion.
+\end{proof}
+
+Thus releasing the tying constraint preserves the speedup from adding
+the easy contrast, but changes which interval is long. In the tied model
+the right branch receives the left branch's feature as soon as the shared
+table rotates. In the untied model the right alignment is still of order
+$\delta$ when the left alignment first reaches a small fixed level.
+Consequently the gap from a fixed left threshold to a fixed hard fit
+itself grows as $\lambda_2^{-1}\log(1/\delta)+O(1)$.

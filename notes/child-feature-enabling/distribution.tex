@@ -1,0 +1,130 @@
+\section{The exact population problem induced by a fixed grammar}
+\label{sec:law}
+Furman's \emph{Bayesian networks and tree tensor networks}, Propositions
+3.2 and 4.1, starts from independent observed leaves, sends conditional
+probability tables toward an output, and contracts the latent indices.
+When the leaves are uniform, averaging a squared error gives equal weight
+to every input tuple. The RHM samples in the other direction. A parent
+chooses its two children \emph{jointly}. Its table is one three-index tensor,
+even when the siblings are dependent given the parent.
+
+Fix the grammar before taking any expectation. For a binary tree of depth
+$L$, write $N=2^L-1$ for the number of internal nodes and define
+\[
+ G_\ell(a,b,c)=\Pr(B=b,C=c\mid A=a)
+  =\frac1m\sum_{k=1}^m {\bf1}\{\mathrm{rule}_{\ell}(a,k)=(b,c)\}.
+\]
+Let $\pi_y$ be the root prior. For fixed leaf string $x$, set
+$g_i(a)={\bf1}\{a=x_i\}$ at each leaf. At each internal node apply
+\[
+ g_i(a)=\sum_{bc}G_{\ell(i)}(a,b,c)g_{iL}(b)g_{iR}(c).
+\]
+Conditioning on its production proves by induction that $g_i(a)$ is
+the likelihood of all observed leaves below $i$ given symbol $a$.
+Consequently the joint tensor with its root index open, its marginal
+with that index closed, and its posterior on positive-probability inputs are
+\[
+ J_y(x)=\pi_y g_{\rm root}(y),\qquad
+ P_X(x)=\sum_yJ_y(x),\qquad
+ t_y(x)=J_y(x)/P_X(x).
+\]
+A missing leaf sends the all-ones vector; the same contraction sums over
+every completion. For weighted or ambiguous rules the joint construction
+still works. A ratio of tensor contractions need not itself have the same TTN
+bond dimension. Unambiguity gives a simpler posterior in the present grammar.
+
+In the repository the ordered productions at each level are disjoint over
+all parents, the root is uniform on $n$ classes and the $m$ choices are uniform.
+Every valid string parses uniquely: the two observed children determine
+the first parent, and induction determines the remaining parents and rule indices.
+Hence the map from $(y,k_1,\ldots,k_N)$ to a legal string is bijective.
+For the legal set $S$, $|S|=n m^N$ and
+\[
+ J_y(x)=\frac{{\bf1}\{x\in S,\; y=y(x)\}}{n m^N}.
+\]
+With identity leaf embeddings, placing $mG_\ell$ in the student cores gives
+a width-$v$ teacher whose output is $e_{y(x)}$ on $S$ and zero outside.
+Scaling its root output by $1/|S|$ gives the joint law everywhere.
+This parser and the distinction between support and product-space loss
+already appear in the repository's \emph{RHM--TTN teacher} note.
+For $n=v=16,m=4,L=4$, $|S|=2^{34}$ among $2^{64}$ token strings.
+
+\paragraph{A population loss you can differentiate without drawing a tree.}
+For any input law, $t(x)=\mathbb E[e_Y\mid X=x]$ gives
+\[
+ \mathbb E[\|f(X)-e_Y\|^2]/2
+ =\tfrac12\sum_xP_X(x)\|f(x)-t(x)\|^2
+  +\tfrac12\sum_xP_X(x)(1-\|t(x)\|^2).
+\]
+This follows by expanding $f-e_Y=(f-t)+(t-e_Y)$; the conditional mean
+of the cross term vanishes. The last term vanishes for our unambiguous
+root task. The first becomes the Frobenius error restricted to $S$, divided
+by $2|S|$. Two representable predictors agreeing on $S$ have equal loss regardless of their outputs elsewhere.
+Zach's full-product landscape theorem cannot be imported by changing a scalar prefactor.
+
+There is a short contraction for the \emph{value} of this loss at arbitrary
+student cores, beyond representing the target. Flatten the root to $C$,
+write $Z=H_L\otimes H_R$, let $D$ have rows
+$\mathbb E[Z\mid Y=j]^\top$, and put $F=\mathbb E[ZZ^\top]$.
+Section~\ref{sec:categorical-root} computes both moments recursively.
+Expanding the Euclidean square gives
+\begin{equation}
+ 2\mathcal L_2=1-\frac{2}{n}\langle C,D\rangle_F
+                +\operatorname{tr}(C F C^\top).
+ \label{eq:full-square}
+\end{equation}
+The linear term contracts the generative tree with one copy of the student.
+The quadratic term contracts it with two copies observing the same leaves.
+The conditional message then carries one symbol index and two student bond
+indices. Backpropagation through these finite sums gives the exact population
+gradient of \emph{every} student core, including repeated uses of tied cores.
+
+\paragraph{Cross-entropy as an exact sum and a computable interval.}
+The actual loss is $\mathbb E[\psi(CZ)-(CZ)_Y]$ for
+$\psi(t)=\log\sum_j e^{t_j}$. On finite support an exact contraction can
+propagate entire distributions. At a leaf use the point mass on its embedding.
+Given parent symbol $a$, its conditional measure on activations is
+\[
+ \nu_i^a=\sum_{bc}G_\ell(a,b,c)\,(W_i)_\#(\nu_{iL}^{b}\otimes\nu_{iR}^{c}),
+\]
+where the pushforward maps $(l,r)$ to $W_i(l\otimes r)$ and preserves
+its probability. Integrating the loss over the resulting root logit
+measure is exact. The number of distinct atoms can grow to the number
+of valid strings. First and second moments alone do not determine this sum:
+a centered scalar logit $t=\pm1$ equiprobably and a logit taking
+$0,\sqrt2,-\sqrt2$ with probabilities $1/2,1/4,1/4$ have the same
+first two moments but different $\mathbb E\log(2\cosh t)$.
+
+A short rigorous interval is available from the same two messages as
+\eqref{eq:full-square}. Center logits over classes by replacing $C$ with
+$C_0=(I-\mathbf1\mathbf1^\top/n)C$, and write $V=C_0Z$.
+Take a finite partition $\mathcal P$ which includes the true root label
+in each cell, and let $m_P=\mathbb E[V\mid P]$. Define
+\[
+ B_{\mathcal P}=\mathbb E[\psi(m_P)-(m_P)_Y],\qquad
+ V_{\mathcal P}=\mathbb E\|V-m_P\|^2 .
+\]
+Then
+\begin{equation}
+ B_{\mathcal P}\ \le\ \mathcal L_{\rm CE}\ \le\
+ B_{\mathcal P}+V_{\mathcal P}/4 .
+ \label{eq:ce-bracket}
+\end{equation}
+Indeed the Hessian of $\psi$ is the covariance of a one-hot draw with
+softmax probabilities. Its quadratic form on a unit vector $d$ is at
+most $(\max d-\min d)^2/4\le1/2$ by the range bound on variance.
+Convexity gives the lower bound. The smoothness inequality gives the
+upper after the linear term averages to zero within each cell.
+For the root-class partition,
+$m_j=C_0D_{j,:}^\top$ and
+$V_{\mathcal P}=\operatorname{tr}(C_0 F C_0^\top)-\mathbb E\|m_Y\|^2$.
+The bracket is exact at zero logits and whenever centered logits are constant
+within a class, including a scaled parser.
+
+Fixing additional productions near the root refines the partition.
+Conditional Jensen applied to $\psi$ increases the lower bound.
+The concavity of $\psi(v)-\|v\|^2/4$ decreases the upper bound under
+the same refinement. Fixing every production gives equality. This derives
+a deterministic accuracy--cost tradeoff without presuming a small interval
+at any particular checkpoint. A useful implementation can stop as soon
+as the gap is below the precision needed for the scientific comparison.

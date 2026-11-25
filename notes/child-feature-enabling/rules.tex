@@ -1,0 +1,87 @@
+\section{Which root contrasts require an interaction in the three training grammars?}
+\label{sec:rule-audit}
+
+The parity example has a root contrast whose conditional mean given either
+child alone is zero. We can check that property exactly in the three
+quenched grammars used in the root-classification experiments. For each of
+the \(n=16\) root symbols, enumerate its \(m=4\) legal top productions. A
+row \(e\) records a root label \(j_e\) and an ordered child pair
+\((u_e,v_e)\). Under the uniform root and uniform production law, the
+\(nm=64\) rows have equal probability. The calculation uses the actual
+hidden child symbols and asks what information is available even with
+perfect access to them.
+
+Let \(E\) be the \(64\times16\) one-hot label matrix and let \(D\) be the
+\(64\times32\) matrix whose row has a one in left column \(u_e\) and
+another in right column \(16+v_e\), using zero-based indices. A root contrast
+\(c\in\mathbb R^{16}\) assigns the value \(y_e=(Ec)_e=c_{j_e}\) to
+each row. Every prediction of the form \(f(u_e)+g(v_e)\) lies in
+\(\operatorname{col}D\), and every vector in that column space has such a
+representation. Centered root contrasts satisfy \(\sum_j c_j=0\).
+
+\paragraph{Two dimension counts.}
+The vector \(D^\top Ec\) contains the sums of \(y_e\) within each left
+symbol and within each right symbol. On a symbol of positive probability,
+its sum vanishes exactly when its conditional mean vanishes. Let us call
+a contrast \emph{purely interactive} when both sets of marginal signals
+vanish. The kernel of \(D^\top E\) consists of exactly those contrasts.
+They are already centered because constants belong to \(\operatorname{col}D\).
+At the opposite extreme \(Ec\) itself may be additive on the legal
+productions. Since \(E^\top E=m I\), the map from contrasts to edge
+values is injective. The dimension formula for the intersection of two
+subspaces gives
+\begin{align}
+ d_{\rm pure} &= n-\operatorname{rank}(D^\top E),\\
+ d_{\rm additive,centered}
+ &= n+\operatorname{rank}D-\operatorname{rank}[D\ E]-1 .
+\end{align}
+The last subtraction removes the shared constant. Both ranks are computed
+over the rationals from integer matrices.
+
+\paragraph{How much can an additive predictor explain?}
+Let \(P_D=DD^\dagger\), the orthogonal projection onto additive functions
+on these rows. For a nonzero centered contrast, the fraction of its
+population variance explained by its best additive predictor is
+\[
+ \eta(c)=\frac{\|P_D Ec\|^2}{\|Ec\|^2}.
+\]
+Indeed, the uniform row weights cancel in the ratio, and the projection
+minimizes the squared residual. If \(H\) has orthonormal columns spanning
+\(\mathbf 1^\perp\) in label space, then \(Q=EH/\sqrt m\) has orthonormal
+columns in row space. The minimum and maximum of \(\eta\) are the extreme
+eigenvalues of \(Q^\top P_DQ=(P_DQ)^\top(P_DQ)\). These fractions allow
+both children's separate contributions to enter in the same additive fit,
+including any correlations between the two child symbols.
+
+\begin{center}
+\begin{tabular}{c|ccc|cc}
+Seed & \(\operatorname{rank}D\) & \(\operatorname{rank}(D^\top E)\)
+& \(\operatorname{rank}[D\ E]\) & \(\min\eta\) & \(\max\eta\)\\ \hline
+0 & 30 & 16 & 45 & 0.063505 & 0.927720\\
+1 & 31 & 16 & 46 & 0.108409 & 0.821812\\
+2 & 31 & 16 & 46 & 0.063091 & 0.909308
+\end{tabular}
+\end{center}
+
+For each seed both dimension counts are zero. Every nonzero centered root
+contrast has some marginal signal, so a pure parity contrast cannot be
+selected from the sixteen label values in these tables. Every such contrast
+also retains a nonzero residual after its best additive fit. For seed 0,
+the least additive direction retains \(93.65\%\) of its variance in that
+residual. That makes it a candidate for studying how learning the children
+changes the root's access to information about their joint state.
+Residualizing \(Ec\) against \(D\) would produce an exactly pure edge
+target, but its values can differ across productions of the same root.
+That intervention would change the prediction task.
+
+To reproduce the calculation from the repository root, run
+\begin{quote}
+\small\ttfamily python3 -m studies.rhm.child\_feature\_enabling.grammar\_audit
+\end{quote}
+It enumerates the root tables from \texttt{studies.rhm.common.GRAMMAR}
+with seeds 0, 1, and 2. The accompanying JSON records the tables, all
+fifteen eigenvalues per seed, the exact ranks, the grammar settings, and
+hashes of the grammar source files. The code checks the projection spectrum
+against an independent principal-angle calculation. A planted binary parity
+table and a table in which the root equals the left child check the pure
+and additive endpoints, respectively.

@@ -1,0 +1,183 @@
+\section{A shared lower factor changes the gap between learning times}
+\label{sec:shared-gap}
+
+Consider the aligned model from November 18. Two orthogonal teacher components
+of strengths \(s_1>s_2>0\) use the same unit feature on the left branch of a
+tree. The student assigns the shared feature an amplitude \(a\). On the right
+branch and at the root, component \(k\) has private amplitudes \(b_k,r_k\).
+Under squared loss on whitened tensor-product inputs, the two coefficients
+\(c_k=a r_k b_k\) have loss
+\(\mathcal L=\tfrac12\sum_{k=1}^2(s_k-c_k)^2\). All times below refer to
+Euclidean gradient flow with unit learning rate on the individual factors.
+We initialize \(r_k=b_k=\delta\) and \(a=\sqrt{2}\delta\).
+The alignment and positive balanced initialization are assumptions.
+
+\begin{theorem}[Learning-time gap for one shared factor]
+\label{thm:shared-gap}
+Let \(T_k(q)=\inf\{t:c_k(t)\ge q s_k\}\) for a fixed \(0<q<1\). At fixed
+\(s_1>s_2>0\), as \(\delta\downarrow0\),
+\begin{equation}
+ T_2(q)-T_1(q)=
+ s_1^{-1/3}\left(\frac{1}{s_2}-\frac{1}{s_1}\right)
+ \log(1/\delta)+O(1).
+ \label{eq:shared-gap}
+\end{equation}
+Both \(T_k(q)\) are of order \(\delta^{-1}\).
+\end{theorem}
+
+\begin{proof}
+Write \(\epsilon_k=s_k-c_k\). The three derivatives are
+\[
+ \dot a=\sum_k r_k b_k\epsilon_k,\qquad
+ \dot r_k=a b_k\epsilon_k,\qquad \dot b_k=a r_k\epsilon_k .
+\]
+Thus \(r_k^2-b_k^2\) and \(a^2-\sum_k r_k^2\) are constant, both zero
+at initialization. Put \(p_k=r_k^2=b_k^2\), so \(a=\sqrt{p_1+p_2}\),
+\(c_k=ap_k\), and \(a^3=c_1+c_2\). In the time variable
+\(u(t)=\int_0^t a(t')\,dt'\), the equations become
+\[
+ p_k'=2p_k(s_k-ap_k),\qquad
+ (1/p_k)'=-2s_k/p_k+2a.
+\]
+Integration gives an exact formula and two bounds,
+\begin{align}
+ \frac{1}{p_k(u)} &=
+ \delta^{-2}e^{-2s_k u}
+ +2\int_0^u a(v)e^{-2s_k(u-v)}\,dv, \label{eq:shared-recip}\\
+ \frac{1}{\delta^{-2}e^{-2s_ku}+A/s_k}
+ &\le p_k(u)\le\delta^2 e^{2s_ku}. \label{eq:shared-bounds}
+\end{align}
+Here \(A\) is independent of small \(\delta\). Indeed, loss decreases, so
+each \(c_k\) is bounded and \(a^3=c_1+c_2\) gives \(a\le A\). The lower
+bound on \(p_k\) then keeps \(a\) positive for each \(\delta>0\), and
+\(u\) runs from zero to infinity.
+
+\emph{Where are the two crossings in \(u\)?}
+Set \(L=\log(1/\delta)\) and \(U_k=L/s_k\).
+The upper bound on \(p_k\) gives \(c_k\le A\exp(2s_k(u-U_k))\).
+The lower bound gives \(p_k\ge m_k=(1+A/s_k)^{-1}\) for \(u\ge U_k\).
+We claim the first crossing of \(q s_k\) occurs at \(u=U_k+O(1)\).
+The upper bound on \(c_k\) prevents either crossing earlier than
+\(U_k-O(1)\). Until \(c_1\ge q s_1\), the exact equation gives
+\(p_1'\ge 2(1-q)s_1p_1\). Since \(m_1\le p_1\le A^2\), this
+forces a crossing within a bounded time after \(U_1\). The same argument
+with \(m_2,s_2\) proves the claim for component 2.
+
+\emph{How much physical time separates the crossings?}
+On \([U_1,U_2]\), the total integral of the weaker private amplitude is bounded,
+\[
+ \int_{U_1}^{U_2}p_2(u)\,du\le
+ \int_{U_1}^{U_2}\exp(2s_2(u-U_2))\,du\le \frac{1}{2s_2}.
+\]
+With \(p_2=0\) the stable positive value of \(p_1\) is \(p_*=s_1^{2/3}\).
+For \(h=\log(p_1/p_*)\) the exact equation is
+\[
+ h'=-2s_1(e^{3h/2}-1)
+       -2p_1\bigl(\sqrt{p_1+p_2}-\sqrt{p_1}\bigr).
+\]
+The second term is bounded in magnitude by \(C p_2\), since \(p_1\) lies
+in \([m_1,A^2]\). On this same compact interval of \(p_1\), the first term
+is \(-\lambda(u)h\) with
+\(\lambda(u)=2s_1(e^{3h/2}-1)/h\) bounded below by a positive constant
+\(\lambda_0\), using the continuous value at zero. The integrating factor
+therefore bounds
+\[
+ |h(u)|\le |h(U_1)|e^{-\lambda_0(u-U_1)}
+       +C\int_{U_1}^{u}e^{-\lambda_0(u-v)}p_2(v)\,dv .
+\]
+Integrating once more gives \(\int_{U_1}^{U_2}|h|\,du=O(1)\).
+The function \(1/\sqrt{p_*e^h+p_2}\) has bounded first derivatives on
+this range, so
+\[
+ \int_{U_1}^{U_2}\left|\frac1a-s_1^{-1/3}\right|du=O(1).
+\]
+A bounded displacement of either endpoint changes physical time by \(O(1)\),
+since~\eqref{eq:shared-bounds} bounds \(a\) below around both endpoints.
+Thus integrating \(dt=du/a\) proves~\eqref{eq:shared-gap}.
+
+Finally, on \([0,U_1]\), the lower bound on \(p_1\) gives
+\(1/a\le\delta^{-1}e^{-s_1u}+\sqrt{A/s_1}\). On \([0,1]\) both
+\(p_k\le \delta^2e^{2s_k}\), which gives \(1/a\ge C/\delta\).
+Integrating yields \(t(U_1)=\Theta(\delta^{-1})\), as claimed.
+\end{proof}
+
+The strong mode's private factor grows first. Near its crossing, the weak
+private factor still has \(p_2=\Theta(\delta^{2(1-s_2/s_1)})\)
+by~\eqref{eq:shared-bounds}. For most of the intervening time the common
+factor has \(a\simeq s_1^{1/3}\), in the integrated sense proved above.
+This lets the weak private factors grow exponentially at an order-one rate.
+If each coefficient instead owns three independent positive balanced factors
+of common amplitude \(x_k\), then \(\dot x_k=x_k^2(s_k-x_k^3)\).
+Its crossing time is
+\[
+ \int_\delta^{(q s_k)^{1/3}}\frac{dx}{x^2(s_k-x^3)}
+ =\frac{1}{s_k\delta}+O(1),
+\]
+since subtracting \(1/(s_kx^2)\) leaves an integrand of order \(x\) at
+zero. The independent gap is of order \(1/\delta\). In the shared model
+the gap diverges logarithmically, even though \(T_2/T_1\to1\).
+
+\paragraph{What requires learning the shared feature?}
+Freeze just \(a\) at \(a_0=\sqrt2\delta\) from initialization, keeping
+the root and right branch trainable. The weak coefficient now obeys
+\(\dot c_2=2a_0 c_2(s_2-c_2)\) and has \(c_2(0)=a_0\delta^2\).
+Separating variables gives the exact crossing time
+\begin{equation}
+ T_2^{\rm frozen}(q)=\frac{1}{2a_0s_2}
+ \log\!\left[\frac{q}{1-q}
+       \left(\frac{s_2}{a_0\delta^2}-1\right)\right]
+ \sim \frac{3\log(1/\delta)}{2\sqrt2\,s_2\delta}.
+ \label{eq:shared-frozen}
+\end{equation}
+Thus movement of the lower factor is necessary to achieve the
+\(\Theta(\delta^{-1})\) hitting time under this intervention. The positive
+frozen model still fits in the limit of long training. Removing the strong
+teacher signal is a different intervention, since the weak signal can itself
+train \(a\).
+
+\subsection{How the number of private factors sets the rate}
+\label{sec:private-degree}
+A single aligned contraction can contain \(m\) trainable private factors
+with product \(x_1\cdots x_m\). Let \(g(t)>0\) denote the product of its
+shared factors, and suppose the private parameters enter a squared loss only
+through \(c=g\prod_j x_j\) with target \(s>0\). Equal positive initialization
+\(x_j(0)=\delta\) is invariant under Euclidean gradient flow, so all
+private factors equal \(x(t)\). Each factor receives the derivative of
+one copy of the product, hence
+\[
+ \dot x=g(t)x^{m-1}\bigl(s-g(t)x^m\bigr).
+\]
+Up to the first fixed-fraction crossing \(c=q s\), integration yields
+\[
+ \int_\delta^{x(t)} z^{1-m}\,dz
+   =\int_0^t g(v)(s-c(v))\,dv
+   \ \in\
+ \left[(1-q)s\int_0^t g(v)\,dv,\;
+                   s\int_0^t g(v)\,dv\right].
+\]
+The accumulated product of the shared factors therefore controls the private
+amplitude. One must determine how \(g(t)\) evolves to extract a physical
+time gap.
+
+For a fixed value \(g>0\), integration to \(x_q=(qs/g)^{1/m}\) gives
+\[
+ T(q;g)=\frac{1}{g s}
+        \int_\delta^{x_q}\frac{x^{1-m}}{1-gx^m/s}\,dx .
+\]
+For fixed \(s,q,g\), the time is finite as \(\delta\downarrow0\) for \(m=1\),
+logarithmic for \(m=2\), and polynomial for \(m>2\). More precisely,
+\[
+ T(q;g)=
+ \begin{cases}
+  g^{-2}\log(1/(1-q))+o(1), &m=1,\\
+  (g s)^{-1}\log(1/\delta)+O(1), &m=2,\\
+  \delta^{-(m-2)}/[g s(m-2)]+O(1), &m>2 .
+ \end{cases}
+\]
+For the first line solve \(\dot c=g^2(s-c)\) directly. In the other two
+lines subtract \(x^{1-m}\) from the integrand. The remainder is
+\((g/s)x/(1-gx^m/s)\), integrable down to zero. Thus even an order-one
+shared feature leaves a polynomial escape time if a dormant mode still
+needs three or more small private factors. A TTN with multiple contraction
+paths or mixed target directions requires a separate justification for this
+scalar reduction.

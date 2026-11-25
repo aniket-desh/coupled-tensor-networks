@@ -1,0 +1,154 @@
+\section{What the children make available to a categorical root}
+\label{sec:categorical-root}
+
+Fix a binary RHM grammar of depth four and a TTN whose tree agrees with the
+grammar. The root label is uniform on the $n$ classes. Each grammar symbol
+chooses one of its $m$ ordered productions uniformly, independently of the
+choices below it. Write $H_L,H_R\in\mathbb R^r$ for the representations
+of the two eight-token subtrees and $Z=H_L\otimes H_R\in\mathbb R^{r^2}$
+for their ordered product. In the repository's \texttt{TreeTN}, the root
+maps this product directly to logits $CZ$, with $C\in\mathbb R^{n\times
+r^2}$ and no bias. All formulas below apply to any fixed choice of the
+lower cores, including a snapshot of jointly trained weights. For time
+evolution with $Z$ fixed, the optimizer specified below is population
+gradient flow. The repository trains with minibatch Adam.
+
+\subsection{The population gradient of the actual classifier}
+
+Let $e_Y$ denote the one-hot root label, let $p=\mathbf{1}/n$, and set
+$D_j=\mathbb E[Z\mid Y=j]$ and $\bar D=\mathbb E Z$.
+For cross-entropy, differentiating the log partition function gives
+\begin{align}
+ {\cal L}_{\rm CE}(C)
+ &=\mathbb E\biggl[\log\sum_j e^{(CZ)_j} -(CZ)_Y\biggr],\\
+ -\nabla_C{\cal L}_{\rm CE}(C)
+ &=\mathbb E\big[(e_Y-\operatorname{softmax}(CZ))Z^\top\big].
+ \label{eq:cat-full-gradient}
+\end{align}
+Resetting the root to zero makes its prediction $p$ for every tree. Its
+initial descent direction $B$ therefore has rows
+\begin{equation}
+ B=\mathbb E[(e_Y-p)Z^\top],\qquad
+ B_{j,:}=\frac{1}{n}(D_j-\bar D)^\top .
+ \label{eq:cat-zero-gradient}
+\end{equation}
+If $B=0$, convexity of cross-entropy in the root weights makes $C=0$ a
+global minimizer with loss $\log n$ on these frozen children. If $B\ne0$,
+moving the root to $\eta B$ improves the loss by
+$\eta\|B\|_F^2+O(\eta^2)$ for small $\eta>0$. Thus $B$ decides
+\emph{exactly} whether a bilinear root can improve population
+cross-entropy over the uniform predictor. This test compares full
+matrices. One vanishing row or one vanishing root contrast establishes
+only zero initial drive along that direction.
+
+For a centered class contrast $c\in\mathbb R^n$ with $\sum_j c_j=0$,
+write $R_j(u,v)=\Pr(U=u,V=v\mid Y=j)$ for the root rule probabilities
+and $K_c(u,v)=n^{-1}\sum_j c_jR_j(u,v)$ for the signed rule table.
+Let $M_L,M_R$ have columns $\mathbb E[H_L\mid U=u]$ and
+$\mathbb E[H_R\mid V=v]$, respectively. Given the child symbols
+$(u,v)$, the two subtrees expand independently. Averaging first over the
+descendants and then over the root production gives
+\begin{equation}
+ \mathbb E[c_YH_LH_R^\top]
+ =\sum_{u,v}K_c(u,v)\,M_L(:,u)M_R(:,v)^\top
+ =M_LK_c M_R^\top .
+ \label{eq:cat-contrast}
+\end{equation}
+Flattening this matrix gives $c^\top B$ in the order used to define $Z$.
+For a singular term $\sigma a b^\top$ of $K_c$, its contribution is
+$\sigma(M_La)(M_Rb)^\top$. A child that annihilates its side of this term
+removes it from the drive. Other terms can survive or cancel in the sum.
+When $K_c$ has zero row and column sums, collapsing either child's
+conditional means to one common vector erases the entire contrast from
+the initial drive. A generic grammar need not have these vanishing
+marginals. For instance, a legal root table can encode the root class in
+the left symbol alone, in which case even a constant nonzero right bond
+can suffice.
+
+\subsection{Exact moments without enumerating the leaf strings}
+
+At each node $i$ with grammar symbol $s$ define
+$\mu_i(s)=\mathbb E[H_i\mid s]$ and
+$S_i(s)=\mathbb E[H_i H_i^\top\mid s]$. Use the tensor convention
+$(x\otimes y)_{ab}=x_a y_b$. At leaf $i$, whose embedding of $s$ is
+$h_i(s)$, the initial values are $h_i(s)$ and $h_i(s)h_i(s)^\top$.
+At an internal node write the flattened core as $W_i$, so
+$H_i=W_i(H_{iL}\otimes H_{iR})$. If the $k$th legal production of $s$
+is $(u_k,v_k)$, conditional independence gives
+\begin{align}
+ d_i(s)&=\frac1m\sum_{k=1}^m \mu_{iL}(u_k)\otimes\mu_{iR}(v_k),\\
+ F_i(s)&=\frac1m\sum_{k=1}^m S_{iL}(u_k)\otimes S_{iR}(v_k),\\
+ \mu_i(s)&=W_i d_i(s),\qquad S_i(s)=W_i F_i(s)W_i^\top .
+ \label{eq:cat-moments}
+\end{align}
+The second line uses $(x\otimes y)(x\otimes y)^\top
+=(xx^\top)\otimes(yy^\top)$ before taking the conditional expectation.
+At the root, stop before multiplying by its core. Then $D_j=d_{\rm
+root}(j)$ and $F=n^{-1}\sum_j F_{\rm root}(j)=\mathbb E[ZZ^\top]$.
+These contractions average only legal productions, with their true
+probabilities. They apply to level-tied and untied weights because the
+conditioning fixes the weights. A TTN that permutes leaves across
+grammar subtrees requires a different contraction.
+
+For any matrix perturbation $E$ of the root, the Hessian at zero obeys
+\begin{equation}
+ \nabla^2 {\cal L}_{\rm CE}(0)[E]
+ =(\operatorname{diag}p-pp^\top)E F .
+\end{equation}
+This follows by differentiating the softmax in
+\eqref{eq:cat-full-gradient}. At a nonzero root the softmax Jacobian
+depends on the particular tree and stays inside the expectation. Thus
+the two moments determine the exact initial gradient and curvature.
+Evaluating the full nonlinear gradient at a trained root generally
+requires more of the distribution of $Z$.
+
+\subsection{Fitting a root above frozen children}
+
+To quantify what a frozen representation can predict at arbitrary root
+weights, take a scalar target $y=c_Y$ and fit the same bias-free root
+with population squared error. With $b=\mathbb E[Zy]$, expansion gives
+\begin{equation}
+ 2{\cal L}_2(w)=\mathbb E[y^2]-2w^\top b+w^\top Fw .
+\end{equation}
+For $v\in\ker F$, $\mathbb E[(v^\top Z)^2]=0$, so $v^\top b=0$ as well.
+Consequently $b$ lies in the range of $F$, $w_*=F^\dagger b$ is a
+minimizer, and completing the square gives
+\begin{equation}
+ 2{\cal L}_2(w)=\mathbb E[y^2]-b^\top F^\dagger b
+                  +(w-w_*)^\top F(w-w_*) .
+ \label{eq:cat-oracle}
+\end{equation}
+Here $F^\dagger$ is the Moore--Penrose pseudoinverse. For a nonzero contrast,
+the fraction of its variance explained by the root is
+$b^\top F^\dagger b/\mathbb E[y^2]$. It is invariant under any
+invertible change of basis on either child bond. Indeed, such a change preserves the set of
+scalar predictions $w^\top Z$ after reparametrizing $w$. The Euclidean
+gradient and its speed depend on that parametrization.
+
+For a fresh root $w(0)=0$, gradient flow obeys $\dot w=b-Fw$.
+Diagonalize $F$ with orthonormal eigenvectors $v_k$ and positive
+eigenvalues $\lambda_k$. Each component obeys
+\begin{equation}
+ v_k^\top w(t)=\frac{v_k^\top b}{\lambda_k}
+       (1-e^{-\lambda_k t}),\qquad
+ {\cal L}_2(w(t))-{\cal L}_2(w_*)
+ =\frac12\sum_{\lambda_k>0}
+ \frac{(v_k^\top b)^2}{\lambda_k}e^{-2\lambda_k t}.
+\end{equation}
+A nonzero component reaches half its final amplitude at
+$\log 2/\lambda_k$. This separates a better attainable fit from a
+shorter learning time in fixed coordinates. These are regression
+half-times for freshly trained roots at different lower-core snapshots.
+They do not give hitting times for the jointly trained categorical model.
+
+\paragraph{Why a shared factor does not imply a lag.}
+In the symmetric two-mode model $f_i=a b_i z_i$ with equal targets and
+equal private initial conditions, exchanging indices $1,2$ leaves the
+loss and initialization invariant. Uniqueness of gradient flow then
+implies $b_1(t)=b_2(t)$ and $z_1(t)=z_2(t)$, so the two modes hit every
+common threshold together despite sharing the trainable factor $a$.
+More generally a change $H_L\mapsto \alpha H_L$, $C\mapsto C/\alpha$
+preserves every categorical prediction while changing the apparent
+size of the child feature. A quantitative time-gap theorem must specify
+a distribution, a target contrast, the initialization, and the optimizer's
+metric, as well as the intervention that tests necessity.

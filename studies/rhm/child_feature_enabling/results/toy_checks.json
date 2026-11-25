@@ -1,0 +1,114 @@
+{
+  "source_sha256": "018b95772197be4e2da5abc19574d4f579097a9132a5335ed1117e84ca184c27",
+  "versions": {
+    "numpy": "1.26.4",
+    "scipy": "1.17.1",
+    "torch": "2.8.0"
+  },
+  "enumeration": {
+    "seed": 21,
+    "leaf_sequences": 256,
+    "counts": [
+      64,
+      64,
+      64,
+      64
+    ],
+    "coordinate_system": "unnormalized Walsh characters, uniform input inner product",
+    "dtype": "float64",
+    "max_error_tolerance": 1e-12,
+    "errors": {
+      "frozen_oracle": 1.8041124150158794e-16,
+      "s0_gradient_max_abs": 1.1102230246251565e-16,
+      "s0_balance_rate_abs": 0.0,
+      "s1_gradient_max_abs": 1.1102230246251565e-16,
+      "s1_balance_rate_abs": 1.1102230246251565e-16
+    }
+  },
+  "untied_second_escape": {
+    "method": "DOP853, original six signal/nuisance and readout coordinates",
+    "rtol": 2e-11,
+    "atol": 2e-14,
+    "s": 1,
+    "q_left": 0.5,
+    "p": 0.5,
+    "deltas": [
+      0.001,
+      0.0001,
+      1e-05
+    ],
+    "columns": [
+      "left_time",
+      "hard_time"
+    ],
+    "times": [
+      [
+        10.811623742387846,
+        21.663895263117784
+      ],
+      [
+        14.537293178874862,
+        28.68614616327209
+      ],
+      [
+        18.26295423309332,
+        35.70838027313938
+      ]
+    ],
+    "finite_difference_slopes": [
+      [
+        1.6180376776619076,
+        3.0497248164771578
+      ],
+      [
+        1.6180340372889295,
+        3.049717524548159
+      ]
+    ],
+    "predicted_slopes": [
+      1.618033988749895,
+      3.0497174053404743
+    ],
+    "final_max_slope_error": 1.1920768461237685e-07,
+    "final_max_slope_tolerance": 0.001
+  },
+  "hard_only": {
+    "method": "Radau",
+    "s": 0,
+    "deltas": [
+      0.04,
+      0.02,
+      0.01
+    ],
+    "q": 0.5,
+    "p": 0.5,
+    "rtol": 2e-11,
+    "atol": 2e-13,
+    "times": [
+      {
+        "child": 161.8806937321925,
+        "hard": 163.72833131906836
+      },
+      {
+        "child": 632.3620617999917,
+        "hard": 634.2096993868656
+      },
+      {
+        "child": 2509.0945547593383,
+        "hard": 2510.9421923462173
+      }
+    ],
+    "child_times_minus_pole": [
+      5.630693732192498,
+      7.362061799991693,
+      9.09455475933828
+    ],
+    "slopes_in_log_inverse_delta": [
+      2.4978361253674053,
+      2.499459000824363
+    ],
+    "theoretical_coefficient": 2.5,
+    "final_slope_error": 0.0005409991756368804,
+    "final_slope_tolerance": 0.01
+  }
+}

@@ -1,0 +1,192 @@
+\section{One root contrast teaches the child feature needed by another}
+\label{sec:parity-toy}
+
+Take four equiprobable root classes encoded by the signs $(U,UV)$, where
+$U,V$ are independent uniform signs. The hidden left child carries $U$ and the
+right child carries $V$. A root can predict the first contrast from its left
+child alone. Predicting the second requires a feature from each subtree.
+
+An unambiguous two-level grammar realizes these classes with four symbols
+per level and four equally likely productions per symbol. Label each symbol
+by two bits. For a leaf pair $x,x'$, the bottom parent is $x\oplus x'$.
+For hidden child symbols whose first bits are $u,v$, the root is
+$(u,u\oplus v)$, with $U=(-1)^u$ and $V=(-1)^v$. At either level each
+output has exactly four input pairs. Thus uniform sampling of the root
+and of each production gives the same distribution as sampling four
+independent uniform leaves and evaluating the tree from the bottom up.
+In particular the two subtree observations are independent. This grammar
+is a specific choice of rules in the RHM family.
+
+The two bottom nodes use the same trainable scalar table $h$. Its sixteen
+entries span all functions on one ordered leaf pair. For a generic subtree
+let $H$ be its hidden first-bit sign. Use the inner product
+$\langle h,g\rangle=\mathbb E[hg]$ over the sixteen equiprobable leaf
+pairs and define
+\[
+ a=\langle h,H\rangle,\qquad R=\langle h,h\rangle,\qquad
+ r=a/\sqrt R .
+\]
+The two root predictions are $b h_L$ for $sU$ and $w h_Lh_R$ for $UV$.
+The easy head uses a fixed constant channel on the right. With $s=1$
+both contrasts supply a learning signal. With $s=0$ only the interaction
+does. Both settings use labels available at the root. We train by
+population squared loss with unit Euclidean gradient-flow rates for
+$b,w$ and the coordinates of $h$ in a basis orthonormal under the stated
+inner product. Unit-rate gradient flow in the raw table entries would
+multiply the bottom learning rate by $1/16$ in these coordinates.
+Initialize $R(0)=1$, $r(0)=\delta\in(0,1)$, and $b(0)=w(0)=0$.
+Sending $\delta$ to zero removes initial alignment while keeping the
+child table at unit norm.
+
+\paragraph{A prerequisite measured by freezing the child table.}
+Independence gives $\mathbb E[UVh_Lh_R]=a^2$ and
+$\mathbb E[h_L^2h_R^2]=R^2$. Let $D$ denote the fraction of the hard
+contrast's unit variance explained by its actual prediction. Completing
+the square gives
+\begin{equation}
+ D=1-\mathbb E[(UV-wh_Lh_R)^2]
+  =r^4-(wR-r^2)^2,\qquad \max_w D=r^4 .
+ \label{eq:toy-risk}
+\end{equation}
+Thus reaching $D=p$ requires $r\ge p^{1/4}$ along the positive-alignment
+trajectories considered here, even if the root has unlimited time to
+refit. For example, a frozen child at $r=1/2$ allows a root to explain
+at most $1/16$ of the interaction variance. To explain half, even the
+best root needs $r\ge 2^{-1/4}$.
+
+\paragraph{Root-only gradient flow.}
+Including the easy head, the total loss is
+\begin{equation}
+ 2\mathcal L=s^2+1+b^2R+w^2R^2-2sba-2wa^2 .
+ \label{eq:toy-objective}
+\end{equation}
+Using $\nabla_h a=H$ and $\nabla_h R=2h$ gives
+\begin{align}
+ \dot b&=sa-bR,& \dot w&=a^2-wR^2,&
+ \dot h&=(sb+2wa)H-(b^2+2w^2R)h .
+ \label{eq:toy-parameter-flow}
+\end{align}
+Taking twice the inner product of the last equation with $h$ gives
+$\dot R=2b\dot b+4w\dot w$, hence $R=1+b^2+2w^2$.
+To obtain the alignment dynamics, take the inner product of $\dot h$
+with $(H-rh/\sqrt R)/\sqrt R$. Its radial term cancels, leaving
+\begin{align}
+ \dot r&=(1-r^2)(sb/\sqrt R+2wr),&
+ \dot b&=R(sr/\sqrt R-b),&
+ \dot w&=R^2(r^2/R-w).
+ \label{eq:toy-reduced}
+\end{align}
+The easy head responds to a single power of $r$, and its feedback toward
+the hidden sign survives even at $r=0$ if $sb\ne0$. The interaction
+head responds to $r^2$ and its own feedback contains another power of $r$.
+
+\begin{theorem}
+\label{prop:toy-gap}
+Let $T_c(q)$ be the first time $r=q$ and $T_p(p)$ the first time $D=p$,
+for fixed $0<q,p<1$ and sufficiently small $\delta>0$. Both times are
+finite. In each arm both have the following expansion as $\delta\downarrow0$,
+with constants in the remainder allowed to depend on the threshold.
+\[
+\begin{array}{ll}
+s=0: & \displaystyle
+ T=\frac{1}{4\delta^2}+\frac52\log\frac{1}{\delta}+O(1),\\[5pt]
+s=1: & \displaystyle
+ T=\frac{1}{\lambda_+}\log\frac{1}{\delta}+O(1),
+ \qquad \lambda_+=(\sqrt5-1)/2 .
+\end{array}
+\]
+In either arm, if $q<p^{1/4}$ then
+\[
+ 0<\frac{p^{1/4}-q}{3}\ \le\ T_p(p)-T_c(q)\ =\ O_{p,q}(1).
+\]
+In particular this applies to $q=p=1/2$.
+\end{theorem}
+
+\begin{proof}
+\emph{Uniform control after the initial escape.}
+Equation~\eqref{eq:toy-reduced} preserves $0\le r,b,w\le1$ and $r$ is
+nondecreasing there. Indeed $R\ge1$ and the targets of the two damped
+readout equations lie in $[0,1]$. In turn $1\le R\le4$ by the invariant,
+so the solution exists for all time. Once $r\ge\varepsilon>0$,
+$w$ is bounded below after one further time unit by
+$(1-e^{-1})\varepsilon^2/4$, by comparison in the damped $w$ equation.
+Thus $\dot r\ge 2wr(1-r^2)$ carries all such trajectories toward one.
+The hard prediction also converges to its target. The bounded gradient
+flow has only stationary accumulation points. The loss derivative is
+minus the squared gradient norm. That squared norm is uniformly continuous on
+the bounded trajectory, so its finite time integral forces it to zero. At any accumulation point $r=1$, and
+$\dot b=\dot w=0$ gives $b\sqrt R=s$ and $wR=1$. Hence $D\to1$.
+
+The time needed for any fixed $r<1$ or $D<1$ threshold after
+$r\ge\varepsilon$ is uniformly bounded in the seed. To see the uniformity,
+start the reduced flow at any point of the compact set
+$[\varepsilon,1]\times[0,1]^2$ in $(r,b,w)$. Each such state is realized by
+a table with $R=1+b^2+2w^2$, so the convergence argument applies from
+every point. Each trajectory strictly exceeds the desired level in
+finite time. Continuous dependence gives a neighborhood that exceeds it
+at the same time, and a finite subcover bounds all these times.
+For the root threshold, choose $\varepsilon<p^{1/4}$ so it cannot occur
+before the escape. Also $\dot r\le3$, by~\eqref{eq:toy-reduced}.
+Travel from $q$ to the necessary $p^{1/4}$ therefore takes at least
+$(p^{1/4}-q)/3$. The uniform bound gives the other direction.
+
+\emph{Both root contrasts.}
+For $s=1$ we show that escape to any sufficiently small fixed $r$ has
+logarithmic time. Monotonicity of $r$ and variation of constants in
+the two readout equations imply $b(t)\le r(t)$ and $w(t)\le r(t)^2$,
+since their past forcing targets $r/\sqrt R$ and $r^2/R$ in~\eqref{eq:toy-reduced}
+are at most $r(t)$ and $r(t)^2$, respectively. Thus $R=1+O(r^2)$ near the
+origin, and
+\[
+ \dot r=b+O(r^3),\qquad \dot b=r-b+O(r^3).
+\]
+Writing $x=r+\lambda_+ b$ gives
+$\dot x=\lambda_+x+O(x^3)$ and $x(0)=\delta$ because
+$\lambda_+^2+\lambda_+=1$. Moreover $r\le x\le(1+\lambda_+)r$.
+Until $r$ reaches a sufficiently small fixed $\varepsilon$,
+$\dot x\ge\lambda_+x/2$, so
+$\int x^2\,dt\le (2/\lambda_+)\int x\,dx=O(1)$.
+Integrating $d\log x/dt=\lambda_++O(x^2)$ gives the stated escape time.
+The bounds after $\varepsilon$ transfer it to both learning times.
+
+\emph{Hard contrast alone.}
+With $s=0$, $b$ stays zero. Put $u=r^2$, so $u(0)=u_0=\delta^2$ and
+\[
+ R=1+2w^2,\qquad \dot w=R(u-Rw),\qquad \dot u=4wu(1-u).
+\]
+Monotonicity and the damped root equation again give $0\le w\le u$.
+Fix small $u_1>0$ below both $q^2$ and $p^{1/2}$, and let $t_1$ be the
+first time $u=u_1$. The first two terms of the slow trajectory are
+$g(u)=u-4u^2$. To control the error, write $e=w-g(u)$ and set
+\[
+ B(w,u)=R(u-Rw)-4g'(u)wu(1-u).
+\]
+Direct substitution gives $\dot e=B(w,u)$,
+$B(g(u),u)=O(u^3)$, and $\partial_wB=-1+O(u)$ uniformly for $0\le w\le u$.
+Taking $u_1$ small, the mean value theorem and variation of constants
+give $|e(t)|\le C u_0e^{-t/2}+Cu(t)^3$, using that $u$ increases.
+The exponential term accounts for $w(0)=0$. For
+$F(u)=-1/(4u)+(5/4)\log u$ this gives
+\[
+ \frac{d}{dt}F(u(t))=(1+5u)(1-u)\frac{w}{u}
+  =1+O(u^2)+O(e^{-t/2}).
+\]
+The time integral of the error is bounded uniformly in $\delta$. Indeed
+$k=w/u\in[0,1]$ obeys
+$\dot k=R(1-Rk)-4k^2u(1-u)\ge1-C_1 k$ on this interval.
+Thus $k$ is bounded below by a positive constant for $1\le t\le t_1$,
+and $\dot u=4ku^2(1-u)$ controls $\int_1^{t_1}u^2\,dt$.
+Integration gives $t_1=F(u_1)-F(u_0)+O(1)$. Substituting
+$u_0=\delta^2$ gives the stated expansion. The bounded time after $u_1$
+transfers this expansion to the child and hard-contrast thresholds.
+\end{proof}
+
+The comparison changes just the easy target. The hard observable, TTN,
+gradient-flow metric, and initial child representation are the same in
+both arms. The bounded within-run lag and the divergent between-arm
+speedup answer different questions. The first measures the time from a specified
+child alignment to a specified fit by the trained root. The
+second measures how much sooner the same interaction is learned when an
+additional root contrast trains its prerequisite. Both statements concern
+population squared error. Sign accuracy is insensitive to the magnitude
+of a correctly signed score.
