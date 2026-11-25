@@ -13,6 +13,7 @@ from pathlib import Path
 
 import numpy as np
 from matplotlib.lines import Line2D
+from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
 
 from studies.rhm.plotting import CATEGORICAL, INK, INK2, plt, save
 
@@ -211,43 +212,39 @@ def intervention(folder, out, fit_ylim=(-0.03, 1.03)):
     grammars = sorted({g for g, _ in pairs})
     seeds = sorted({s for _, s in pairs})
     any_pair = next(iter(pairs.values()))
-    horizon, every, lr = any_pair['steps'], any_pair['eval_every'], any_pair['lr']
+    horizon, lr = any_pair['steps'], any_pair['lr']
     shown = max(p['arms'][arm]['columns']['step'][-1] for p in pairs.values() for arm in ARM_COLORS)
-    fig = plt.figure(figsize=(7.2, 1.45 * len(grammars) + 0.5), layout='constrained')
-    grid = fig.add_gridspec(len(grammars), len(seeds) + 1, width_ratios=[1] * len(seeds) + [1.3])
-    first = None
+    fig = plt.figure(figsize=(7.2, 1.35 * len(grammars) + 0.9), layout='constrained')
+    left, right = fig.subfigures(1, 2, width_ratios=[len(seeds), 1.25])
+    axes = left.subplots(len(grammars), len(seeds), sharex=True, sharey=True, squeeze=False)
+    first = axes[0, 0]
+    unit = 1 if fit_ylim is not None else 1000  # runs that never leave the floor are drawn in units of 1e-3
     for row, g in enumerate(grammars):
         for col, s in enumerate(seeds):
-            ax = fig.add_subplot(grid[row, col], sharex=first, sharey=first)
-            first = first or ax
+            ax = axes[row, col]
             pair = pairs.get((g, s))
             if pair is None:
                 ax.text(0.5, 0.5, 'not run', transform=ax.transAxes, ha='center', color=INK2)
                 continue
             for arm, color in ARM_COLORS.items():
                 cols = pair['arms'][arm]['columns']
-                x = np.maximum(cols['step'], every)  # update 0 is drawn at the first evaluation interval
-                ax.plot(x, cols['A_h'], '--', color=color, lw=0.9)
-                ax.plot(x, cols['D_h'], '-', color=color, lw=1.4)
+                x = np.array(cols['step']) / 1000
+                ax.plot(x, unit * np.array(cols['A_h']), '--', color=color, lw=0.9)
+                ax.plot(x, unit * np.array(cols['D_h']), '-', color=color, lw=1.4)
             if fit_ylim is not None:
                 ax.axhline(0.5, color=INK2, lw=0.6, ls=(0, (1, 2)))
-            ax.text(0.04, 0.93, f'grammar {g}, init {s}' + ('' if pair['status'] == 'finished' else ', ' + pair['status']),
-                    transform=ax.transAxes, va='top', fontsize=7, color=INK2)
-            ax.tick_params(labelbottom=row == len(grammars) - 1, labelleft=col == 0)
-            if row == len(grammars) - 1:
-                ax.set_xlabel('SGD update')
-            if col == 0:
-                ax.set_ylabel('Fraction of $c_h$ variance')
-    first.set_xscale('log')
-    first.set_xlim(every, shown * 1.15)
+            ax.set_title(f'grammar {g}, init seed {s}' + ('' if pair['status'] == 'finished' else ', ' + pair['status']),
+                         fontsize=7, color=INK2, pad=2)
+    left.supxlabel('SGD updates (thousands)', fontsize=8)
+    left.supylabel('Fraction of the hard contrast $c_h$ explained' + ('' if unit == 1 else r' ($\times10^{-3}$)'),
+                   fontsize=8)
+    first.set_xlim(0, shown * 1.03 / 1000)
     if fit_ylim is not None:
         first.set_ylim(*fit_ylim)
-    else:
-        first.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-    fig.axes[0].set_title(r'$\mathbf{a}$  Hard contrast, per pair: trained fit $D_h$ (solid), ceiling $A_h$ (dashed)',
-                          loc='left', fontsize=8)
+    left.suptitle(r'$\mathbf{a}$  Each pair: trained fit $D_h$ (solid)' + (' ' if len(seeds) > 2 else '\n')
+                  + 'and frozen-child ceiling $A_h$ (dashed)', fontsize=8, x=0.02, ha='left')
 
-    ax = fig.add_subplot(grid[:, -1])
+    ax = right.subplots()
     censored_any = False
     for (g, s), pair in sorted(pairs.items()):
         cross = {arm: pair['arms'][arm]['crossing'] for arm in ARM_COLORS}
@@ -263,6 +260,9 @@ def intervention(folder, out, fit_ylim=(-0.03, 1.03)):
                 ax.annotate('', (k + jitter, horizon * 1.45), (k + jitter, horizon * 1.05),
                             arrowprops=dict(arrowstyle='->', color=ARM_COLORS[arm], lw=0.9))
     ax.set_yscale('log')
+    ax.yaxis.set_major_locator(LogLocator(subs=(1, 2, 3, 5)))
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f'{v:,.0f}'))
+    ax.yaxis.set_minor_formatter(NullFormatter())
     ax.set_xticks([0, 1], ['intact', 'easy gradient\ndetached'])
     for label, color in zip(ax.get_xticklabels(), ARM_COLORS.values()):  # the tick labels are the colour key
         label.set_color(color)
@@ -271,11 +271,16 @@ def intervention(folder, out, fit_ylim=(-0.03, 1.03)):
     ax.set_ylabel('Updates until $D_h\\geq 1/2$')
     low = min([c['T'] for p in pairs.values() for c in (p['arms'][a]['crossing'] for a in ARM_COLORS)
                if not c['censored']] + [horizon])
-    ax.set_ylim(low / 1.8, horizon * (1.7 if censored_any else 1.15))
-    ax.axhline(horizon, color=INK2, lw=0.6, ls=(0, (1, 2)))
-    ax.annotate(f'horizon {horizon:,}', (1.4, horizon), xytext=(-2, -9), textcoords='offset points', ha='right',
-                fontsize=7, color=INK2)
-    ax.set_title(r'$\mathbf{b}$  Half-fit time, joined within a pair', loc='left', fontsize=8)
+    high = max([c['T'] for p in pairs.values() for c in (p['arms'][a]['crossing'] for a in ARM_COLORS)
+                if not c['censored']] + [low])
+    if censored_any:  # the horizon is drawn only when an arm is censored at it
+        ax.set_ylim(low / 1.8, horizon * 1.7)
+        ax.axhline(horizon, color=INK2, lw=0.6, ls=(0, (1, 2)))
+        ax.annotate(f'horizon {horizon:,}', (1.4, horizon), xytext=(-2, -9), textcoords='offset points', ha='right',
+                    fontsize=7, color=INK2)
+    else:
+        ax.set_ylim(low / 1.6, high * 1.25)
+    right.suptitle(r'$\mathbf{b}$  Half-fit time, joined within a pair', fontsize=8, x=0.02, ha='left')
     handles = [Line2D([], [], color=INK2, ls='none', marker=m, ms=4, label=f'grammar {g}')
                for g, m in zip(grammars, GRAMMAR_MARKERS)]
     if censored_any:
@@ -284,7 +289,7 @@ def intervention(folder, out, fit_ylim=(-0.03, 1.03)):
     stop = any_pair.get('stop_fit')
     fig.suptitle(f'Plain SGD, rate {lr:g}, batch 256, horizon {horizon:,} updates per arm'
                  + (f' (a pair ends once both arms have $D_h\\geq{stop:g}$)' if stop else ''),
-                 fontsize=8, x=0.01, ha='left')
+                 fontsize=8, x=0.01, ha='left', color=INK2)
     save(fig, FIG / out)
 
 
@@ -296,7 +301,7 @@ def ceilings(folder, out):
     pairs = load_pairs(folder)
     if not pairs:
         return
-    fig, (fit_ax, path_ax) = plt.subplots(1, 2, figsize=(6.6, 3.2), layout='constrained')
+    fig, (fit_ax, path_ax) = plt.subplots(1, 2, figsize=(6.6, 3.45), layout='constrained')
     for ax in (fit_ax, path_ax):
         ax.plot([0, 1], [0, 1], color=INK2, lw=0.6, ls=(0, (1, 2)))
         ax.set(xlim=(-0.02, 1.02), ylim=(-0.02, 1.02), aspect='equal')
@@ -312,12 +317,12 @@ def ceilings(folder, out):
         path_ax.plot([r['A_e'] for r in rows], [r['A_h'] for r in rows], ls='none', marker='x', ms=4, mew=0.9,
                      color=INK, zorder=4)
         handles.append(Line2D([], [], color=INK, ls='none', marker='x', ms=4,
-                              label='CE/Adam checkpoints,\nupdates 0 to 300'))
+                              label='CE/Adam checkpoints of the original classifiers, updates 0 to 300 (panel b)'))
     fit_ax.set(xlabel='Frozen-child ceiling $A_h$', ylabel='Trained hard fit $D_h$')
     fit_ax.annotate('head has fitted all\nthe children allow', (0.55, 0.55), xytext=(0.14, 0.8), fontsize=7,
                     color=INK2, arrowprops=dict(arrowstyle='-', color=INK2, lw=0.5))
     path_ax.set(xlabel='Easy ceiling $A_e$', ylabel='Hard ceiling $A_h$')
-    path_ax.legend(handles=handles, loc='lower right', fontsize=7)
+    fig.legend(handles=handles, loc='outside lower center', ncol=3, fontsize=7)
     fit_ax.set_title(r'$\mathbf{a}$  Trained fit against its ceiling', loc='left', fontsize=8)
     path_ax.set_title(r'$\mathbf{b}$  Which contrast the children expose first', loc='left', fontsize=8)
     save(fig, FIG / out)

@@ -31,3 +31,9 @@ $PY -m $M.intervene --pairs 0:0 1:0 2:0 --steps 40000 --stop-fit 0.9 --lr 0.1 --
 
 $PY -m $M.plot
 $PY -m $M.summary
+
+# PNG renders of the figures and the interactive page for the draft post in notes/child-feature-enabling/.
+for f in intervention-extended intervention-ceilings planted-time-laws checkpoint-readout intervention-as-written intervention-extended-lr0.1; do
+  pdftocairo -png -r 200 -singlefile studies/rhm/child_feature_enabling/figures/$f.pdf notes/child-feature-enabling/zulip/$f
+done
+$PY notes/child-feature-enabling/explorer/build.py

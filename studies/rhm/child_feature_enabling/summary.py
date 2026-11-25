@@ -79,9 +79,23 @@ def checkpoints():
     out['ce_reveal1_max_width'] = max(r['ce_reveal1_upper'] - r['ce_reveal1_lower'] for r in rows)
     out['ce_reveal1_min_width'] = min(r['ce_reveal1_upper'] - r['ce_reveal1_lower'] for r in rows)
     out['final_test'] = data['final_test']
+    out['D_ce_after_300_min'] = {k: min(r[f'D_{k}_ce'] for r in late) for k in 'eh'}
+    out['acc_range_by_step'] = {step: [min(r['acc'] for r in rows if r['step'] == step),
+                                       max(r['acc'] for r in rows if r['step'] == step)] for step in (100, 150, 200, 300)}
+    out['A_e_over_A_h'] = {step: [min(r['A_e'] / r['A_h'] for r in rows if r['step'] == step),
+                                  max(r['A_e'] / r['A_h'] for r in rows if r['step'] == step)] for step in (100, 150)}
+    # the contrasts' additive fractions against the committed audit of the same rule tables
+    audit = json.loads((HERE / 'results/grammar_audit.json').read_text())['tables']
+    out['contrast_vs_audit_max_abs_diff'] = max(
+        max(abs(data['grammars'][str(t['seed'])]['easy']['additive_fraction'] - t['additive_fraction_max']),
+            abs(data['grammars'][str(t['seed'])]['hard']['additive_fraction'] - t['additive_fraction_min']))
+        for t in audit)
+    out['contrast_eigenspace_dims'] = sorted({spec[k]['eigenspace_dim'] for spec in data['grammars'].values()
+                                              for k in ('easy', 'hard')})
     for key in ('A_h_step0_range', 'A_e_step0_range', 'A_h_after_300_range', 'A_e_after_300_range', 'easy_leads_hard',
                 'cutoff_sensitivity_max', 'min_rank', 'logged_loss_max_abs_diff', 'ce_reveal1_min_width',
-                'ce_reveal1_max_width'):
+                'ce_reveal1_max_width', 'D_ce_after_300_min', 'acc_range_by_step', 'A_e_over_A_h',
+                'contrast_vs_audit_max_abs_diff', 'contrast_eigenspace_dims'):
         print(f'{key}: {out[key]}')
     print('final test (50,000 trees): acc ' + ', '.join(f"{t['acc']:.5f}" for t in data['final_test'])
           + ' | CE ' + ', '.join(f"{t['ce']:.2e}" for t in data['final_test']))
@@ -117,7 +131,21 @@ def intervention(folder):
                 k = cols['step'].index(cross['T'])
                 row[arm]['at_T'] = dict(A_h=cols['A_h'][k], A_e=cols['A_e'][k], D_e=cols['D_e'][k],
                                         lower_shift=cols['lower_shift'][k])
-            row[arm]['max_ceiling_gap'] = max(a - d for a, d in zip(cols['A_h'], cols['D_h']))
+            row[arm]['min_rank'] = min(cols['rank_h'])
+            row[arm]['cutoff_sensitivity'] = max(abs(cols[f'A_{k}'][j] - cols[f'A_{k}_cutoff10'][j])
+                                                 for k in 'eh' for j in range(len(cols['step'])))
+            gaps = [a - d for a, d in zip(cols['A_h'], cols['D_h'])]
+            row[arm]['max_ceiling_gap'] = max(gaps)
+            row[arm]['median_ceiling_gap'] = statistics.median(gaps)
+            row[arm]['n_evaluations'] = len(gaps)
+            row[arm]['n_gap_above_0.05'] = sum(g > 0.05 for g in gaps)
+            # single-batch gradient diagnostics over the first 1,000 updates (evaluations 1..40; none at update 0,
+            # where the zero heads send no gradient down)
+            early = [k for k, st in enumerate(cols['step']) if 0 < st <= 1000 and cols['grad_easy'][k] is not None]
+            if early:
+                row[arm]['early_grad_ratio_easy_over_hard'] = statistics.median(
+                    cols['grad_easy'][k] / cols['grad_hard'][k] for k in early)
+                row[arm]['early_grad_cos'] = statistics.median(cols['grad_cos'][k] for k in early)
             # the largest single-evaluation fall of the trained hard fit: an instability shows up here
             row[arm]['largest_drop_D_h'] = float(-np.diff(cols['D_h']).min())
         a, b = row['intact'], row['detached']
@@ -158,6 +186,23 @@ def intervention(folder):
             out[f'at_T_{arm}'] = {k: dict(n=len(at), median=statistics.median(x[k] for x in at),
                                           min=min(x[k] for x in at), max=max(x[k] for x in at)) for k in at[0]}
     out['max_ceiling_gap'] = {arm: max(r[arm]['max_ceiling_gap'] for r in rows) for arm in ARMS}
+    out['median_ceiling_gap'] = {arm: [min(r[arm]['median_ceiling_gap'] for r in rows),
+                                       max(r[arm]['median_ceiling_gap'] for r in rows)] for arm in ARMS}
+    out['evaluations_with_gap_above_0.05'] = {arm: [sum(r[arm]['n_gap_above_0.05'] for r in rows),
+                                                    sum(r[arm]['n_evaluations'] for r in rows)] for arm in ARMS}
+    for key in ('early_grad_ratio_easy_over_hard', 'early_grad_cos'):
+        if all(key in r[arm] for r in rows for arm in ARMS):
+            out[key] = {arm: dict(median=statistics.median(r[arm][key] for r in rows),
+                                  min=min(r[arm][key] for r in rows), max=max(r[arm][key] for r in rows))
+                        for arm in ARMS}
+    out['min_rank'] = min(r[arm]['min_rank'] for r in rows for arm in ARMS)
+    out['cutoff_sensitivity_max'] = max(r[arm]['cutoff_sensitivity'] for r in rows for arm in ARMS)
+    out['max_final_or_any_D_h'] = {arm: max(r[arm]['max_D_h'] for r in rows) for arm in ARMS}
+    out['steps_done'] = [min(r[arm]['last_step'] for r in rows for arm in ARMS),
+                         max(r[arm]['last_step'] for r in rows for arm in ARMS)]
+    out['seconds'] = dict(total=sum(r['seconds'] for r in rows), min=min(r['seconds'] for r in rows),
+                          max=max(r['seconds'] for r in rows))
+    out['init_kinds'] = sorted({r['init'] for r in rows})
     out['max_D_minus_A'] = max(r[arm]['max_D_minus_A'] for r in rows for arm in ARMS)
     out['largest_drop_D_h'] = {arm: max(r[arm]['largest_drop_D_h'] for r in rows) for arm in ARMS}
     out['final_D_h_range'] = {arm: [min(r[arm]['final_D_h'] for r in rows), max(r[arm]['final_D_h'] for r in rows)]
@@ -168,6 +213,9 @@ def intervention(folder):
                               for arm in ARMS}
     for key in ('censored', 'nonfinite', 'intact_first', 'detached_first', 'capped_difference', 'ratio', 'T_intact',
                 'T_detached', 'ceiling_to_fit_lag_intact', 'ceiling_to_fit_lag_detached', 'at_T_intact', 'at_T_detached', 'max_ceiling_gap',
+                'median_ceiling_gap', 'evaluations_with_gap_above_0.05', 'early_grad_ratio_easy_over_hard',
+                'early_grad_cos', 'min_rank', 'cutoff_sensitivity_max', 'max_final_or_any_D_h', 'steps_done',
+                'seconds', 'init_kinds',
                 'max_D_minus_A',
                 'largest_drop_D_h', 'final_D_h_range', 'final_A_h_range', 'final_A_e_range', 'commits', 'uncommitted'):
         if key in out:
@@ -184,7 +232,41 @@ def intervention(folder):
         print(f"pilot ({pl['steps']} updates): choice {pl['choice']}")
         for r in out['pilot']['rates']:
             print('  ', r)
+        # Does rate x updates act as a clock? The same pilot pair at equal rate x updates, for each rate whose
+        # schedule has an evaluation there.
+        out['pilot']['equal_flow_time'] = {}
+        for t in (30, 120, 300):
+            rows_t = {}
+            for r in pl['results']:
+                cols = {arm: r['pair']['arms'][arm]['columns'] for arm in ARMS}
+                step = round(t / r['lr'])
+                if step in cols['intact']['step'] and abs(step * r['lr'] - t) < 1e-9:
+                    k = cols['intact']['step'].index(step)
+                    rows_t[f"{r['lr']:g}"] = {arm: dict(D_e=cols[arm]['D_e'][k], D_h=cols[arm]['D_h'][k],
+                                                        A_e=cols[arm]['A_e'][k], A_h=cols[arm]['A_h'][k]) for arm in ARMS}
+            out['pilot']['equal_flow_time'][t] = rows_t
+            print(f'  pilot pair at rate x updates = {t}: ' + '; '.join(
+                f"rate {lr}: intact D_e {v['intact']['D_e']:.4f}, D_h {v['intact']['D_h']:.4f}" for lr, v in rows_t.items()))
     return out
+
+
+def rate_comparison(a, b):
+    """The pairs run at two rates: half-fit times in updates and in rate x updates, and the detached/intact ratio."""
+    rows = []
+    print(f"\n## Same pairs at rates {a['lr']:g} and {b['lr']:g}\n")
+    print('| pair | rate | T intact | T detached | ratio | rate x T intact | rate x T detached |')
+    print('|---|---|---|---|---|---|---|')
+    for rb in b['pairs']:
+        ra = next(r for r in a['pairs'] if (r['grammar'], r['seed']) == (rb['grammar'], rb['seed']))
+        for src, r in ((a, ra), (b, rb)):
+            ti, td = r['intact']['T'], r['detached']['T']
+            rows.append(dict(grammar=r['grammar'], seed=r['seed'], lr=src['lr'], T_intact=ti, T_detached=td,
+                             ratio=r['ratio'], flow_intact=None if ti is None else src['lr'] * ti,
+                             flow_detached=None if td is None else src['lr'] * td))
+            f = lambda x, d=0: 'censored' if x is None else f'{x:,.{d}f}'
+            print(f"| g{r['grammar']} s{r['seed']} | {src['lr']:g} | {f(ti)} | {f(td)} | {f(r['ratio'], 2)} | "
+                  f"{f(rows[-1]['flow_intact'])} | {f(rows[-1]['flow_detached'])} |")
+    return rows
 
 
 def main():
@@ -193,6 +275,8 @@ def main():
         result = intervention(folder)
         if result is not None:
             out[Path(folder).name] = result
+    if 'intervention-extended' in out and 'intervention-extended-lr0.1' in out:
+        out['rate_comparison'] = rate_comparison(out['intervention-extended'], out['intervention-extended-lr0.1'])
     record.dump(HERE / 'results' / 'summary.json', out)
 
 
