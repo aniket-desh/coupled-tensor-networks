@@ -1,16 +1,44 @@
-"""Draw the mathematical ceilings and the spectra of the saved legal rule tables."""
+"""Regenerate every figure of the study from equations and the saved results (no computation beyond that).
+
+  python -m studies.rhm.child_feature_enabling.plot
+
+  frozen-root.pdf, grammar-spectra.pdf   closed forms and the saved top-rule spectra
+  planted-time-laws.pdf                  results/planted/planted.json
+  checkpoint-readout.pdf                 results/checkpoints/checkpoints.json
+  intervention*.pdf                      results/intervention*/pairs/*.json (one figure per protocol)
+A figure whose results file is absent is skipped with a message.
+"""
 import json
 from pathlib import Path
 
 import numpy as np
+from matplotlib.lines import Line2D
 
-from studies.rhm.plotting import CATEGORICAL, plt, save
+from studies.rhm.plotting import CATEGORICAL, INK, INK2, plt, save
 
 
 HERE = Path(__file__).resolve().parent
+FIG = HERE / 'figures'
+BLUE, ORANGE, GREEN = CATEGORICAL[:3]
+SEED_STYLES = ('-', '--', ':')
 
 
-def main():
+def load(path):
+    path = HERE / path
+    if not path.exists():
+        print('skipped (no results):', path)
+        return None
+    return json.loads(path.read_text())
+
+
+def panel_title(ax, letter, title):
+    """Left-aligned title led by a bold panel letter."""
+    ax.set_title(rf'$\mathbf{{{letter}}}$  {title}', loc='left', fontsize=8)
+
+
+# ------------------------------------------------------------------------------------- closed forms and spectra
+
+def theory():
     r = np.linspace(0, 1, 201)
     fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.65), layout='constrained')
     ax, heat = axes
@@ -30,7 +58,7 @@ def main():
     heat.set(title='Separate child tables', xlabel='Left alignment', ylabel='Right alignment',
              xlim=(0, 1), ylim=(0, 1), aspect='equal')
     heat.grid(False)
-    save(fig, HERE / 'figures' / 'frozen-root.pdf')
+    save(fig, FIG / 'frozen-root.pdf')
 
     tables = json.loads((HERE / 'results' / 'grammar_audit.json').read_text())['tables']
     fig, ax = plt.subplots(figsize=(5.7, 2.65), layout='constrained')
@@ -43,7 +71,125 @@ def main():
            ylabel='Fraction explained by additive fit', ylim=(0, 1), xlim=(.6, 15.4),
            xticks=[1, 3, 5, 7, 9, 11, 13, 15])
     ax.legend()
-    save(fig, HERE / 'figures' / 'grammar-spectra.pdf')
+    save(fig, FIG / 'grammar-spectra.pdf')
+
+
+# ------------------------------------------------------------------------------------------------ planted sweep
+
+def planted(overlay_delta=0.02):
+    data = load('results/planted/planted.json')
+    if data is None:
+        return
+    inv_lambda_2 = 1 / data['meta']['lambda_2']
+    arms = data['arms']
+    pick = lambda tied, s: sorted((a for a in arms if a['tied'] == tied and a['s'] == s), key=lambda a: -a['delta'])
+    styles = {True: dict(color=BLUE, marker='o', label='tied'), False: dict(color=ORANGE, marker='s', label='untied')}
+    fig, axes = plt.subplots(2, 2, figsize=(6.5, 4.7), layout='constrained')
+    gap_ax, slope_ax, pole_ax, time_ax = axes.flat
+
+    for tied in (True, False):
+        both = pick(tied, 1)
+        logs = np.log(1 / np.array([a['delta'] for a in both]))
+        gap = np.array([a['events']['hard_half'] - a['events']['left_half'] for a in both])
+        st = styles[tied]
+        points = dict(ls='none', marker=st['marker'], ms=4.5, color=st['color'], mfc='white', mew=1.2)
+        # Theory fixes the slope only (0 tied, 1/lambda_2 untied); the O(1) offset is anchored at the smallest delta.
+        slope = 0.0 if tied else inv_lambda_2
+        gap_ax.plot(logs, gap[-1] + slope * (logs - logs[-1]), color=st['color'], lw=1)
+        gap_ax.plot(logs, gap, **points)
+        gap_ax.annotate(st['label'] + ': slope ' + ('0' if tied else r'$1/\lambda_2$'), (logs[2], gap[2]),
+                        xytext=(0, 7) if tied else (-6, 5), textcoords='offset points', color=st['color'],
+                        ha='center' if tied else 'right')
+        mid = (logs[1:] + logs[:-1]) / 2
+        slope_ax.axhline(slope, color=st['color'], lw=1)
+        slope_ax.plot(mid, np.diff(gap) / np.diff(logs), **points)
+
+        alone = pick(tied, 0)
+        deltas = np.array([a['delta'] for a in alone])
+        limit = 0.25 if tied else 0.5
+        pole_ax.axhline(limit, color=st['color'], lw=1)
+        pole_ax.plot(deltas, deltas ** 2 * np.array([a['events']['hard_half'] for a in alone]), **points)
+        pole_ax.annotate(st['label'] + ': limit ' + ('1/4' if tied else '1/2'), (deltas[-1], limit), xytext=(0, -10),
+                         textcoords='offset points', color=st['color'])
+
+        arm = next(a for a in both if a['delta'] == overlay_delta)
+        t = np.array(arm['t'])
+        time_ax.plot(t, arm['A_h'], '--', color=st['color'], lw=1)
+        time_ax.plot(t, arm['D_h'], '-', color=st['color'], lw=1.6)
+        time_ax.plot([arm['events']['left_half']], [-0.03], marker='^', ms=5, color=st['color'], clip_on=False,
+                     zorder=5)
+
+    gap_ax.set(xlabel=r'$\log(1/\delta)$', ylabel='Time from $r_L=1/2$ to $D_h=1/2$', ylim=(0, 9.5))
+    slope_ax.set(xlabel=r'$\log(1/\delta)$, midpoint of adjacent seeds', ylabel='Adjacent-point slope of the wait',
+                 ylim=(-0.15, 1.75))
+    slope_ax.annotate(rf'$1/\lambda_2={inv_lambda_2:.3f}$', (0.03, inv_lambda_2), xycoords=('axes fraction', 'data'),
+                      xytext=(0, -10), textcoords='offset points', color=ORANGE)
+    pole_ax.set(xscale='log', xlabel=r'Initial alignment $\delta$', ylabel=r'$\delta^2\,T_h$', ylim=(0.2, 0.6))
+    pole_ax.set_xticks(deltas, [f'{d:g}' for d in deltas])
+    pole_ax.minorticks_off()
+    time_ax.set(xlabel='Gradient-flow time $t$', ylabel='Fraction of $UV$ variance', ylim=(-0.03, 1.02),
+                xlim=(0, max(a['t_final'] for a in arms if a['s'] == 1 and a['delta'] == overlay_delta)))
+    time_ax.legend(handles=[Line2D([], [], color=INK2, ls='--', lw=1, label='ceiling $A_h=r_L^2r_R^2$'),
+                            Line2D([], [], color=INK2, lw=1.6, label='trained fit $D_h$'),
+                            Line2D([], [], color=INK2, ls='none', marker='^', ms=5, label='time of $r_L=1/2$'),
+                            Line2D([], [], color=BLUE, lw=1.6, label='tied'),
+                            Line2D([], [], color=ORANGE, lw=1.6, label='untied')], loc='upper left', fontsize=7)
+    titles = ('Both contrasts ($s=1$): wait for the hard fit', 'Measured slopes against the predicted ones',
+              'Hard contrast alone ($s=0$)', rf'$s=1$, $\delta={overlay_delta}$: ceiling and trained fit')
+    for ax, letter, title in zip(axes.flat, 'abcd', titles):
+        panel_title(ax, letter, title)
+    save(fig, FIG / 'planted-time-laws.pdf')
+
+
+# ------------------------------------------------------------------------------------------- checkpoint readout
+
+def step_axis(ax, last, zero_at):
+    """Log update axis with update 0 drawn at `zero_at` (left of the first positive update)."""
+    ax.set_xscale('log')
+    ticks = [s for s in (100, 1000, 10000, 100000) if zero_at < s <= last]
+    ax.set_xticks([zero_at] + ticks, ['0'] + [f'{s:,}' for s in ticks])
+    ax.set_xlim(zero_at * 0.8, last * 1.25)
+    ax.minorticks_off()
+
+
+def checkpoints():
+    data = load('results/checkpoints/checkpoints.json')
+    if data is None:
+        return
+    rows = [r for r in data['rows'] if r['status'] == 'ok']
+    grammars = sorted({r['grammar'] for r in rows})
+    seeds = sorted({r['seed'] for r in rows})
+    zero_at = 25
+    fig, axes = plt.subplots(3, len(grammars), figsize=(6.8, 5.3), layout='constrained', sharex=True, sharey='row')
+    for col, g in enumerate(grammars):
+        for s, ls in zip(seeds, SEED_STYLES):
+            run = sorted((r for r in rows if r['grammar'] == g and r['seed'] == s), key=lambda r: r['step'])
+            x = [max(r['step'], zero_at) for r in run]
+            for key, color in (('e', BLUE), ('h', ORANGE)):
+                axes[0, col].plot(x, [r[f'A_{key}'] for r in run], ls, color=color, marker='o', ms=2)
+                axes[1, col].plot(x, [r[f'D_{key}_ce'] for r in run], ls, color=color, marker='o', ms=2)
+            axes[2, col].plot(x, [r['ce'] for r in run], ls, color=INK, marker='o', ms=2)
+        axes[0, col].set_title(f'Grammar {g}', fontsize=8)
+        axes[2, col].axhline(np.log(16), color=INK2, lw=0.6, ls=(0, (1, 2)))
+        axes[2, col].set_xlabel('Adam update of the original run')
+        for ax in axes[:, col]:
+            step_axis(ax, max(r['step'] for r in rows), zero_at)
+    axes[2, 0].annotate('uniform, log 16', (1000, np.log(16)), xytext=(0, -9), textcoords='offset points',
+                        color=INK2, fontsize=7)
+    axes[0, 0].set(ylabel='Frozen-child ceiling $A_c$\n(best linear root, exact)', ylim=(-0.03, 1.03))
+    axes[1, 0].set(ylabel="Classifier's own fit $D_c^{CE}$\n(posterior mean, 20,000 trees)", ylim=(-0.03, 1.03))
+    axes[2, 0].set(ylabel='Cross-entropy (nats)\non the diagnostic trees')
+    axes[1, -1].legend(handles=[Line2D([], [], color=BLUE, label='easy contrast $c_e$'),
+                                Line2D([], [], color=ORANGE, label='hard contrast $c_h$')]
+                       + [Line2D([], [], color=INK2, ls=ls, label=f'init seed {s}') for s, ls in zip(seeds, SEED_STYLES)],
+                       loc='lower right', fontsize=7)
+    save(fig, FIG / 'checkpoint-readout.pdf')
+
+
+def main():
+    theory()
+    planted()
+    checkpoints()
 
 
 if __name__ == '__main__':

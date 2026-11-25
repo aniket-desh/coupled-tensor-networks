@@ -55,3 +55,21 @@ python3 -m studies.rhm.child_feature_enabling.toy_check
 ```
 
 Save each future run in a new results directory. Include the committed source revision and any local diff, driver and plotting code, versions, configuration, contrast vectors and grammar hashes, initial checkpoint identifiers and checksums, calibration results, solver tolerances or learning rate, seeds, per-evaluation data, event records, failures, and machine/runtime. Keep validation outputs distinct from the proposed comparisons. The full grid has not been timed. Benchmark one CPU pair and an exact oracle evaluation before budgeting the grid; report any subset actually completed and the stopping reason.
+
+## Amendments made during execution (2026-11-25)
+
+The three sections above are the plan as handed off. These changes were made while running it. Each says what was known when it was made.
+
+**A1, planted sweep (section 1).** Each trajectory is integrated 15 time units past its last event, so the overlay of $D_h$ and $A_h$ shows saturation. The event times come from the integration before that point and are unaffected. The independent full-table reference was integrated for all twenty arm-seed combinations.
+
+**A2, checkpoint readout (section 2).** One column is added: $D_c^{\rm CE}=1-\frac1N\sum_x\big(c_{y}-\sum_j p_j(x)c_j\big)^2$ on the 20,000 diagnostic trees, the fit of the unmodified classifier's posterior-mean prediction of contrast $c$. The plan had the oracle $A_c$ and the cross-entropy but no fit of the trained predictor to the two contrasts. $D_c^{\rm CE}$ is a sample estimate from a different predictor class (softmax of a trilinear root), so it is not bounded by $A_c$.
+
+**A3, extended intervention (section 3).** The protocol as written is run first and reported whatever it gives (`results/intervention/`). Its pilot rates are too small for its horizon: on the pilot pair (grammar 0, init seed 9) the hard mean squared error after 300 updates was 0.99996 or more at all three rates, and 4,000 updates at $10^{-3}$ is a gradient-flow time of 4. Exploratory runs on the same pilot pair, at rates 0.01 to 1 for 4,000 updates, showed the hard fit moving only at rates of 0.1 and above. No evaluation pair had been run at any rate when this amendment was written. The extended protocol changes three numbers and nothing else:
+
+- pilot rates $\{0.01,0.03,0.1,0.3,1\}$ in place of $\{10^{-4},3\times10^{-4},10^{-3}\}$;
+- pilot length 4,000 updates in place of 300, since 300 updates cannot rank these rates either;
+- horizon 40,000 updates per arm in place of 4,000, so that a delayed arm can still cross.
+
+The eligibility and selection rules, the pilot pair, the nine evaluation pairs, their step-0 weights and batch streams, the loss, plain SGD, the evaluation schedule and the endpoint are unchanged. Results go to `results/intervention-extended/`. Its censoring bound is $T>40{,}000$.
+
+**A4, rate sensitivity.** Minibatch SGD at these rates need not follow gradient flow, so the ordering of the two arms is checked at a second rate: 0.1, one half-decade below the extended pilot's choice if that choice is 0.3, for 40,000 updates on the three pairs with init seed 0 (one per grammar). Results go to `results/intervention-extended-lr0.1/`. This is a robustness check on the sign and rough size of the effect, with three pairs.
