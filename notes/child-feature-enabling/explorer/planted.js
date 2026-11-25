@@ -1,6 +1,6 @@
 // Reduced population gradient flow of the planted two-level model: the equations of
 // studies/rhm/child_feature_enabling/planted.py (notes toy.tex and untied.tex), integrated with an adaptive
-// Dormand-Prince 5(4) step. Checked against results/planted/planted.json by explorer/check.js.
+// Dormand-Prince 5(4) step. Checked against results/planted/planted.json by explorer/check_site.py.
 //
 // Tied state (r, b, w); untied state (rL, rR, b, w). s = 1 adds the easy target U, s = 0 leaves the interaction alone.
 const PHI = (1 + Math.sqrt(5)) / 2;

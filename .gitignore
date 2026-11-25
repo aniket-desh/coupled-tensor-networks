@@ -6,3 +6,6 @@ __pycache__/
 /artifacts/
 .orch/
 /data/
+
+# Built by notes/child-feature-enabling/explorer/export.py and published as the Artifact; explorer.html is the tracked copy.
+notes/child-feature-enabling/explorer/site/

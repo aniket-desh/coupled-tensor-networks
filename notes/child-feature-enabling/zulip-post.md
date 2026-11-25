@@ -9,9 +9,9 @@ Before posting to Zulip:
 - The names in the second paragraph are plain text here. Turn them into @-mentions if you want to notify people.
 - The repository links point at the branch codex/child-feature-enabling. They only work for readers who can see the
   repository; attach theory.pdf and explorer.html to the post otherwise.
-- The interactive page is a Claude artifact that is private until you share it. Open the link below, press Share,
-  and paste the share link over it. explorer.html in this folder is the same page as a file, for readers without
-  access to the artifact.
+- The interactive page is a Claude artifact that is private until you share it. Open the link below and set Share to
+  "anyone with the link"; the link itself stays the same. explorer.html in this folder is the same page as one file
+  (data inlined, works offline), for readers without access to the artifact.
 - Who did what is yours to state. The theory note was written by a Codex session and the experiments, plots and this
   draft by Claude; the sentence under "Experiments" says so and should be edited to say what you have checked.
 -->
@@ -64,7 +64,7 @@ Detaching the easy gradient delays the hard target's half fit in 9 of 9 pairs (3
 
 Left: the trained fit sits on its frozen-child ceiling in both arms (the ceiling crosses 1/2 at most 75 updates before the fit does), so the delay is in the lower cores and the readout is not what is slow. Right: with the easy gradient the easy contrast becomes available first, as in the saved checkpoints of the original cross-entropy classifiers (crosses). Without it the network reaches half fit on the hard contrast while the easy one is only about 19% linearly available.
 
-Interactive page: https://claude.ai/artifact/7Bs2Sho6EVnWJfQ2TM3quE. The first half integrates the planted model in the browser, with a slider for $\delta$ and switches for tied or untied children and for the easy target, and shows the half-fit time next to the leading terms of its law. The second half replays every pair of the intervention.
+Interactive page: https://claude.ai/artifact/7Bs2Sho6EVnWJfQ2TM3quE. It has four parts that share one example: generate an RHM tree and switch a node to a synonym to see which leaves change and that the parse does not; run the step-0 and trained tree networks on the same tree; compare the intact and detached arms of every pair under the written and the amended protocol, with the hypotheses and verdicts in one table; and work through the planted model, from its rule table to the population loss, the ceiling $r_L^2r_R^2$ and the gradient flow, with a slider for $\delta$ and switches for tied or untied children and the easy target.
 
 **What this does and does not show.**
 - The planted laws are a checked calculation about that model. They say nothing by themselves about deeper trees.

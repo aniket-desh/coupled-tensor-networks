@@ -36,4 +36,6 @@ $PY -m $M.summary
 for f in intervention-extended intervention-ceilings planted-time-laws checkpoint-readout intervention-as-written intervention-extended-lr0.1; do
   pdftocairo -png -r 200 -singlefile studies/rhm/child_feature_enabling/figures/$f.pdf notes/child-feature-enabling/zulip/$f
 done
-$PY notes/child-feature-enabling/explorer/build.py
+# Needs the final intervention weights in runs/child-feature-enabling/ and the step-0 checkpoints in $RUNS.
+$PY notes/child-feature-enabling/explorer/export.py
+# Optional browser check (needs Playwright): $PY notes/child-feature-enabling/explorer/check_site.py

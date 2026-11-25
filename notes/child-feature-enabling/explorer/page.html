@@ -1,0 +1,1572 @@
+<title>Child Feature Explorer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+/* Layout: one reading column with a sticky section bar; each tool is a control rail beside its figure, stacked on a phone.
+   The grammar tree and the network share one leaf row: grammar above (top-down), network below (bottom-up). */
+:root {
+  --bg: #f5f6f8; --surface: #ffffff; --ink: #141920; --ink2: #566070; --rule: #dbe0e7; --grid: #e8ecf0;
+  --intact: #2466c2; --detached: #c9501d; --left: #11845b; --right: #7853c4; --pick: #e8f0fb;
+  --changed: #b7791f; --changed-bg: #fbefd9; --ok: #1f7a4d; --ok-bg: #e2f3ea; --warn: #9a6200; --warn-bg: #fbf0d6;
+  --bad: #b3261e; --bad-bg: #fbe4e2; --muted-bg: #eef1f5;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --text: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1318; --surface: #171c23; --ink: #e6eaf0; --ink2: #9aa4b2; --rule: #29303a; --grid: #212831;
+    --intact: #6ea8f2; --detached: #f08a5d; --left: #4fc79c; --right: #b79cf2; --pick: #1d2838;
+    --changed: #f0b45a; --changed-bg: #3a2c14; --ok: #5fd39a; --ok-bg: #15301f; --warn: #f0c060; --warn-bg: #352a10;
+    --bad: #f28b82; --bad-bg: #3a1a18; --muted-bg: #1f252e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1318; --surface: #171c23; --ink: #e6eaf0; --ink2: #9aa4b2; --rule: #29303a; --grid: #212831;
+  --intact: #6ea8f2; --detached: #f08a5d; --left: #4fc79c; --right: #b79cf2; --pick: #1d2838;
+  --changed: #f0b45a; --changed-bg: #3a2c14; --ok: #5fd39a; --ok-bg: #15301f; --warn: #f0c060; --warn-bg: #352a10;
+  --bad: #f28b82; --bad-bg: #3a1a18; --muted-bg: #1f252e; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--text); font-size: 15px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.page { max-width: 1100px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 44px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-family: var(--display); font-weight: 500; font-size: 2.1rem; line-height: 1.12; max-width: 24ch; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 1.6rem; line-height: 1.2; }
+h3 { font-size: 1rem; font-weight: 600; }
+p { margin: 0; max-width: 70ch; }
+a { color: var(--intact); }
+.lede { font-size: 1.05rem; }
+.eyebrow { font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 500; }
+header.top { display: flex; flex-direction: column; gap: 14px; }
+.answer { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; max-width: 900px; }
+.answer > div { border-left: 3px solid var(--rule); padding: 2px 0 2px 12px; font-size: 0.9rem; color: var(--ink2); }
+.answer b { display: block; color: var(--ink); font-family: var(--data); font-weight: 500; font-size: 1.05rem; }
+nav.sections { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  border-bottom: 1px solid var(--rule); margin-inline: -4px; padding: 8px 4px; display: flex; gap: 6px; overflow-x: auto; }
+nav.sections a { white-space: nowrap; text-decoration: none; color: var(--ink2); font-size: 0.88rem; padding: 5px 10px;
+  border-radius: 999px; border: 1px solid transparent; }
+nav.sections a:hover { color: var(--ink); border-color: var(--rule); }
+nav.sections a.on { color: var(--bg); background: var(--ink); }
+nav.sections a span { font-family: var(--data); margin-right: 6px; }
+section.part { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 64px; }
+.tool { display: grid; grid-template-columns: minmax(240px, 300px) minmax(0, 1fr); gap: 22px; align-items: start; }
+.tool.wide-rail { grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); }
+@media (max-width: 820px) { .tool, .tool.wide-rail { grid-template-columns: minmax(0, 1fr); } }
+.rail { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.stack { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink2); font-weight: 500; }
+.label .plain { text-transform: none; letter-spacing: 0; font-size: 0.86rem; color: var(--ink); font-weight: 400; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+select, .btn { font: inherit; font-size: 0.88rem; color: var(--ink); background: var(--surface); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 6px 10px; }
+.btn { cursor: pointer; }
+.btn:hover { border-color: var(--ink2); }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.seg button { flex: 1 1 auto; min-width: 0; padding: 6px 9px; border: 0; background: transparent; color: var(--ink2);
+  font: inherit; font-size: 0.86rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.seg button:disabled { opacity: 0.4; cursor: default; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible, [tabindex]:focus-visible,
+svg .hit:focus-visible { outline: 2px solid var(--intact); outline-offset: 2px; }
+input[type="range"] { width: 100%; accent-color: var(--intact); }
+.num, code { font-family: var(--data); font-variant-numeric: tabular-nums; }
+code { font-size: 0.86em; background: var(--muted-bg); padding: 1px 4px; border-radius: 4px; }
+dl.kv { margin: 0; display: grid; grid-template-columns: minmax(7em, auto) minmax(0, 1fr); gap: 4px 12px; font-size: 0.88rem; }
+dl.kv dt { color: var(--ink2); min-width: 0; }
+dl.kv dd { margin: 0; text-align: right; font-family: var(--data); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.note { font-size: 0.84rem; color: var(--ink2); }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; min-width: 0; }
+.card h3 { margin-bottom: 6px; }
+.fig { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 10px 6px; min-width: 0; }
+.fig > h3 { margin: 0 0 4px 4px; font-size: 0.92rem; font-weight: 500; }
+.fig .cap { font-size: 0.82rem; color: var(--ink2); padding: 2px 4px 4px; }
+.scroll-x { overflow-x: auto; }
+svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--data); font-size: 11px; fill: var(--ink2); }
+svg .axis { stroke: var(--ink2); stroke-width: 1; fill: none; }
+svg .grid { stroke: var(--grid); stroke-width: 1; fill: none; }
+svg .ref { stroke: var(--ink2); stroke-width: 1; stroke-dasharray: 2 4; fill: none; }
+svg .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+svg .thin { stroke-width: 1.3; }
+svg .dash { stroke-dasharray: 6 4; }
+svg .faint { opacity: 0.3; }
+.c-intact { stroke: var(--intact); } .c-detached { stroke: var(--detached); } .c-left { stroke: var(--left); }
+.c-right { stroke: var(--right); } .c-ink { stroke: var(--ink); } .c-ink2 { stroke: var(--ink2); }
+.f-intact { fill: var(--intact); } .f-detached { fill: var(--detached); } .f-left { fill: var(--left); }
+.f-right { fill: var(--right); } .f-ink { fill: var(--ink); } .f-surface { fill: var(--surface); } .f-ink2 { fill: var(--ink2); }
+svg text.f-intact { fill: var(--intact); } svg text.f-detached { fill: var(--detached); } svg text.f-left { fill: var(--left); }
+svg text.f-right { fill: var(--right); } svg text.f-ink { fill: var(--ink); }
+svg text.strong { font-weight: 500; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.8rem; color: var(--ink2); padding: 0 4px 6px; }
+.key > span { display: inline-flex; align-items: center; gap: 6px; }
+.key i { display: inline-block; width: 22px; border-top: 2px solid var(--ink2); }
+.key i.d { border-top-style: dashed; }
+/* trees */
+svg.tree .edge { stroke: var(--rule); stroke-width: 1.4; fill: none; }
+svg.tree .edge.live { stroke: var(--ink2); }
+svg.tree .node rect, svg.tree .node circle { fill: var(--surface); stroke: var(--ink2); stroke-width: 1.2; }
+svg.tree .node text { fill: var(--ink); font-size: 11px; }
+svg.tree .node.leaf rect { fill: var(--muted-bg); }
+svg.tree .node.changed rect, svg.tree .node.changed circle { fill: var(--changed-bg); stroke: var(--changed); stroke-width: 2; }
+svg.tree .node.sel rect, svg.tree .node.sel circle { stroke: var(--intact); stroke-width: 2.6; }
+svg.tree .node.dim { opacity: 0.18; }
+svg.tree .node { cursor: pointer; }
+svg.tree .lvl { font-size: 10px; fill: var(--ink2); }
+svg.tree .prod { font-size: 9px; fill: var(--ink2); }
+svg.tree .band { fill: var(--muted-bg); }
+svg.tree .hit { fill: transparent; stroke: none; }
+.prods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.prods button { font: inherit; font-family: var(--data); font-size: 0.86rem; text-align: left; padding: 6px 8px; border-radius: 6px;
+  border: 1px solid var(--rule); background: var(--surface); color: var(--ink); cursor: pointer; }
+.prods button[aria-pressed="true"] { border-color: var(--intact); box-shadow: inset 0 0 0 1px var(--intact); background: var(--pick); }
+.prods button:hover { border-color: var(--ink2); }
+.prods small { display: block; color: var(--ink2); font-family: var(--text); font-size: 0.72rem; }
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.ok { color: var(--ok); background: var(--ok-bg); } .pill.warn { color: var(--warn); background: var(--warn-bg); }
+.pill.bad { color: var(--bad); background: var(--bad-bg); } .pill.muted { color: var(--ink2); background: var(--muted-bg); }
+.pill.kind { color: var(--ink2); background: transparent; border: 1px solid var(--rule); font-weight: 500; }
+.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 0.86rem; }
+.checks li { display: flex; gap: 8px; align-items: baseline; }
+.checks .ok { color: var(--ok); font-weight: 600; } .checks .bad { color: var(--bad); font-weight: 600; }
+.strip { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 2px; }
+.strip span { height: 22px; border-radius: 2px; }
+.strip.idx span { height: auto; font-family: var(--data); font-size: 9px; color: var(--ink2); text-align: center; }
+.bars { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 2px; align-items: end; height: 64px; }
+.bars span { background: var(--ink2); border-radius: 2px 2px 0 0; min-height: 1px; }
+.bars span.true { background: var(--intact); }
+.stages { display: flex; gap: 4px; flex-wrap: wrap; }
+.stages button { font: inherit; font-size: 0.76rem; padding: 3px 7px; border: 1px solid var(--rule); border-radius: 999px;
+  background: var(--surface); color: var(--ink2); cursor: pointer; }
+.stages button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.stages button.done { color: var(--ink); }
+.cols2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.cols3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 820px) { .cols2, .cols3 { grid-template-columns: minmax(0, 1fr); } }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.84rem; }
+th, td { padding: 7px 9px; text-align: left; vertical-align: top; }
+th { font-weight: 500; color: var(--ink2); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(--rule); }
+td { border-bottom: 1px solid var(--grid); }
+tbody tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: right; font-family: var(--data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.hyp td { min-width: 150px; } table.hyp td:first-child { min-width: 170px; } table.hyp td:last-child { min-width: 110px; }
+table.pairs tbody tr { cursor: pointer; }
+table.pairs tbody tr:hover { background: var(--pick); }
+table.pairs tbody tr[aria-selected="true"] { background: var(--pick); box-shadow: inset 3px 0 0 var(--intact); }
+.rules { border-collapse: collapse; font-family: var(--data); font-size: 0.8rem; width: auto; }
+.rules td, .rules th { padding: 3px 6px; border: 1px solid var(--grid); text-align: center; }
+.rules th { font-family: var(--text); text-transform: none; letter-spacing: 0; font-size: 0.74rem; }
+.rules td.hl { background: var(--pick); color: var(--intact); font-weight: 500; }
+ol.timeline { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; max-width: 76ch; }
+ol.timeline li::marker { font-family: var(--data); color: var(--ink2); }
+details { border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); padding: 8px 14px; }
+details > summary { cursor: pointer; font-weight: 500; font-size: 0.92rem; }
+details[open] > summary { margin-bottom: 8px; }
+details .body { display: flex; flex-direction: column; gap: 10px; font-size: 0.92rem; }
+.math { font-family: var(--display); font-size: 1.08rem; font-style: italic; }
+.eq { font-family: var(--display); font-size: 1.08rem; padding: 4px 0 4px 14px; border-left: 2px solid var(--rule); overflow-x: auto; }
+.eq i, .math i { font-style: italic; }
+.tag { font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.tag.proved { color: var(--left); } .tag.measured { color: var(--detached); }
+.callout { border-left: 3px solid var(--ink); padding: 4px 0 4px 14px; max-width: 76ch; }
+.loading { color: var(--ink2); font-size: 0.9rem; }
+footer { font-size: 0.85rem; color: var(--ink2); border-top: 1px solid var(--rule); padding-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+</style>
+
+<div class="page">
+  <header class="top">
+    <div class="eyebrow">Tree tensor networks on a Random Hierarchy Model · study of 25 Nov 2026</div>
+    <h1>Does learning an easy root contrast speed up a hard one?</h1>
+    <p class="lede">A tree tensor network learns to read the root symbol of a hierarchical grammar from its 16 leaves. Some
+      functions of the root label are almost additive in the two symbols just below the root; others need the two
+      children to interact. This study asks whether training on the easy kind builds the child features that the hard kind
+      needs. In a planted two-level model the theory says yes, by a margin that grows without bound as the starting
+      alignment shrinks. On three depth-four grammars, cutting only the easy target's gradient into the lower network
+      slowed the hard target's half fit by about 2.4 times, and the cut network still learned it.</p>
+    <div class="answer" id="answer">
+      <div><b id="ans-ratio">2.41×</b>median slowdown of the hard half fit when the easy gradient is cut</div>
+      <div><b id="ans-range">2.09–2.51</b>range of that ratio over nine matched pairs; intact first in all nine</div>
+      <div><b id="ans-nec">9 of 9</b>cut arms still reach half fit, so the easy path helps but is not required</div>
+      <div><b>18 of 18</b>arms censored under the protocol as first written (4,000 updates at rate 0.001)</div>
+    </div>
+  </header>
+
+  <nav class="sections" aria-label="Sections">
+    <a href="#rhm"><span>1</span>Explore the grammar</a>
+    <a href="#ttn"><span>2</span>Inspect the network</a>
+    <a href="#evidence"><span>3</span>Weigh the evidence</a>
+    <a href="#theory"><span>4</span>Learn the theory</a>
+  </nav>
+
+  <!-- ============================================================ 1. RHM -->
+  <section class="part" id="rhm" aria-labelledby="rhm-h">
+    <div class="eyebrow">1 · The data</div>
+    <h2 id="rhm-h">A grammar that writes 16 tokens from one root symbol</h2>
+    <p>The Random Hierarchy Model (RHM) generates a sentence top-down. The root is one of 16 symbols. Every symbol has
+      4 productions, each an ordered pair of symbols one level down, chosen with probability 1/4. Four levels of binary
+      productions give 16 observed tokens from a vocabulary of 16. At every level each pair of symbols appears in at
+      most one production, so the leaves can be parsed back to the root without ambiguity. Two productions of the same
+      symbol are <b>synonyms</b>: different child pairs that mean the same thing one level up.</p>
+    <div class="tool">
+      <div class="rail">
+        <div class="field">
+          <label class="label" for="g-seed">Grammar (rule table)</label>
+          <div class="row">
+            <select id="g-seed"></select>
+            <button class="btn" type="button" id="g-next">Change grammar</button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="root-sym">Root symbol</label>
+          <div class="row">
+            <select id="root-sym"></select>
+            <button class="btn primary" type="button" id="resample">Resample this tree</button>
+          </div>
+        </div>
+        <p class="note">Resampling draws new productions from the same rule table. Changing the grammar swaps the rule
+          table and keeps the root and every production choice, so nearly every leaf changes while the choices stay the
+          same.</p>
+        <div class="card" id="node-card"></div>
+      </div>
+      <div class="stack">
+        <div class="fig">
+          <h3 id="tree-title">Generated tree</h3>
+          <div class="key">
+            <span>click a node to inspect it</span>
+            <span><i style="border-color: var(--changed); border-top-width: 6px"></i>leaves changed by the last edit</span>
+          </div>
+          <div class="scroll-x"><svg class="tree" id="tree1" role="img" aria-label="Generated RHM tree"></svg></div>
+        </div>
+        <div class="card" id="parse-card"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2. TTN -->
+  <section class="part" id="ttn" aria-labelledby="ttn-h">
+    <div class="eyebrow">2 · The learner</div>
+    <h2 id="ttn-h">The network computes over the same tree, from the leaves up</h2>
+    <p>The learner is a binary tree tensor network (TTN) laid over the same 16 positions. Each leaf token selects a
+      16-dimensional embedding. Each internal node fuses its two children's vectors with its own 16×16×16 core,
+      <span class="math">z<sub>a</sub> = Σ<sub>bc</sub> W<sub>abc</sub> z<sup>L</sup><sub>b</sub> z<sup>R</sup><sub>c</sub></span>,
+      with no nonlinearity, and the root reads the outer product of the top two vectors. Above the shared leaf row is the
+      grammar sampling top-down; below it is the network computing bottom-up on the same example. The exact parser
+      inverts the rule table and returns symbols. The network never sees the rule table and returns vectors.</p>
+    <div class="tool wide-rail">
+      <div class="rail">
+        <div class="field">
+          <span class="label" id="learner-l">Network weights</span>
+          <div class="seg" role="group" aria-labelledby="learner-l" id="learner">
+            <button type="button" data-v="init">step 0</button><button type="button" data-v="intact">intact, trained</button><button type="button" data-v="detached">detached, trained</button>
+          </div>
+          <p class="note" id="learner-id"></p>
+        </div>
+        <div class="field">
+          <span class="label">Pass <span class="plain" id="stage-name"></span></span>
+          <div class="stages" id="stages"></div>
+          <div class="row"><button class="btn" type="button" id="play">Play both passes</button></div>
+        </div>
+        <div class="card" id="ttn-card"></div>
+      </div>
+      <div class="stack">
+        <div class="fig">
+          <h3>Grammar above, network below, one example</h3>
+          <div class="key">
+            <span><i style="border-color: var(--ink2)"></i>grammar: symbols, top-down</span>
+            <span><i style="border-color: var(--intact); border-top-width: 6px"></i>network: vector norm, bottom-up</span>
+            <span><i style="border-color: var(--changed); border-top-width: 6px"></i>changed by the last edit</span>
+          </div>
+          <div class="scroll-x"><svg class="tree" id="tree2" role="img" aria-label="Grammar tree above the shared leaves and the tensor network below"></svg></div>
+        </div>
+        <div class="cols2">
+          <div class="card" id="out-parser"></div>
+          <div class="card" id="out-ttn"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 3. Evidence -->
+  <section class="part" id="evidence" aria-labelledby="ev-h">
+    <div class="eyebrow">3 · The evidence</div>
+    <h2 id="ev-h">What was predicted, what was done, and what came out</h2>
+    <p>The study has three parts that support different kinds of claim. The planted sweep checks a theorem numerically.
+      The checkpoint readout observes classifiers that were trained earlier. The intervention is the causal test: two
+      arms start from the same weights and see the same batches, and in one of them the easy head's error is stopped
+      from reaching the lower cores while its head keeps training.</p>
+    <div class="tablewrap">
+      <table class="hyp">
+        <thead><tr><th>Hypothesis and prediction</th><th>Intervention</th><th>Observable</th><th>Outcome</th><th>Verdict</th></tr></thead>
+        <tbody id="hyp-body"></tbody>
+      </table>
+    </div>
+
+    <h3>Intact against detached, one pair at a time</h3>
+    <p>Both arms fit two contrasts of the root label with linear heads on the root's 256 product features
+      <span class="math">Z = z<sub>left</sub> ⊗ z<sub>right</sub></span>, by plain SGD on a summed squared loss. The
+      <b style="color: var(--intact)">intact</b> arm sends both errors into the lower cores. The
+      <b style="color: var(--detached)">detached</b> arm computes the easy prediction from a stopped copy of
+      <span class="math">Z</span>, so nothing about the easy target reaches the lower cores. Solid lines are the trained fit
+      <span class="math">D</span>, dashed lines the frozen-child ceiling <span class="math">A</span> (the most a refitted
+      linear head could explain with the current lower cores). Both are exact population values.</p>
+    <div class="tool">
+      <div class="rail">
+        <div class="field">
+          <span class="label" id="proto-l">Protocol</span>
+          <div class="seg" role="group" aria-labelledby="proto-l" id="proto"></div>
+          <p class="note" id="proto-note"></p>
+        </div>
+        <div class="field">
+          <span class="label" id="pg-l">Grammar</span>
+          <div class="seg" role="group" aria-labelledby="pg-l" id="pg">
+            <button type="button" data-v="0">0</button><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="ps-l">Initialization seed</span>
+          <div class="seg" role="group" aria-labelledby="ps-l" id="ps">
+            <button type="button" data-v="0">0</button><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="ct-l">Contrast</span>
+          <div class="seg" role="group" aria-labelledby="ct-l" id="ct">
+            <button type="button" data-v="h">hard</button><button type="button" data-v="e">easy</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="yz-l">Vertical axis</span>
+          <div class="seg" role="group" aria-labelledby="yz-l" id="yz">
+            <button type="button" data-v="full">0 to 1</button><button type="button" data-v="zoom">fit the data</button>
+          </div>
+        </div>
+        <dl class="kv" id="pair-kv"></dl>
+      </div>
+      <div class="stack">
+        <div class="fig">
+          <h3 id="pair-title"></h3>
+          <div class="key">
+            <span><i style="border-color: var(--intact)"></i>intact, trained fit D</span>
+            <span><i class="d" style="border-color: var(--intact)"></i>intact, ceiling A</span>
+            <span><i style="border-color: var(--detached)"></i>detached, trained fit D</span>
+            <span><i class="d" style="border-color: var(--detached)"></i>detached, ceiling A</span>
+          </div>
+          <svg id="pair-chart" role="img" aria-label="Trained fit and frozen-child ceiling of both arms against SGD updates"></svg>
+          <p class="cap" id="pair-cap"></p>
+        </div>
+        <div class="cols2">
+          <div class="fig">
+            <h3>All pairs: updates to half fit</h3>
+            <svg id="agg-chart" role="img" aria-label="Half-fit times of the two arms in every pair, joined within a pair"></svg>
+            <p class="cap" id="agg-cap"></p>
+          </div>
+          <div class="fig">
+            <h3>Easy ceiling against hard ceiling</h3>
+            <svg id="path-chart" role="img" aria-label="Hard ceiling against easy ceiling along training for the selected pair"></svg>
+            <p class="cap">The selected pair's path through the two ceilings, every saved evaluation; dots mark each arm's half fit and crosses the cross-entropy classifiers of the same grammar at updates 0 to 300. With the easy gradient the
+              easy contrast becomes available first; without it the lower cores build what the hard contrast needs and little else.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table class="pairs">
+        <thead><tr><th>Pair</th><th class="n">Intact</th><th class="n">Detached</th><th class="n">Difference</th><th class="n">Ratio</th><th class="n">A<sub>e</sub> at half fit, intact</th><th class="n">detached</th></tr></thead>
+        <tbody id="pair-rows"></tbody>
+      </table>
+    </div>
+    <p class="note" id="pair-table-note"></p>
+
+    <div class="cols2">
+      <div class="stack">
+        <h3>Acceleration, and why the detached arm's success matters</h3>
+        <p>The data establish acceleration. The two arms differ only in one gradient path, share their start and their
+          batches, and the intact arm reached half fit first in nine of nine pairs, 2.09 to 2.51 times sooner. That is a
+          causal effect of the easy error's gradient on the lower cores, under plain SGD at this rate and initialization.</p>
+        <p>They do not establish necessity, and they argue against it. A stronger claim would be that the hard contrast
+          cannot be learned without the feature the easy contrast teaches, as in the planted model, where the hard
+          target alone takes about a thousand times longer at the smallest alignment. Here the detached arm, which sees
+          nothing of the easy target, still reached half fit in every pair and went on to a fit of 0.9, from a
+          representation exposing under a quarter of the easy contrast at half fit. On these grammars the easy
+          gradient is a help, not a requirement.</p>
+        <p>The intact arm also simply sends more gradient into the lower cores (about 3.5 times the norm of the hard
+          term's, nearly orthogonal to it), so whether it has to be <em>this</em> contrast is untested. A control with a
+          second poorly additive contrast in place of the easy one would settle it.</p>
+      </div>
+      <div class="stack">
+        <h3>How the protocol was amended</h3>
+        <ol class="timeline" id="timeline">
+          <li><b>Written protocol.</b> Pilot rates 10⁻⁴, 3×10⁻⁴ and 10⁻³ for 300 updates on a separate pilot pair
+            (grammar 0, init seed 9); the rule picked 10⁻³, with mean hard squared error 0.99996 (1 means no fit).</li>
+          <li><b>Exploratory runs on the pilot pair only</b>, rates 0.01 to 1 for 4,000 updates, showed the hard fit moving only
+            at 0.1 and above. 4,000 updates at 10⁻³ is a gradient-flow time of 4; half fit later took 880 to 1,310.</li>
+          <li><b>Amendment A3, before any evaluation pair ran at an amended rate</b>: pilot rates 0.01 to 1, pilot length 4,000,
+            horizon 40,000. Selection rule, pairs, starts, batches, loss and endpoint unchanged. The rule chose 0.3; rate 1
+            lost narrowly (mean final hard error 0.526 against 0.514) after its intact arm collapsed.</li>
+          <li><b>A5, early stop.</b> The first extended pair passed the endpoint by update 8,500 in both arms, so pairs now end once
+            both arms have <span class="math">D<sub>h</sub></span> ≥ 0.9, after both half-fit times are fixed. Everything
+            was rerun from the new commit.</li>
+          <li><b>A4, rate check.</b> The three init-seed-0 pairs rerun at rate 0.1: ratios within 0.07 of rate 0.3.</li>
+          <li><b>The written protocol is reported as it came out</b>: all 18 arms censored. Five of its nine pairs had
+            finished before any extended result existed; the saved files are from the rerun, which matched them.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h3>Observational: classifiers trained earlier with cross-entropy and Adam</h3>
+    <p>The nine original 16-way classifiers were saved at 15 points of training. Reading both contrasts out of their
+      root features shows which becomes linearly available first. It cannot say what drove the lower cores.</p>
+    <div class="tool">
+      <div class="rail">
+        <div class="field">
+          <span class="label" id="rg-l">Grammar</span>
+          <div class="seg" role="group" aria-labelledby="rg-l" id="rg">
+            <button type="button" data-v="0">0</button><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button>
+          </div>
+        </div>
+        <dl class="kv" id="ro-kv"></dl>
+        <p class="note">Ceilings are exact frozen-child values. Accuracy is on the fixed 20,000 diagnostic trees. From update
+          300 on, both ceilings sit between 0.53 and 0.75 although accuracy reaches 1.000 on 50,000 held-out trees: the
+          ceiling bounds a linear squared-error head, not the classifier.</p>
+      </div>
+      <div class="cols2">
+        <div class="fig"><h3>Ceilings A<sub>e</sub> (green), A<sub>h</sub> (purple)</h3><svg id="ro-ceil" role="img" aria-label="Easy and hard ceilings at the saved checkpoints"></svg></div>
+        <div class="fig"><h3>Diagnostic accuracy</h3><svg id="ro-acc" role="img" aria-label="Classifier accuracy at the saved checkpoints"></svg></div>
+      </div>
+    </div>
+
+    <details>
+      <summary>Not yet checked</summary>
+      <div class="body">
+        <ul class="checks">
+          <li>· Whether any second poorly additive contrast helps as much as the easy one.</li>
+          <li>· The same pairs under exact population gradient descent, which would put the comparison on the theorem's clock (SGD at rate 0.3 runs 15–17% behind rate 0.1 per unit of rate × updates).</li>
+          <li>· Other initialization scales; the planted speedup depends on the initial alignment and only the identity init was used.</li>
+          <li>· More than three grammars; the ratio already differs between them (2.1 for grammar 0, 2.5 for grammar 1).</li>
+          <li>· The original cross-entropy and Adam training; the readout is only compatible with the effect.</li>
+          <li>· Behaviour far past the stop at <span class="math">D<sub>h</sub></span> ≥ 0.9.</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary>Experiment settings</summary>
+      <div class="body" id="settings"></div>
+    </details>
+  </section>
+
+  <!-- ============================================================ 4. Theory -->
+  <section class="part" id="theory" aria-labelledby="th-h">
+    <div class="eyebrow">4 · The theory</div>
+    <h2 id="th-h">A planted grammar where the hard target needs a feature the easy one teaches</h2>
+    <p>The planted model has four root classes encoded by two signs, <span class="math">(U, UV)</span>. The left child
+      hides <span class="math">U</span> and the right child hides <span class="math">V</span>. The easy target
+      <span class="math">U</span> can be read from the left child alone; the hard target <span class="math">UV</span>
+      needs both. Everything below is exact: the 256 leaf strings are enumerated in your browser.</p>
+
+    <div class="tool wide-rail">
+      <div class="rail">
+        <div class="card">
+          <h3>Rule table</h3>
+          <p class="note">Symbols are two bits, written 0–3 (first bit is the high bit). A bottom node over leaves
+            <span class="math">x, x′</span> is <span class="math">x ⊕ x′</span>. A root over children with first bits
+            <span class="math">u, v</span> is <span class="math">(u, u ⊕ v)</span>.</p>
+          <div class="scroll-x" id="pl-rules"></div>
+        </div>
+        <div class="field">
+          <span class="label">Leaf string <span class="plain">(x₁ x₂ x₃ x₄)</span></span>
+          <div class="row" id="pl-leaves"></div>
+          <div class="row"><button class="btn" type="button" id="pl-rand">Random string</button></div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="cols2">
+          <div class="card" id="pl-joint"></div>
+          <div class="card" id="pl-pred"></div>
+        </div>
+        <div class="cols2">
+          <div class="stack">
+            <div class="field">
+              <label class="label" for="pl-rl">Left child alignment <span class="plain">r<sub>L</sub> = <span class="num" id="pl-rl-v"></span></span></label>
+              <input type="range" id="pl-rl" min="0" max="1" step="0.01" value="0.8">
+            </div>
+            <div class="field">
+              <label class="label" for="pl-rr">Right child alignment <span class="plain">r<sub>R</sub> = <span class="num" id="pl-rr-v"></span></span></label>
+              <input type="range" id="pl-rr" min="0" max="1" step="0.01" value="0.3">
+            </div>
+            <div class="field">
+              <label class="label" for="pl-w">Hard readout <span class="plain">w = <span class="num" id="pl-w-v"></span></span></label>
+              <input type="range" id="pl-w" min="0" max="1.2" step="0.01" value="0.05">
+            </div>
+            <div class="field">
+              <label class="label" for="pl-b">Easy readout <span class="plain">b = <span class="num" id="pl-b-v"></span></span></label>
+              <input type="range" id="pl-b" min="0" max="1.2" step="0.01" value="0.5">
+            </div>
+            <div class="row"><button class="btn" type="button" id="pl-best">Set w to the best frozen-child value</button></div>
+          </div>
+          <div class="fig">
+            <h3>Frozen-root ceiling r<sub>L</sub>² r<sub>R</sub>²</h3>
+            <svg id="pl-heat" role="img" aria-label="Ceiling as a function of the two child alignments"></svg>
+            <p class="cap">The best root that keeps the children frozen explains <span class="math">r<sub>L</sub>²r<sub>R</sub>²</span>
+              of the interaction's variance. The line is the level 1/2: a perfect left child still needs
+              <span class="math">r<sub>R</sub></span> ≥ 0.71.</p>
+          </div>
+        </div>
+        <div class="card" id="pl-loss"></div>
+      </div>
+    </div>
+
+    <h3>Gradient flow: when does the hard fit arrive?</h3>
+    <p>Each child table starts at unit norm with alignment <span class="math">δ</span> to its hidden sign, and both readouts start at
+      zero. The curves are population gradient flow, integrated in your browser from the reduced equations of the
+      theory note. Its half-fit times agree with the saved stiff-solver integration to about one part in 10¹⁰.</p>
+    <div class="tool">
+      <div class="rail">
+        <div class="field">
+          <label class="label" for="delta">Initial alignment <span class="plain">δ = <span class="num" id="delta-val"></span></span></label>
+          <input type="range" id="delta" min="-2.5" max="-0.7" step="0.01" value="-1.7">
+        </div>
+        <div class="field">
+          <span class="label" id="tie-l">Child tables</span>
+          <div class="seg" role="group" aria-labelledby="tie-l" id="tie">
+            <button type="button" data-v="tied">tied (shared)</button><button type="button" data-v="untied">untied</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="easy-l">Easy target U</span>
+          <div class="seg" role="group" aria-labelledby="easy-l" id="easy">
+            <button type="button" data-v="1">trained</button><button type="button" data-v="0">absent</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="axis-l">Time axis</span>
+          <div class="seg" role="group" aria-labelledby="axis-l" id="axis">
+            <button type="button" data-v="linear">linear</button><button type="button" data-v="log">log</button>
+          </div>
+        </div>
+        <dl class="kv" id="planted-out"></dl>
+        <p class="note" id="planted-law"></p>
+      </div>
+      <div class="stack">
+        <div class="fig">
+          <h3>Trajectory at this setting</h3>
+          <div class="key">
+            <span><i style="border-color: var(--intact)"></i><span>trained hard fit D<sub>h</sub></span></span>
+            <span><i class="d" style="border-color: var(--intact)"></i><span>ceiling A<sub>h</sub> = r<sub>L</sub>²r<sub>R</sub>²</span></span>
+            <span><i style="border-color: var(--left)"></i><span>left alignment r<sub>L</sub></span></span>
+            <span><i style="border-color: var(--right)"></i><span>right alignment r<sub>R</sub></span></span>
+          </div>
+          <svg id="traj" role="img" aria-label="Alignments, ceiling and trained hard fit against gradient-flow time"></svg>
+        </div>
+        <div class="fig">
+          <h3>Hard half-fit time against δ, all four arms</h3>
+          <svg id="sweep" role="img" aria-label="Half-fit time against initial alignment for the four arms"></svg>
+          <p class="cap">Lines are computed here; rings are the saved stiff-solver results at the five swept values of δ.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cols2">
+      <div class="stack">
+        <h3>Why tying removes the second logarithmic wait</h3>
+        <p>With the easy target present, the easy readout <span class="math">b</span> and the left alignment
+          <span class="math">r<sub>L</sub></span> feed each other linearly, so <span class="math">r<sub>L</sub></span> escapes from
+          <span class="math">δ</span> at rate <span class="math">λ<sub>1</sub> = 1/φ ≈ 0.618</span>, taking
+          <span class="math">log(1/δ)/λ<sub>1</sub></span>.</p>
+        <p>When the two bottom nodes share one table, every update that rotates the left table rotates the right one too,
+          so the right child arrives with the left and the hard fit follows in bounded time. In the saved sweep the wait from
+          left half alignment to hard half fit is 1.0571 at every δ from 0.08 to 0.005.</p>
+        <p>With separate tables, the right alignment is still of order <span class="math">δ</span> when the left one has
+          learned. The right table only hears about <span class="math">V</span> through the hard readout, and the pair
+          <span class="math">(r<sub>R</sub>, w)</span> is linearly unstable with rate
+          <span class="math">λ<sub>2</sub> = (√(φ²+4φ) − φ)/2 ≈ 0.698</span>, so a second escape from order
+          <span class="math">δ</span> costs another <span class="math">log(1/δ)/λ<sub>2</sub></span>. The saved sweep's
+          adjacent slopes are 1.4408, 1.4352, 1.4329 and 1.4321 against <span class="math">1/λ<sub>2</sub></span> = 1.4317.</p>
+      </div>
+      <div class="stack">
+        <h3>Proved laws and measured numbers</h3>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th></th><th>Hard target alone</th><th>With the easy target</th></tr></thead>
+            <tbody>
+              <tr><td>Tied</td><td class="math">1/(4δ²) + (5/2) log(1/δ) + O(1)</td><td class="math">log(1/δ)/λ₁ + O(1)</td></tr>
+              <tr><td>Untied</td><td class="math">1/(2δ²) + 3 log(1/δ) + O(1)</td><td class="math">(1/λ₁ + 1/λ₂) log(1/δ) + O(1)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span class="tag proved">Proved</span> These are theorems about the planted model under population squared-loss
+          gradient flow, as δ → 0. The planted sweep checks them numerically: at δ = 0.005 the hard half fit comes at 9.0
+          (tied) or 16.8 (untied) with the easy target, and at 10,013 or 20,016 without it.</p>
+        <p><span class="tag measured">Measured</span> The depth-four numbers are not instances of these laws. They come from
+          minibatch SGD at one initialization on three fixed grammars with 16 classes, where no contrast is purely
+          interactive (the least additive one still has 6.3 to 10.8% of its variance explained additively). The factor
+          2.41 there has no δ to sweep and no proved prediction to match.</p>
+      </div>
+    </div>
+
+    <details>
+      <summary>Derivation: population loss, gradients and the reduced flow</summary>
+      <div class="body">
+        <p>Write <span class="math">a<sub>i</sub> = E[h<sub>i</sub>H<sub>i</sub>]</span>, <span class="math">R<sub>i</sub> = E[h<sub>i</sub>²]</span> and
+          <span class="math">r<sub>i</sub> = a<sub>i</sub>/√R<sub>i</sub></span>, with <span class="math">H<sub>L</sub> = U</span>,
+          <span class="math">H<sub>R</sub> = V</span> and expectations over the 16 equiprobable leaf pairs. The predictions are
+          <span class="math">b h<sub>L</sub></span> for <span class="math">sU</span> and <span class="math">w h<sub>L</sub>h<sub>R</sub></span> for <span class="math">UV</span>.
+          The two subtrees are independent, so the population loss is</p>
+        <div class="eq">2𝓛 = s² + 1 + b²R<sub>L</sub> + w²R<sub>L</sub>R<sub>R</sub> − 2sb a<sub>L</sub> − 2w a<sub>L</sub>a<sub>R</sub>.</div>
+        <p>Its derivatives give the untied parameter flow</p>
+        <div class="eq">ḃ = s a<sub>L</sub> − bR<sub>L</sub>,&nbsp;&nbsp; ẇ = a<sub>L</sub>a<sub>R</sub> − wR<sub>L</sub>R<sub>R</sub>,<br>
+          ḣ<sub>L</sub> = (sb + w a<sub>R</sub>)H<sub>L</sub> − (b² + w²R<sub>R</sub>)h<sub>L</sub>,&nbsp;&nbsp; ḣ<sub>R</sub> = w a<sub>L</sub>H<sub>R</sub> − w²R<sub>L</sub>h<sub>R</sub>.</div>
+        <p>Norms are conserved quantities of the flow, <span class="math">R<sub>L</sub> = 1 + b² + w²</span> and <span class="math">R<sub>R</sub> = 1 + w²</span>,
+          and projecting the table velocities perpendicular to the tables gives</p>
+        <div class="eq">ṙ<sub>L</sub> = (1 − r<sub>L</sub>²)(sb + w a<sub>R</sub>)/√R<sub>L</sub>,&nbsp;&nbsp; ṙ<sub>R</sub> = (1 − r<sub>R</sub>²) w a<sub>L</sub>/√R<sub>R</sub>.</div>
+        <p>The trained hard fit is <span class="math">D<sub>h</sub> = r<sub>L</sub>²r<sub>R</sub>² − (w√(R<sub>L</sub>R<sub>R</sub>) − r<sub>L</sub>r<sub>R</sub>)²</span>,
+          so its maximum over <span class="math">w</span> is the ceiling <span class="math">r<sub>L</sub>²r<sub>R</sub>²</span>.
+          In the tied model there is one table, both occurrences contribute to its gradient, and
+          <span class="math">R = 1 + b² + 2w²</span>; the reduced flow is
+          <span class="math">ṙ = (1 − r²)(sb/√R + 2wr)</span>, <span class="math">ḃ = R(sr/√R − b)</span>,
+          <span class="math">ẇ = R²(r²/R − w)</span>.</p>
+        <p>The second escape: once the left table has learned (<span class="math">r<sub>L</sub> → 1</span>, <span class="math">b → 1/√φ</span>,
+          <span class="math">a<sub>L</sub> → √φ</span>, <span class="math">R<sub>L</sub> → φ</span>), the small pair
+          <span class="math">z = (r<sub>R</sub>, w)</span> obeys <span class="math">ż ≈ [[0, √φ], [√φ, −φ]] z</span>, whose positive
+          eigenvalue is <span class="math">λ<sub>2</sub></span>. With the easy target absent, the hard readout's gradient at
+          <span class="math">w = 0</span> is <span class="math">−a<sub>L</sub>a<sub>R</sub></span>, of order δ², which is where the
+          <span class="math">1/δ²</span> laws come from.</p>
+        <p>Full proofs, with the bounded-remainder arguments, are in the <a href="https://github.com/aniket-desh/coupled-tensor-networks/blob/6e7c825535634bbdaa53d9b6233a50c38d0662e9/notes/child-feature-enabling/theory.pdf" target="_blank" rel="noopener">theory note (PDF)</a>.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Derivation: from the rule table to the joint law in the depth-four grammars</summary>
+      <div class="body">
+        <p>Put the conditional probability of each production into a three-index core,
+          <span class="math">T<sup>(l)</sup><sub>a,bc</sub> = (1/m)·[(b, c) is a production of a]</span>. Contracting the cores upward
+          with one-hot leaf vectors gives the likelihood of the leaves under each root symbol; multiplying by the uniform
+          root prior gives the joint law <span class="math">P(x, y)</span>. For a legal string in the depth-four grammars it is
+          <span class="math">(1/16)(1/4)<sup>15</sup> = 2<sup>−34</sup></span>, one root and 15 production choices, and the posterior over
+          the root is one-hot. Two student copies observing the same leaves give the expected squared output, so the
+          population squared loss of any aligned tree network, and its gradient for every core, can be contracted exactly
+          without sampling. That is how the ceilings <span class="math">A</span> and fits <span class="math">D</span> in
+          section 3 are computed.</p>
+        <p>The contrasts come from the 64 top productions alone. With <span class="math">E</span> encoding the root label,
+          <span class="math">X</span> the two child symbols as concatenated one-hots and <span class="math">P<sub>X</sub></span> the projector
+          onto additive functions of them, the eigenvectors of the label-space operator <span class="math">Q<sup>⊤</sup>P<sub>X</sub>Q</span> with the largest and
+          smallest eigenvalue are the easy and hard contrasts, and the eigenvalues are their additive fractions.</p>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <p id="foot-data"></p>
+    <p>Source on GitHub (public): <a href="https://github.com/aniket-desh/coupled-tensor-networks/blob/6e7c825535634bbdaa53d9b6233a50c38d0662e9/studies/rhm/child_feature_enabling/README.md" target="_blank" rel="noopener">study results README</a> ·
+      <a href="https://github.com/aniket-desh/coupled-tensor-networks/blob/6e7c825535634bbdaa53d9b6233a50c38d0662e9/studies/rhm/child_feature_enabling/EXPERIMENT.md" target="_blank" rel="noopener">experiment definition and amendments</a> ·
+      <a href="https://github.com/aniket-desh/coupled-tensor-networks/tree/6e7c825535634bbdaa53d9b6233a50c38d0662e9/studies/rhm/child_feature_enabling/results" target="_blank" rel="noopener">saved results</a> ·
+      <a href="https://github.com/aniket-desh/coupled-tensor-networks/blob/6e7c825535634bbdaa53d9b6233a50c38d0662e9/notes/child-feature-enabling/theory.pdf" target="_blank" rel="noopener">theory note</a> ·
+      <a href="https://github.com/aniket-desh/coupled-tensor-networks/tree/codex/child-feature-enabling/notes/child-feature-enabling/explorer" target="_blank" rel="noopener">this page's source</a> ·
+      <a href="https://arxiv.org/abs/2307.02129" target="_blank" rel="noopener">RHM paper</a>.</p>
+  </footer>
+</div>
+
+<script>
+/*__PLANTED_JS__*/
+</script>
+<script>
+'use strict';
+// ============================================================================================ helpers
+const $ = (id) => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, text) => {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  return n;
+};
+const fmt = (x, d) => (x === null || x === undefined || !isFinite(x)) ? '–'
+  : x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const int = (x) => x === null ? '–' : Math.round(x).toLocaleString('en-US');
+const median = (a) => { const s = [...a].sort((p, q) => p - q), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+function segmented(id, value, onChange) {
+  const box = $(id);
+  const buttons = () => [...box.querySelectorAll('button')];
+  const set = (v) => buttons().forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === String(v))));
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    set(b.dataset.v); onChange(b.dataset.v);
+  });
+  set(value);
+  return set;
+}
+function niceTicks(lo, hi, n) {
+  const span = hi - lo, raw = span / n, mag = 10 ** Math.floor(Math.log10(raw));
+  const st = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => span / s <= n) || 10 * mag;
+  const out = [];
+  for (let v = Math.ceil(lo / st - 1e-9) * st; v <= hi + 1e-9 * span; v += st) out.push(+v.toPrecision(12));
+  return out;
+}
+const logTicks = (lo, hi) => {
+  const out = [];
+  for (let e = Math.ceil(Math.log10(lo) - 1e-9); e <= Math.floor(Math.log10(hi) + 1e-9); e++) out.push(10 ** e);
+  return out;
+};
+const tickLabel = (v, log) => {
+  if (v === 0) return '0';
+  const a = Math.abs(v);
+  if (a < 1e-3 || (log && a >= 1e5)) return v.toExponential(0).replace('e+', 'e');
+  return a >= 1e3 ? Math.round(v).toLocaleString('en-US') : String(+v.toPrecision(4));
+};
+
+// Axes for a chart sized to its container (text stays 11px). Returns scales for further drawing.
+function frame(svg, o) {
+  const W = Math.max(260, (svg.parentNode.clientWidth || 600) - 20);
+  const Ht = o.height || Math.round(Math.min(330, Math.max(210, W * 0.5)));
+  const m = Object.assign({ l: 62, r: 18, t: 10, b: 38 }, o.margin || {});
+  svg.setAttribute('viewBox', `0 0 ${W} ${Ht}`);
+  svg.replaceChildren();
+  const tx = o.xlog ? Math.log10 : (v) => v, ty = o.ylog ? Math.log10 : (v) => v;
+  const x = (v) => m.l + (tx(v) - tx(o.xlim[0])) / (tx(o.xlim[1]) - tx(o.xlim[0])) * (W - m.l - m.r);
+  const y = (v) => Ht - m.b - (ty(v) - ty(o.ylim[0])) / (ty(o.ylim[1]) - ty(o.ylim[0])) * (Ht - m.t - m.b);
+  const yt = o.yticks || (o.ylog ? logTicks(...o.ylim) : niceTicks(o.ylim[0], o.ylim[1], 5));
+  for (const v of yt) {
+    svg.append(el('line', { class: 'grid', x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }));
+    svg.append(el('text', { x: m.l - 6, y: y(v) + 4, 'text-anchor': 'end' }, o.yfmt ? o.yfmt(v) : tickLabel(v, o.ylog)));
+  }
+  const xt = o.xticks || (o.xlog ? logTicks(...o.xlim) : niceTicks(o.xlim[0], o.xlim[1], W < 420 ? 4 : 6));
+  for (const v of xt) {
+    svg.append(el('line', { class: 'axis', x1: x(v), x2: x(v), y1: Ht - m.b, y2: Ht - m.b + 4 }));
+    svg.append(el('text', { x: x(v), y: Ht - m.b + 16, 'text-anchor': 'middle' }, o.xfmt ? o.xfmt(v) : tickLabel(v, o.xlog)));
+  }
+  svg.append(el('line', { class: 'axis', x1: m.l, x2: W - m.r, y1: Ht - m.b, y2: Ht - m.b }));
+  if (o.xlabel) svg.append(el('text', { x: (m.l + W - m.r) / 2, y: Ht - 4, 'text-anchor': 'middle' }, o.xlabel));
+  if (o.ylabel) svg.append(el('text', { x: 11, y: (Ht - m.b + m.t) / 2, 'text-anchor': 'middle', transform: `rotate(-90 11 ${(Ht - m.b + m.t) / 2})` }, o.ylabel));
+  for (const h of (o.hlines || [])) svg.append(el('line', { class: 'ref', x1: m.l, x2: W - m.r, y1: y(h), y2: y(h) }));
+  const clampY = (v) => y(Math.min(Math.max(v, o.ylim[0]), o.ylim[1]));
+  const line = (pts, cls) => {
+    const inside = pts.filter((p) => p[0] >= o.xlim[0] && p[0] <= o.xlim[1] && p[1] !== null && isFinite(p[1]));
+    if (inside.length > 1) svg.append(el('polyline', { class: 'line ' + cls, points: inside.map((p) => `${x(p[0]).toFixed(1)},${clampY(p[1]).toFixed(1)}`).join(' ') }));
+  };
+  return { svg, x, y, clampY, W, Ht, m, line };
+}
+
+function halfToFloat(h) {
+  const s = (h & 0x8000) ? -1 : 1, e = (h >> 10) & 0x1f, f = h & 0x3ff;
+  if (e === 0) return s * 2 ** -14 * (f / 1024);
+  if (e === 31) return f ? NaN : s * Infinity;
+  return s * 2 ** (e - 15) * (1 + f / 1024);
+}
+function decode(b64, kind) {
+  const bin = atob(b64), bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const dv = new DataView(bytes.buffer), out = new Float64Array(bytes.length / (kind === 'f2' ? 2 : 4));
+  for (let i = 0; i < out.length; i++) out[i] = kind === 'f2' ? halfToFloat(dv.getUint16(2 * i, true)) : dv.getFloat32(4 * i, true);
+  return out;
+}
+function rng(seed) {  // mulberry32
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+
+// The published page fetches its data files; the single-file copy (explorer.html) carries them in window.BUNDLE.
+const getJSON = (path) => (window.BUNDLE && window.BUNDLE[path]) ? Promise.resolve(window.BUNDLE[path])
+  : fetch(path).then((r) => { if (!r.ok) throw new Error(`${path}: ${r.status}`); return r.json(); });
+
+// ============================================================================================ state
+let STUDY = null;
+const WEIGHTS = {};          // grammar -> {init, intact, detached} decoded
+const L = 4, M = 4, V = 16, RB = 16;
+const S = {
+  g: 0, root: 5, prods: null, prevLeaves: null, prevBonds: null, lastEdit: null, sel: { l: 1, p: 0 },
+  learner: 'intact', stage: 9, playing: null,
+  proto: 'amended', pg: 0, ps: 0, ct: 'h', yz: 'full', rg: 0,
+};
+let draw = new Set();
+
+// ============================================================================================ grammar
+const rules = (g) => STUDY.grammars[String(g)];         // [level][symbol][k] -> [left, right]
+const INV = {};
+function inverse(g) {
+  if (INV[g]) return INV[g];
+  INV[g] = rules(g).map((R) => { const m = new Map(); R.forEach((prods, a) => prods.forEach(([c1, c2]) => m.set(c1 * V + c2, a))); return m; });
+  return INV[g];
+}
+function symbols(g, root, prods) {     // sym[l][p], l = 0 (root) .. 4 (leaves)
+  const R = rules(g), sym = [[root]];
+  for (let l = 0; l < L; l++) {
+    const next = [];
+    sym[l].forEach((a, p) => next.push(...R[l][a][prods[l][p]]));
+    sym.push(next);
+  }
+  return sym;
+}
+function parse(g, leaves) {             // bottom-up lookup; -1 where a pair is not a production
+  const inv = inverse(g), out = [];
+  out[L] = leaves.slice();
+  for (let l = L - 1; l >= 0; l--) {
+    out[l] = [];
+    for (let p = 0; p < out[l + 1].length / 2; p++) {
+      const c1 = out[l + 1][2 * p], c2 = out[l + 1][2 * p + 1];
+      out[l].push(c1 < 0 || c2 < 0 ? -1 : (inv[l].has(c1 * V + c2) ? inv[l].get(c1 * V + c2) : -1));
+    }
+  }
+  return out;
+}
+function randomProds(r) { return [0, 1, 2, 3].map((l) => Array.from({ length: 2 ** l }, () => Math.floor(r() * M))); }
+let treeRng = rng(20261125);
+const current = () => symbols(S.g, S.root, S.prods);
+
+// ============================================================================================ network
+function loadWeights(g) {
+  if (WEIGHTS[g]) return Promise.resolve(WEIGHTS[g]);
+  if (g > 2) return Promise.resolve(null);
+  return getJSON(`data/weights-g${g}.json`).then((w) => {
+    const dec = (set, withC) => ({
+      label: set.label, file: set.file, sha256: set.sha256, step: set.step, saved: set.saved_D_h === undefined ? null :
+        { D_h: set.saved_D_h, D_e: set.saved_D_e, A_h: set.saved_A_h, A_e: set.saved_A_e },
+      A: decode(set.A, 'f2'), W: set.W.map((b) => decode(b, 'f2')), C: withC ? decode(set.C, 'f2') : null,
+      w_e: set.w_e ? decode(set.w_e, 'f4') : null, w_h: set.w_h ? decode(set.w_h, 'f4') : null,
+    });
+    WEIGHTS[g] = { init: dec(w.init, true), intact: dec(w.intact, false), detached: dec(w.detached, false) };
+    return WEIGHTS[g];
+  });
+}
+// bonds[t][p] for network level t = 0 (leaves) .. 3 (the two bonds the root reads); grammar level l <-> t = 4 - l.
+function forward(ws, leaves) {
+  const bonds = [leaves.map((tok, i) => ws.A.subarray((i * V + tok) * RB, (i * V + tok + 1) * RB))];
+  for (let t = 1; t < L; t++) {
+    const prev = bonds[t - 1], Wt = ws.W[t - 1], cur = [];
+    for (let p = 0; p < prev.length / 2; p++) {
+      const zl = prev[2 * p], zr = prev[2 * p + 1], z = new Float64Array(RB), base = p * RB * RB * RB;
+      for (let a = 0; a < RB; a++) {
+        let acc = 0;
+        for (let b = 0; b < RB; b++) {
+          const off = base + (a * RB + b) * RB, lb = zl[b];
+          if (lb === 0) continue;
+          let inner = 0;
+          for (let c = 0; c < RB; c++) inner += Wt[off + c] * zr[c];
+          acc += lb * inner;
+        }
+        z[a] = acc;
+      }
+      cur.push(z);
+    }
+    bonds.push(cur);
+  }
+  const [zl, zr] = bonds[L - 1], out = { bonds };
+  if (ws.C) {
+    out.logits = Array.from({ length: 16 }, (_, o) => { let s = 0; for (let a = 0; a < RB; a++) for (let b = 0; b < RB; b++) s += ws.C[(o * RB + a) * RB + b] * zl[a] * zr[b]; return s; });
+  }
+  if (ws.w_h) {
+    let e = 0, h = 0;
+    for (let a = 0; a < RB; a++) for (let b = 0; b < RB; b++) { const z = zl[a] * zr[b]; e += ws.w_e[a * RB + b] * z; h += ws.w_h[a * RB + b] * z; }
+    out.easy = e; out.hard = h;
+  }
+  return out;
+}
+const norm = (v) => Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+const softmax = (z) => { const m = Math.max(...z), e = z.map((v) => Math.exp(v - m)), s = e.reduce((a, b) => a + b, 0); return e.map((v) => v / s); };
+const FIT_CACHE = {};
+function sampleFit(g, learner) {          // fit on 2,000 trees drawn here with a fixed seed (a sample estimate)
+  const key = `${g}:${learner}`;
+  if (FIT_CACHE[key]) return FIT_CACHE[key];
+  const ws = WEIGHTS[g][learner], c = STUDY.contrasts[String(g)], r = rng(777 + g), N = 2000;
+  let se = 0, sh = 0, acc = 0;
+  for (let i = 0; i < N; i++) {
+    const root = Math.floor(r() * 16), sym = symbols(g, root, randomProds(r)), out = forward(ws, sym[L]);
+    if (out.logits) acc += out.logits.indexOf(Math.max(...out.logits)) === root ? 1 : 0;
+    else { se += (c.easy[root] - out.easy) ** 2; sh += (c.hard[root] - out.hard) ** 2; }
+  }
+  FIT_CACHE[key] = { N, D_e: 1 - se / N, D_h: 1 - sh / N, acc: acc / N };
+  return FIT_CACHE[key];
+}
+
+// ============================================================================================ trees
+// Node geometry over 16 leaf columns. Grammar level l: y from the top; network level t mirrored below the leaves.
+function treeGeom(W, mirror) {
+  const col = (W - 70) / 16, x0 = 62;
+  const cx = (l, p) => x0 + (p + 0.5) * col * 2 ** (L - l);
+  const gy = (l) => 22 + l * 50;
+  const ty = (t) => gy(L) + 50 * (t + 1);  // network height t = 0 (embeddings) .. 4 (readout), under the leaf row
+  return { col, cx, gy, ty, x0 };
+}
+function nodeBox(svg, x, y, w, h, label, cls, data, round) {
+  const g = el('g', { class: 'node ' + cls, tabindex: '0', role: 'button', 'data-l': data.l, 'data-p': data.p, 'aria-label': data.aria });
+  if (round) g.append(el('circle', { cx: x, cy: y, r: h / 2 }));
+  else g.append(el('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 5 }));
+  if (label !== '') g.append(el('text', { x, y: y + 4, 'text-anchor': 'middle' }, label));
+  svg.append(g);
+  return g;
+}
+function changedLeaves() {
+  if (!S.prevLeaves) return new Set();
+  const now = current()[L], set = new Set();
+  now.forEach((v, i) => { if (v !== S.prevLeaves[i]) set.add(i); });
+  return set;
+}
+function inSubtree(l, p, L2, P2) { return L2 >= l && (P2 >> (L2 - l)) === p; }
+
+function drawTree1() {
+  const svg = $('tree1'), W = Math.max(620, svg.parentNode.clientWidth), sym = current(), G = treeGeom(W, false);
+  const H = G.gy(L) + 34;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.minWidth = '620px';
+  svg.replaceChildren();
+  const changed = changedLeaves();
+  ['root', 'level 1', 'level 2', 'level 3', 'tokens'].forEach((t, l) => svg.append(el('text', { class: 'lvl', x: 4, y: G.gy(l) + 4 }, t)));
+  for (let l = 0; l < L; l++) for (let p = 0; p < 2 ** l; p++) for (const j of [0, 1]) {
+    svg.append(el('line', { class: 'edge live', x1: G.cx(l, p), y1: G.gy(l) + 10, x2: G.cx(l + 1, 2 * p + j), y2: G.gy(l + 1) - 10 }));
+  }
+  for (let l = 0; l < L; l++) for (let p = 0; p < 2 ** l; p++) {  // production index under each internal node
+    svg.append(el('text', { class: 'prod', x: G.cx(l, p), y: G.gy(l) + 22, 'text-anchor': 'middle' }, `k=${S.prods[l][p]}`));
+  }
+  for (let l = 0; l <= L; l++) for (let p = 0; p < 2 ** l; p++) {
+    const sel = S.sel.l === l && S.sel.p === p, ch = l === L && changed.has(p);
+    const w = l === L ? Math.min(26, G.col - 3) : 28;
+    nodeBox(svg, G.cx(l, p), G.gy(l), w, 20, String(sym[l][p]), (l === L ? 'leaf ' : '') + (sel ? 'sel ' : '') + (ch ? 'changed' : ''),
+      { l, p, aria: `${l === L ? 'token' : 'symbol'} ${sym[l][p]} at level ${l}, position ${p}` });
+  }
+  bindNodes(svg);
+}
+function bindNodes(svg) {
+  svg.querySelectorAll('.node').forEach((n) => {
+    const pick = () => { S.sel = { l: +n.dataset.l, p: +n.dataset.p }; update('sel'); };
+    n.addEventListener('click', pick);
+    n.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  });
+}
+
+// ============================================================================================ section 1
+function nodeCard() {
+  const { l, p } = S.sel, sym = current(), R = rules(S.g), a = sym[l][p];
+  let html = '';
+  if (l < L) {
+    const prods = R[l][a], k = S.prods[l][p];
+    html += `<h3>${l === 0 ? 'Root' : 'Level ' + l} symbol <span class="num">${a}</span> <span class="note">(position ${p})</span></h3>`;
+    html += `<p class="note">${l === 0 ? 'The root symbol' : `Produced by its parent <span class="num">${sym[l - 1][p >> 1]}</span> as its ${p % 2 ? 'right' : 'left'} child`}. Its four productions are synonyms: click one to rewrite this node with it. The subtree below keeps its production choices.</p>`;
+    html += '<div class="prods" id="prod-buttons">' + prods.map(([c1, c2], j) =>
+      `<button type="button" data-k="${j}" aria-pressed="${j === k}"><small>production k=${j}${j === k ? ' (in use)' : ''}</small>${a} → (${c1}, ${c2})</button>`).join('') + '</div>';
+  } else {
+    const parent = sym[L - 1][p >> 1];
+    html += `<h3>Token <span class="num">${a}</span> <span class="note">(leaf ${p})</span></h3>`;
+    html += `<p class="note">Observed token. With its ${p % 2 ? 'left' : 'right'} sibling <span class="num">${sym[L][p ^ 1]}</span> it forms the pair (${sym[L][p & ~1]}, ${sym[L][p | 1]}), which only symbol <span class="num">${parent}</span> at level 3 produces. Select an internal node to switch a production.</p>`;
+  }
+  $('node-card').innerHTML = html;
+  const box = $('prod-buttons');
+  if (box) box.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => switchProduction(l, p, +b.dataset.k)));
+}
+function remember(kind) {
+  S.prevLeaves = current()[L].slice();
+  S.prevBonds = null;
+  if (WEIGHTS[S.g]) S.prevBonds = forward(WEIGHTS[S.g][S.learner], S.prevLeaves).bonds;
+  S.lastEdit = kind;
+}
+function switchProduction(l, p, k) {
+  if (S.prods[l][p] === k) return;
+  remember({ kind: 'synonym', l, p, from: S.prods[l][p], to: k, before: current() });
+  S.prods[l][p] = k;
+  update('tree');
+}
+function parseCard() {
+  const sym = current(), parsed = parse(S.g, sym[L]), changed = changedLeaves();
+  let ok = true;
+  for (let l = 0; l < L; l++) sym[l].forEach((a, p) => { if (parsed[l][p] !== a) ok = false; });
+  let html = `<h3>Parsing the leaves back up</h3>`;
+  const e = S.lastEdit;
+  if (e && e.kind === 'synonym') {
+    const lo = e.p * 2 ** (L - e.l), hi = (e.p + 1) * 2 ** (L - e.l) - 1;
+    const before = e.before, a = before[e.l][e.p];
+    const parentLine = e.l > 0 ? `<li><span class="${parsed[e.l - 1][e.p >> 1] === before[e.l - 1][e.p >> 1] ? 'ok' : 'bad'}">${parsed[e.l - 1][e.p >> 1] === before[e.l - 1][e.p >> 1] ? '✓' : '✗'}</span>its parent at level ${e.l - 1} parses to <span class="num">${parsed[e.l - 1][e.p >> 1]}</span>, as before</li>` : '';
+    html += `<p class="note">Last edit: symbol <span class="num">${a}</span> at level ${e.l} switched from production k=${e.from} to its synonym k=${e.to}. ` +
+      `${changed.size} of 16 tokens changed, all inside leaves ${lo}–${hi} (highlighted).</p>`;
+    html += `<ul class="checks"><li><span class="${parsed[e.l][e.p] === a ? 'ok' : 'bad'}">${parsed[e.l][e.p] === a ? '✓' : '✗'}</span>the switched node parses back to <span class="num">${parsed[e.l][e.p]}</span></li>${parentLine}` +
+      `<li><span class="${parsed[0][0] === before[0][0] ? 'ok' : 'bad'}">${parsed[0][0] === before[0][0] ? '✓' : '✗'}</span>the root parses to <span class="num">${parsed[0][0]}</span>, as before</li></ul>`;
+  } else if (e && e.kind === 'grammar') {
+    html += `<p class="note">Last edit: the rule table changed from grammar ${e.from} to grammar ${e.to}, with the same root and production choices. ${changed.size} of 16 tokens changed.</p>`;
+  } else if (e && e.kind === 'resample') {
+    html += `<p class="note">Last edit: new productions drawn from the same rule table. ${changed.size} of 16 tokens changed; the root is the one you chose.</p>`;
+  } else {
+    html += `<p class="note">Pick an internal node and switch it to a synonym to see which leaves change.</p>`;
+  }
+  html += `<p class="note">Each level is recovered by looking up its child pairs in the rule table, bottom-up: ` +
+    `${ok ? `all ${15} internal symbols match the generating tree.` : 'some internal symbols do not match the generating tree.'} ` +
+    `Recovered levels: ${[3, 2, 1, 0].map((l) => `level ${l} (${parsed[l].join(' ')})`).join(', ')}.</p>`;
+  $('parse-card').innerHTML = html;
+}
+
+// ============================================================================================ section 2
+const STAGES = [['root drawn', 'g', 0], ['level 1', 'g', 1], ['level 2', 'g', 2], ['level 3', 'g', 3], ['tokens', 'g', 4],
+  ['embeddings', 't', 0], ['fuse 1', 't', 1], ['fuse 2', 't', 2], ['fuse 3', 't', 3], ['readout', 't', 4]];
+const STAGE_TEXT = [
+  'Top-down: the root symbol is drawn uniformly from 16.',
+  'Top-down: the root picks one of its 4 productions, giving the two level-1 symbols.',
+  'Top-down: each level-1 symbol picks a production independently.',
+  'Top-down: each level-2 symbol picks a production.',
+  'Top-down: each level-3 symbol emits a pair of tokens. Only these 16 tokens are observed.',
+  'Bottom-up: each token selects a 16-vector from its position\'s embedding table.',
+  'Bottom-up: 8 cores each fuse a pair of vectors into one.',
+  'Bottom-up: 4 cores fuse the level-3 vectors.',
+  'Bottom-up: 2 cores give the two vectors the root reads.',
+  'Bottom-up: the root reads the outer product of the last two vectors.',
+];
+function drawTree2() {
+  const svg = $('tree2'), W = Math.max(620, svg.parentNode.clientWidth), G = treeGeom(W, true), sym = current();
+  const H = G.ty(4) + 30;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.minWidth = '620px';
+  svg.replaceChildren();
+  const st = S.stage, gShown = (l) => st >= l, tShown = (t) => st >= 5 + t;
+  const ws = WEIGHTS[S.g] ? WEIGHTS[S.g][S.learner] : null;
+  const out = ws ? forward(ws, sym[L]) : null;
+  const changed = changedLeaves();
+  const bondChange = (t, p) => {
+    if (!out || !S.prevBonds || !S.lastEdit || S.lastEdit.kind !== 'synonym') return 0;
+    const a = out.bonds[t][p], b = S.prevBonds[t][p], d = Math.sqrt(a.reduce((s, v, i) => s + (v - b[i]) ** 2, 0));
+    return d / Math.max(1e-12, norm(b));
+  };
+  svg.append(el('rect', { class: 'band', x: 0, y: G.gy(L) - 14, width: W, height: 28, rx: 4 }));
+  ['root', 'level 1', 'level 2', 'level 3', 'tokens'].forEach((t, l) => svg.append(el('text', { class: 'lvl', x: 4, y: G.gy(l) + 4 }, t)));
+  ['embed', 'fuse 1', 'fuse 2', 'fuse 3', 'readout'].forEach((t, i) => svg.append(el('text', { class: 'lvl', x: 4, y: G.ty(i) + 4 }, t)));
+  // grammar edges (top-down) and network edges (bottom-up)
+  for (let l = 0; l < L; l++) for (let p = 0; p < 2 ** l; p++) for (const j of [0, 1]) {
+    svg.append(el('line', { class: 'edge' + (gShown(l + 1) ? ' live' : ''), x1: G.cx(l, p), y1: G.gy(l) + 10, x2: G.cx(l + 1, 2 * p + j), y2: G.gy(l + 1) - 10 }));
+  }
+  for (let p = 0; p < 16; p++) svg.append(el('line', { class: 'edge' + (tShown(0) ? ' live' : ''), x1: G.cx(L, p), y1: G.gy(L) + 10, x2: G.cx(L, p), y2: G.ty(0) - 8 }));
+  for (let t = 1; t <= L; t++) for (let p = 0; p < 2 ** (L - t); p++) for (const j of [0, 1]) {
+    svg.append(el('line', { class: 'edge' + (tShown(t) ? ' live' : ''), x1: G.cx(L - t + 1, 2 * p + j), y1: G.ty(t - 1) + 8, x2: G.cx(L - t, p), y2: G.ty(t) - 9 }));
+  }
+  // grammar nodes
+  for (let l = 0; l <= L; l++) for (let p = 0; p < 2 ** l; p++) {
+    const sel = S.sel.l === l && S.sel.p === p, ch = l === L && changed.has(p);
+    nodeBox(svg, G.cx(l, p), G.gy(l), l === L ? Math.min(26, G.col - 3) : 28, 20, String(sym[l][p]),
+      (l === L ? 'leaf ' : '') + (sel ? 'sel ' : '') + (ch ? 'changed ' : '') + (gShown(l) ? '' : 'dim'),
+      { l, p, aria: `grammar node, level ${l}, position ${p}` });
+  }
+  // network nodes: circle area ~ bond norm relative to its level's largest; ring marks a changed bond
+  for (let t = 0; t <= L; t++) {
+    const l = L - t, n = 2 ** l;
+    let norms = [];
+    if (out) norms = t < L ? out.bonds[t].map(norm) : [1];
+    const mx = Math.max(...norms, 1e-12);
+    for (let p = 0; p < n; p++) {
+      const sel = S.sel.l === l && S.sel.p === p, ch = t < L && bondChange(t, p) > 1e-6;
+      const rad = t === L ? 9 : 4 + 6 * Math.sqrt((norms[p] || 0) / mx);
+      const g = nodeBox(svg, G.cx(l, p), G.ty(t), 0, 2 * rad, '', (sel ? 'sel ' : '') + (ch ? 'changed ' : '') + (tShown(t) ? '' : 'dim'),
+        { l, p, aria: `network node, height ${t}, position ${p}` }, true);
+      if (t < L && out) g.querySelector('circle').style.fill = 'var(--intact)';
+      if (t < L && out) g.querySelector('circle').style.fillOpacity = String(0.25 + 0.6 * (norms[p] / mx));
+    }
+  }
+  bindNodes(svg);
+  $('stage-name').textContent = `· ${STAGE_TEXT[st]}`;
+  $('stages').querySelectorAll('button').forEach((b, i) => { b.setAttribute('aria-pressed', String(i === st)); b.classList.toggle('done', i < st); });
+}
+function learnerId() {
+  const ws = WEIGHTS[S.g];
+  const box = $('learner-id');
+  $('learner').querySelectorAll('button').forEach((b) => { b.disabled = !ws; });
+  if (S.g > 2) { box.innerHTML = 'No trained network exists for this grammar. Pick grammar 0, 1 or 2 in section 1 to load one.'; return; }
+  if (!ws) { box.textContent = 'Loading weights…'; return; }
+  const w = ws[S.learner];
+  const what = S.learner === 'init'
+    ? `Stored step-0 tree of the original cross-entropy run on grammar ${S.g}, init seed 0 (identity initialization). Both intervention arms start from these lower cores.`
+    : `Trained weights from the intervention: ${w.label}, grammar ${S.g}, init seed 0, saved where the pair stopped (both arms past a hard fit of 0.9).`;
+  box.innerHTML = `${what} <span class="num">${esc(w.file)}</span>, sha256 <span class="num">${w.sha256.slice(0, 12)}…</span>. Cores rounded to float16.`;
+}
+function ttnCard() {
+  const { l, p } = S.sel, t = L - l, sym = current(), ws = WEIGHTS[S.g] ? WEIGHTS[S.g][S.learner] : null;
+  const out = ws ? forward(ws, sym[L]) : null;
+  let html = '';
+  if (l === L) {
+    html += `<h3>Leaf ${p}: embedding</h3><dl class="kv"><dt>input</dt><dd>token ${sym[L][p]} (one-hot of size 16)</dd>` +
+      `<dt>table A<sub>${p}</sub></dt><dd>16 tokens × 16</dd><dt>output bond</dt><dd>16</dd><dt>parameters</dt><dd>256</dd></dl>`;
+  } else if (l === 0) {
+    html += `<h3>Root readout</h3><dl class="kv"><dt>inputs</dt><dd>two 16-vectors</dd><dt>features Z</dt><dd>16 × 16 = 256</dd>` +
+      (S.learner === 'init' ? `<dt>core C</dt><dd>16 classes × 16 × 16</dd><dt>output</dt><dd>16 logits</dd>`
+        : `<dt>heads</dt><dd>w<sub>e</sub>, w<sub>h</sub> ∈ ℝ²⁵⁶</dd><dt>output</dt><dd>2 numbers</dd>`) + `</dl>`;
+  } else {
+    html += `<h3>Core at height ${t}, position ${p}</h3><dl class="kv"><dt>inputs</dt><dd>bonds of nodes ${2 * p}, ${2 * p + 1} below (16 each)</dd>` +
+      `<dt>core W</dt><dd>16 out × 16 left × 16 right</dd><dt>parameters</dt><dd>4,096</dd><dt>output bond</dt><dd>16</dd></dl>`;
+  }
+  html += `<p class="note">${l === 0 ? '' : `Weight tying: none in these runs, so this node has its own ${l === L ? 'table' : 'core'}. Tying by level would share one ${l === L ? 'table across all 16 leaves' : `core across the ${2 ** l} nodes at this height`} (65,536 parameters untied against 16,640 tied). The planted model in section 4 compares exactly this choice for its two bottom nodes.`}</p>`;
+  if (out && l > 0) {
+    const z = out.bonds[t][p], mx = Math.max(...z.map(Math.abs), 1e-12);
+    html += `<div class="label" style="margin-top:6px">bond vector on this example <span class="plain">(|z| = ${fmt(norm(z), 3)}; channel 0 carries the identity init's constant)</span></div>`;
+    html += '<div class="strip">' + Array.from(z).map((v) => `<span title="${v.toFixed(4)}" style="background: ${v >= 0 ? 'var(--intact)' : 'var(--detached)'}; opacity: ${(0.12 + 0.88 * Math.abs(v) / mx).toFixed(2)}"></span>`).join('') + '</div>';
+    html += '<div class="strip idx">' + Array.from({ length: 16 }, (_, i) => `<span>${i}</span>`).join('') + '</div>';
+    if (S.prevBonds && S.lastEdit && S.lastEdit.kind === 'synonym') {
+      const b = S.prevBonds[t][p], d = Math.sqrt(z.reduce((s, v, i) => s + (v - b[i]) ** 2, 0)) / Math.max(norm(b), 1e-12);
+      html += `<p class="note">Relative change after the last synonym switch: <span class="num">${fmt(d, 3)}</span>.</p>`;
+    }
+  }
+  const parsed = parse(S.g, sym[L]);
+  html += `<p class="note">Exact parser at this node: ${l === L ? 'the token itself' : `symbol <span class="num">${parsed[l][p]}</span>, by a table lookup`}. The network has no symbol here, only the vector above.</p>`;
+  $('ttn-card').innerHTML = html;
+}
+function outputs() {
+  const sym = current(), parsed = parse(S.g, sym[L]), y = parsed[0][0], g = S.g;
+  let html = `<h3>Exact parser</h3><p class="note">Bottom-up lookups in the rule table recover root <span class="num">${y}</span>, so the posterior over the 16 roots is one-hot. The joint probability of this tree is (1/16)(1/4)<sup>15</sup> = 2<sup>−34</sup>.</p>`;
+  html += '<div class="bars">' + Array.from({ length: 16 }, (_, i) => `<span class="${i === y ? 'true' : ''}" style="height:${i === y ? 100 : 1.5}%"></span>`).join('') + '</div>';
+  html += '<div class="strip idx">' + Array.from({ length: 16 }, (_, i) => `<span>${i}</span>`).join('') + '</div>';
+  if (g <= 2) {
+    const c = STUDY.contrasts[String(g)];
+    html += `<dl class="kv" style="margin-top:8px"><dt>easy contrast c<sub>e</sub>(root)</dt><dd>${fmt(c.easy[y], 3)}</dd><dt>hard contrast c<sub>h</sub>(root)</dt><dd>${fmt(c.hard[y], 3)}</dd></dl>`;
+  }
+  $('out-parser').innerHTML = html;
+  const ws = WEIGHTS[g] ? WEIGHTS[g][S.learner] : null;
+  if (!ws) { $('out-ttn').innerHTML = `<h3>Learned network</h3><p class="note">${g > 2 ? 'Not available for this grammar.' : 'Loading…'}</p>`; return; }
+  const out = forward(ws, sym[L]);
+  let t = `<h3>Learned network</h3>`;
+  if (S.learner === 'init') {
+    const pr = softmax(out.logits), fit = sampleFit(g, 'init');
+    t += `<p class="note">The step-0 root core gives nearly uniform class probabilities: the largest is <span class="num">${fmt(Math.max(...pr), 3)}</span>, on class <span class="num">${pr.indexOf(Math.max(...pr))}</span>. Both intervention heads start at zero, so their predictions are 0.</p>`;
+    t += '<div class="bars">' + pr.map((v, i) => `<span class="${i === y ? 'true' : ''}" style="height:${Math.min(100, Math.max(1.5, 100 * v / 0.25))}%"></span>`).join('') + '</div>';
+    t += '<div class="strip idx">' + Array.from({ length: 16 }, (_, i) => `<span>${i}</span>`).join('') + '</div>';
+    t += `<p class="note">Bars are probabilities on a 0 to 0.25 scale; blue is the true root. Accuracy on ${int(fit.N)} trees drawn here: <span class="num">${fmt(fit.acc, 3)}</span> (chance is 0.0625).</p>`;
+  } else {
+    const c = STUDY.contrasts[String(g)], fit = sampleFit(g, S.learner);
+    t += `<dl class="kv"><dt>easy head w<sub>e</sub>·Z</dt><dd>${fmt(out.easy, 3)} <span class="note">target ${fmt(c.easy[y], 3)}</span></dd>` +
+      `<dt>hard head w<sub>h</sub>·Z</dt><dd>${fmt(out.hard, 3)} <span class="note">target ${fmt(c.hard[y], 3)}</span></dd></dl>`;
+    if (S.lastEdit && S.lastEdit.kind === 'synonym' && S.prevLeaves) {
+      const prev = forward(ws, S.prevLeaves);
+      t += `<p class="note">Before the last synonym switch the hard head gave <span class="num">${fmt(prev.hard, 3)}</span> and the easy head <span class="num">${fmt(prev.easy, 3)}</span>. The parser's answer cannot change; the network's can, by how much it has learned to treat synonyms alike.</p>`;
+    }
+    t += `<dl class="kv" style="margin-top:6px"><dt>hard fit, ${int(fit.N)} trees drawn here</dt><dd>${fmt(fit.D_h, 3)}</dd><dt>hard fit, saved exact</dt><dd>${fmt(ws.saved.D_h, 3)}</dd>` +
+      `<dt>easy fit, ${int(fit.N)} trees drawn here</dt><dd>${fmt(fit.D_e, 3)}</dd><dt>easy fit, saved exact</dt><dd>${fmt(ws.saved.D_e, 3)}</dd></dl>`;
+    t += `<p class="note">Fit is one minus the mean squared error on a unit-variance target. The sample values are estimates from this page's own trees; the saved values are exact population fits from the run.</p>`;
+  }
+  $('out-ttn').innerHTML = t;
+}
+
+// ============================================================================================ section 3
+const PROTO = () => STUDY.protocols.find((p) => p.key === S.proto);
+const pairOf = (pr, g, s) => pr.pairs.find((q) => q.g === g && q.s === s);
+function summary(pr) {
+  const done = pr.pairs.filter((q) => q.intact.T && q.detached.T);
+  const ratios = done.map((q) => q.detached.T / q.intact.T);
+  return {
+    n: pr.pairs.length, ratios, done: done.length,
+    censored: pr.pairs.reduce((s, q) => s + (q.intact.T === null) + (q.detached.T === null), 0),
+    intactFirst: done.filter((q) => q.intact.T < q.detached.T).length,
+    Ti: done.map((q) => q.intact.T), Td: done.map((q) => q.detached.T),
+  };
+}
+function hypotheses() {
+  const am = summary(STUDY.protocols.find((p) => p.key === 'amended')), wr = summary(STUDY.protocols.find((p) => p.key === 'written'));
+  const r01 = summary(STUDY.protocols.find((p) => p.key === 'rate01'));
+  const am03 = STUDY.protocols.find((p) => p.key === 'amended').pairs.filter((q) => q.s === 0).sort((a, b) => a.g - b.g).map((q) => q.detached.T / q.intact.T);
+  const pl = STUDY.planted, waits = (tied) => pl.filter((a) => a.tied === tied && a.s === 1).sort((a, b) => b.delta - a.delta).map((a) => a.hard - a.left);
+  const tw = waits(true), uw = waits(false), Ls = [0.08, 0.04, 0.02, 0.01, 0.005].map((d) => Math.log(1 / d));
+  const slopes = uw.slice(1).map((w, i) => (w - uw[i]) / (Ls[i + 1] - Ls[i]));
+  const lim = (tied) => pl.filter((a) => a.tied === tied && a.s === 0).sort((a, b) => a.delta - b.delta)[0];
+  const ro = STUDY.readout, early = ro.filter((r) => r.step <= 300), at = (s) => ro.filter((r) => r.step === s);
+  const ratioAt = (s) => at(s).map((r) => r.A_e / r.A_h);
+  const init = at(0);
+  const rows = [
+    ['Planted, tied tables', 'With the easy target, the wait from left half alignment to hard half fit stays bounded as δ → 0.', 'Integrate population gradient flow at five values of δ.', 'Wait from r<sub>L</sub> = 1/2 to D<sub>h</sub> = 1/2', `${fmt(tw[0], 4)} at every δ from 0.08 to 0.005`, ['holds', 'ok'], 'numerical check of a proof'],
+    ['Planted, untied tables', 'The same wait grows with slope 1/λ₂ = 1.4317 in log(1/δ).', 'Same sweep with separate child tables.', 'Adjacent slopes of the wait', `${slopes.map((s) => fmt(s, 4)).join(', ')}`, ['holds', 'ok'], 'numerical check of a proof'],
+    ['Planted, hard target alone', 'δ²T<sub>h</sub> → 1/4 (tied) and 1/2 (untied).', 'Remove the easy target (s = 0).', 'δ²T<sub>h</sub> at δ = 0.005', `${fmt(lim(true).delta ** 2 * lim(true).hard, 4)} and ${fmt(lim(false).delta ** 2 * lim(false).hard, 4)}`, ['holds', 'ok'], 'numerical check of a proof'],
+    ['Readout delay', 'If the hard features were present at initialization, a slow readout would explain late learning.', 'None (saved cross-entropy classifiers).', 'Ceiling A<sub>h</sub> at update 0', `${fmt(Math.min(...init.map((r) => r.A_h)), 4)} to ${fmt(Math.max(...init.map((r) => r.A_h)), 4)}: the features are absent`, ['rejected', 'bad'], 'observational'],
+    ['Easy first', 'The easy contrast becomes linearly available before the hard one.', 'None (saved cross-entropy classifiers).', 'A<sub>e</sub> against A<sub>h</sub> at 15 checkpoints', `A<sub>e</sub> > A<sub>h</sub> at ${early.filter((r) => r.A_e > r.A_h).length} of ${early.length} checkpoints up to update 300; ${fmt(Math.min(...ratioAt(100)), 1)}–${fmt(Math.max(...ratioAt(100)), 1)}× at update 100, ${fmt(Math.min(...ratioAt(300)), 2)}–${fmt(Math.max(...ratioAt(300)), 2)}× at 300`, ['consistent', 'warn'], 'observational'],
+    ['Easy gradient helps (as written)', 'Detaching the easy gradient delays the hard half fit.', 'Stop-gradient on the easy head; rate 10⁻³, 4,000 updates.', 'First evaluation with D<sub>h</sub> ≥ 1/2', `${wr.censored} of ${2 * wr.n} arms censored at 4,000; hard fit never above 0.0007`, ['inconclusive', 'muted'], 'causal'],
+    ['Easy gradient helps (amended)', 'Same prediction, at the rate the amended pilot chose.', 'Same stop-gradient; rate 0.3, horizon 40,000.', 'First evaluation with D<sub>h</sub> ≥ 1/2', `intact first in ${am.intactFirst} of ${am.n}; ratio ${fmt(median(am.ratios), 2)} (${fmt(Math.min(...am.ratios), 2)} to ${fmt(Math.max(...am.ratios), 2)}); ${am.censored} censored`, ['supported', 'ok'], 'causal'],
+    ['The delay is in the representation', 'If the readout were slow, D<sub>h</sub> would lag far behind A<sub>h</sub>.', 'Track the exact ceiling beside the trained fit.', 'Lead of A<sub>h</sub> over D<sub>h</sub> at 1/2', 'A<sub>h</sub> crosses 1/2 only 25–75 updates earlier, against a gap of thousands between arms', ['supported', 'ok'], 'causal'],
+    ['Necessity', 'If the easy feature were required, the detached arm would not fit the hard contrast.', 'Same pairs.', 'Detached arms reaching D<sub>h</sub> ≥ 1/2 and 0.9', `${am.done} of ${am.n} reach 1/2 and all reach 0.9 before the 40,000 horizon`, ['rejected', 'bad'], 'causal'],
+    ['Not a rate artifact', 'The ratio does not depend on the SGD rate.', 'Rerun the three init-seed-0 pairs at rate 0.1.', 'Ratio at 0.1 against 0.3, grammars 0, 1, 2', `${r01.ratios.map((r) => fmt(r, 2)).join(', ')} against ${am03.map((r) => fmt(r, 2)).join(', ')}`, ['holds', 'ok'], 'robustness, 3 pairs'],
+  ];
+  $('hyp-body').innerHTML = rows.map(([h, pred, iv, obs, out, [v, cls], kind]) =>
+    `<tr><td><b>${h}</b><br><span class="note">${pred}</span></td><td>${iv}</td><td>${obs}</td><td>${out}</td><td><span class="pill ${cls}">${v}</span><br><span class="pill kind" style="margin-top:4px">${kind}</span></td></tr>`).join('');
+  $('ans-ratio').textContent = `${fmt(median(am.ratios), 2)}×`;
+  $('ans-range').textContent = `${fmt(Math.min(...am.ratios), 2)}–${fmt(Math.max(...am.ratios), 2)}`;
+  $('ans-nec').textContent = `${am.done} of ${am.n}`;
+}
+function protoNote(pr) {
+  if (pr.key === 'written') return 'Rate 10⁻³ chosen by the written pilot; 4,000 updates per arm. Nothing approaches 1/2, so every arm is censored at T > 4,000. Switch the vertical axis to "fit the data" to see the curves.';
+  if (pr.key === 'amended') return 'Amendment A3: rate 0.3 chosen by the amended pilot before any evaluation pair ran at it; horizon 40,000, and a pair stops once both arms pass D_h = 0.9 (A5).';
+  return 'Amendment A4: the three init-seed-0 pairs at rate 0.1, a robustness check on the sign and size of the effect. Other seeds were not run.';
+}
+function drawPair() {
+  const pr = PROTO();
+  const avail = new Set(pr.pairs.map((q) => `${q.g}:${q.s}`));
+  $('ps').querySelectorAll('button').forEach((b) => { b.disabled = !avail.has(`${S.pg}:${b.dataset.v}`); });
+  if (!avail.has(`${S.pg}:${S.ps}`)) { S.ps = 0; setPs(0); }
+  $('proto-note').textContent = protoNote(pr);
+  const q = pairOf(pr, S.pg, S.ps), k = S.ct;
+  $('pair-title').textContent = `${k === 'h' ? 'Hard' : 'Easy'} contrast · grammar ${q.g}, init seed ${q.s} · ${pr.label.toLowerCase()}`;
+  const xmax = Math.max(...pr.pairs.map((p) => Math.max(p.intact.last, p.detached.last))) * (pr.key === 'written' ? 1.04 : 1.02);
+  let top = 0;
+  for (const arm of ['intact', 'detached']) top = Math.max(top, ...q[arm]['A_' + k], ...q[arm]['D_' + k]);
+  const zoom = S.yz === 'zoom';
+  const ylim = zoom ? [0, top * 1.15] : [0, 1.02];
+  const f = frame($('pair-chart'), { xlim: [0, xmax], ylim, xlabel: 'SGD update', ylabel: 'fraction of variance', hlines: ylim[1] > 0.5 ? [0.5] : [],
+    yfmt: zoom && top < 0.02 ? (v) => (v * 1e3).toPrecision(3) + 'e-3' : undefined });
+  for (const arm of ['intact', 'detached']) {
+    const a = q[arm];
+    f.line(a.step.map((s, i) => [s, a['A_' + k][i]]), `c-${arm} dash thin`);
+    f.line(a.step.map((s, i) => [s, a['D_' + k][i]]), `c-${arm}`);
+  }
+  const lab = [];
+  for (const [i, arm] of ['intact', 'detached'].entries()) {
+    const a = q[arm];
+    if (k !== 'h') continue;
+    if (a.T !== null) {
+      f.svg.append(el('line', { class: `line thin c-${arm}`, x1: f.x(a.T), x2: f.x(a.T), y1: f.Ht - f.m.b, y2: f.clampY(0.5) }));
+      f.svg.append(el('circle', { class: `f-${arm}`, cx: f.x(a.T), cy: f.clampY(0.5), r: 4 }));
+      f.svg.append(el('text', { class: `f-${arm} strong`, x: f.x(a.T) + 6, y: f.Ht - f.m.b - 8 - 14 * i }, `T = ${int(a.T)}`));
+    } else {
+      const xh = f.x(pr.horizon), yy = f.m.t + 14 + 16 * i;
+      f.svg.append(el('path', { class: `f-${arm}`, d: `M ${xh} ${yy - 5} l 9 5 l -9 5 z` }));
+      f.svg.append(el('text', { class: `f-${arm} strong`, x: xh - 6, y: yy + 4, 'text-anchor': 'end' }, `${arm}: T > ${int(pr.horizon)} (censored)`));
+    }
+  }
+  if (pr.key !== 'written' && q.intact.last < pr.horizon) {
+    f.svg.append(el('text', { x: f.x(q.intact.last) + 4, y: f.m.t + 12 }, `stopped at ${int(q.intact.last)}: both arms ≥ 0.9`));
+  }
+  const cap = k === 'h'
+    ? (pr.key === 'written'
+      ? `Censored: neither arm's hard fit reaches 1/2 within ${int(pr.horizon)} updates (largest values ${fmt(q.intact.max_fit, 4)} intact, ${fmt(q.detached.max_fit, 4)} detached). The capped difference is 0 by construction and says nothing about the order of the arms.`
+      : `Half fit at ${int(q.intact.T)} updates intact and ${int(q.detached.T)} detached, a ratio of ${fmt(q.detached.T / q.intact.T, 2)}. Each time is the first evaluation (every 25 updates) with D_h ≥ 1/2. In both arms the dashed ceiling crosses 1/2 just before the solid fit, so the head is not what is slow.`)
+    : 'The easy contrast. In the detached arm its head still trains on stopped features, so its fit can only follow what the hard contrast\'s gradient happens to build.';
+  $('pair-cap').textContent = cap;
+  const kv = [['learning rate', String(pr.lr)], ['horizon', int(pr.horizon) + ' updates'], ['batch', `${pr.batch} trees, shared by both arms`],
+    ['evaluated every', `${pr.eval_every} updates`], ['start', q.init.replace('stored ', '')], ['data seed', int(7000400 + 1000 * q.g + q.s)],
+    ['contrast additive fraction', `${fmt(STUDY.contrasts[q.g].additive_easy, 3)} easy, ${fmt(STUDY.contrasts[q.g].additive_hard, 3)} hard`]];
+  $('pair-kv').innerHTML = kv.map(([a, b]) => `<dt>${a}</dt><dd>${esc(b)}</dd>`).join('');
+  drawAgg(); drawPath(q); pairTable();
+}
+function drawAgg() {
+  const pr = PROTO(), svg = $('agg-chart');
+  const Ts = pr.pairs.flatMap((q) => [q.intact.T, q.detached.T]).filter((t) => t !== null);
+  const lo = Ts.length ? Math.min(...Ts) / 1.4 : 1000, hi = Math.max(pr.horizon * 1.3, ...(Ts.length ? Ts.map((t) => t * 1.3) : [0]));
+  const f = frame(svg, { xlim: [0, 1], ylim: [lo, hi], ylog: true, xticks: [], ylabel: 'updates to half fit', height: 250, margin: { l: 70, r: 14, b: 26 },
+    yticks: [1000, 2000, 5000, 10000, 20000, 50000].filter((v) => v >= lo && v <= hi) });
+  const xi = f.x(0.22), xd = f.x(0.78);
+  f.svg.append(el('text', { class: 'f-intact strong', x: xi, y: f.Ht - 8, 'text-anchor': 'middle' }, 'intact'));
+  f.svg.append(el('text', { class: 'f-detached strong', x: xd, y: f.Ht - 8, 'text-anchor': 'middle' }, 'detached'));
+  f.svg.append(el('line', { class: 'ref', x1: f.m.l, x2: f.W - f.m.r, y1: f.y(pr.horizon), y2: f.y(pr.horizon) }));
+  f.svg.append(el('text', { x: f.W - f.m.r, y: f.y(pr.horizon) - 5, 'text-anchor': 'end' }, `horizon ${int(pr.horizon)}`));
+  pr.pairs.forEach((q, i) => {
+    const sel = q.g === S.pg && q.s === S.ps, jitter = (i - 4) * 2.2;
+    const yi = q.intact.T === null ? f.y(pr.horizon) : f.y(q.intact.T), yd = q.detached.T === null ? f.y(pr.horizon) : f.y(q.detached.T);
+    const g = el('g', { class: 'hit-group', tabindex: '0', role: 'button', 'aria-label': `grammar ${q.g}, init seed ${q.s}`, style: 'cursor:pointer' });
+    g.append(el('line', { class: 'line ' + (sel ? 'c-ink' : 'c-ink2 thin faint'), x1: xi, y1: yi + jitter, x2: xd, y2: yd + jitter }));
+    for (const [arm, xx, yy, T] of [['intact', xi, yi, q.intact.T], ['detached', xd, yd, q.detached.T]]) {
+      if (T === null) g.append(el('path', { class: `f-${arm}`, d: `M ${xx - 5} ${yy + jitter + 3} l 5 -9 l 5 9 z`, opacity: sel ? 1 : 0.5 }));
+      else g.append(el('circle', { class: `f-${arm}`, cx: xx, cy: yy + jitter, r: sel ? 5 : 3.5, opacity: sel ? 1 : 0.6 }));
+    }
+    g.append(el('line', { x1: xi, y1: yi + jitter, x2: xd, y2: yd + jitter, stroke: 'transparent', 'stroke-width': 12 }));
+    const pick = () => { S.pg = q.g; S.ps = q.s; setPg(q.g); setPs(q.s); drawPair(); };
+    g.addEventListener('click', pick);
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+    f.svg.append(g);
+    if (sel) f.svg.append(el('text', { class: 'f-ink strong', x: (xi + xd) / 2, y: (yi + yd) / 2 + jitter - 8, 'text-anchor': 'middle' }, `g${q.g} s${q.s}`));
+  });
+  const s = summary(pr);
+  $('agg-cap').textContent = s.done
+    ? `${s.n} pairs, joined within a pair; click one to select it. Median ${int(median(s.Ti))} updates intact against ${int(median(s.Td))} detached; per-pair ratio ${fmt(median(s.ratios), 2)} at the median (${fmt(Math.min(...s.ratios), 2)} to ${fmt(Math.max(...s.ratios), 2)}). ${s.censored} of ${2 * s.n} arms censored.`
+    : `All ${2 * s.n} arms are censored (triangles at the ${int(pr.horizon)}-update horizon). The restricted difference of capped times is 0 in every pair by construction.`;
+}
+function drawPath(q) {
+  const f = frame($('path-chart'), { xlim: [0, 1], ylim: [0, 1], xlabel: 'easy ceiling A_e', ylabel: 'hard ceiling A_h', height: 250, margin: { l: 46, b: 36 } });
+  f.svg.append(el('line', { class: 'ref', x1: f.x(0), y1: f.y(0), x2: f.x(1), y2: f.y(1) }));
+  for (const arm of ['intact', 'detached']) f.line(q[arm].step.map((_, i) => [q[arm].A_e[i], q[arm].A_h[i]]), `c-${arm}`);
+  if (S.proto !== 'written') {
+    for (const arm of ['intact', 'detached']) {
+      const a = q[arm], i = a.step.indexOf(a.T);
+      if (i >= 0) f.svg.append(el('circle', { class: `f-${arm}`, cx: f.x(a.A_e[i]), cy: f.y(a.A_h[i]), r: 4 }));
+    }
+  }
+  const ro = STUDY.readout.filter((r) => r.g === q.g && r.step <= 300);
+  for (const r of ro) f.svg.append(el('text', { x: f.x(r.A_e), y: f.y(r.A_h) + 4, 'text-anchor': 'middle', class: 'f-ink' }, '×'));
+}
+function pairTable() {
+  const pr = PROTO();
+  $('pair-rows').innerHTML = pr.pairs.map((q) => {
+    const sel = q.g === S.pg && q.s === S.ps;
+    const t = (a) => a.T === null ? `&gt; ${int(pr.horizon)}` : int(a.T);
+    const aeAt = (a) => { const i = a.step.indexOf(a.T); return i >= 0 ? fmt(a.A_e[i], 2) : '–'; };
+    const both = q.intact.T !== null && q.detached.T !== null;
+    return `<tr tabindex="0" data-g="${q.g}" data-s="${q.s}" aria-selected="${sel}"><td>grammar ${q.g}, seed ${q.s}</td><td class="n">${t(q.intact)}</td><td class="n">${t(q.detached)}</td>` +
+      `<td class="n">${both ? int(q.detached.T - q.intact.T) : '0 (capped)'}</td><td class="n">${both ? fmt(q.detached.T / q.intact.T, 2) : '–'}</td><td class="n">${aeAt(q.intact)}</td><td class="n">${aeAt(q.detached)}</td></tr>`;
+  }).join('');
+  $('pair-rows').querySelectorAll('tr').forEach((tr) => {
+    const pick = () => { S.pg = +tr.dataset.g; S.ps = +tr.dataset.s; setPg(S.pg); setPs(S.ps); drawPair(); };
+    tr.addEventListener('click', pick);
+    tr.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  });
+  $('pair-table-note').textContent = pr.key === 'written'
+    ? 'Every arm censored; the difference column is the restricted difference of capped times, zero by construction.'
+    : 'Times are first scheduled evaluations with D_h ≥ 1/2, each bracketed by the evaluation 25 updates earlier. In seven of nine intact arms (rate 0.3) D_h dips back under 1/2 for up to 450 updates; measured to the last crossing the median ratio is 2.26 (2.04 to 2.51).';
+}
+function drawReadout() {
+  const rows = STUDY.readout.filter((r) => r.g === S.rg), at0 = 25;
+  const px = (s) => Math.max(s, at0);
+  const xt = [at0, 100, 1000, 10000], xfmt = (v) => v === at0 ? '0' : tickLabel(v, true);
+  for (const [id, keys, ylab] of [['ro-ceil', ['A_e', 'A_h'], 'fraction of variance'], ['ro-acc', ['acc'], 'accuracy']]) {
+    const f = frame($(id), { xlim: [at0, 40000], ylim: [0, 1.02], xlog: true, xticks: xt, xfmt, xlabel: 'Adam update (0 drawn at left edge)', ylabel: ylab, height: 230, margin: { l: 46 } });
+    for (const s of [0, 1, 2]) {
+      const rr = rows.filter((r) => r.s === s).sort((a, b) => a.step - b.step);
+      keys.forEach((k) => f.line(rr.map((r) => [px(r.step), r[k]]), (k === 'A_h' ? 'c-right' : k === 'A_e' ? 'c-left' : 'c-ink') + ['', ' dash thin', ' thin faint'][s]));
+    }
+  }
+  const at = (s) => rows.filter((r) => r.step === s);
+  $('ro-kv').innerHTML = [['A_h at update 0', at(0)], ['A_e at update 0', at(0)]].map(([k, rr], i) =>
+    `<dt>${k.replace('_h', '<sub>h</sub>').replace('_e', '<sub>e</sub>')}</dt><dd>${rr.map((r) => fmt(i ? r.A_e : r.A_h, 4)).join(', ')}</dd>`).join('') +
+    `<dt>A<sub>e</sub>/A<sub>h</sub> at 100</dt><dd>${at(100).map((r) => fmt(r.A_e / r.A_h, 1)).join(', ')}</dd>` +
+    `<dt>A<sub>e</sub>/A<sub>h</sub> at 300</dt><dd>${at(300).map((r) => fmt(r.A_e / r.A_h, 2)).join(', ')}</dd>` +
+    `<dt>accuracy at 300</dt><dd>${at(300).map((r) => fmt(r.acc, 3)).join(', ')}</dd>` +
+    `<dt class="note">init seeds 0, 1, 2 (solid, dashed, faint)</dt><dd></dd>`;
+}
+function settings() {
+  const w = STUDY.pilots.written, a = STUDY.pilots.amended;
+  const pil = (p) => p.rows.map((r) => `${r.lr}: ${fmt(r.mean_final_hard_mse, 5)}`).join(' · ');
+  $('settings').innerHTML = `
+    <p><b>Grammars.</b> RHM with 16 root classes, 16 symbols per level, 4 productions per symbol, binary productions,
+      depth 4 (16 tokens). Grammar seeds 0, 1, 2. Section 1 also offers seeds 3–9, which have no trained network.</p>
+    <p><b>Network.</b> Untied binary tree tensor network, bond dimension 16, identity initialization (channel 0 carries a
+      constant; scale 0.1 noise), 65,536 parameters with the 16-way root. Intervention arms drop that root and train two zero-initialized
+      linear heads on the 256 product features.</p>
+    <p><b>Contrasts.</b> From each grammar's 64 top productions alone, before any learning curve was seen: the most and the
+      least additive unit-variance functions of the root label. Additive fractions: ${[0, 1, 2].map((g) => `grammar ${g} ${fmt(STUDY.contrasts[g].additive_easy, 3)} and ${fmt(STUDY.contrasts[g].additive_hard, 3)}`).join('; ')}.
+      Sign rule: ${esc(STUDY.contrasts[0].sign_rule)}.</p>
+    <p><b>Training.</b> Plain SGD (no momentum, decay, clipping or schedule), CPU float64, batches of 256 trees drawn once per update and
+      shared by both arms, data seed 7,000,400 + 1000·grammar + init seed, summed two-target squared loss. Exact population fits and
+      ceilings every 25 updates from the moments of Z; D ≤ A held at every evaluation (largest D − A was −2.0×10⁻⁵) and the
+      256-feature Gram matrix had full rank throughout.</p>
+    <p><b>Pilots</b> (grammar ${w.grammar}, init seed ${w.seed}; mean final hard squared error by rate). Written, ${w.steps} updates: ${pil(w)}; chose ${w.choice}.
+      Amended, ${int(a.steps)} updates: ${pil(a)}; chose ${a.choice}. Eligibility: finite and population loss below 10 at every evaluation.</p>
+    <p><b>Endpoint.</b> First scheduled evaluation with D<sub>h</sub> ≥ 1/2; censored at the horizon otherwise. Intact first means a
+      positive detached − intact difference.</p>
+    <p><b>Compute.</b> CPU only, no GPU rental: 66 minutes of wall-clock time on two processes for the saved results.</p>`;
+}
+
+// ============================================================================================ section 4
+const PL = { x: [1, 2, 3, 0], rl: 0.8, rr: 0.3, w: 0.05, b: 0.5, s: 1 };
+const hi = (a) => a >> 1, lo = (a) => a & 1, sgn = (bit) => bit ? -1 : 1;
+const bottom = (x, x2) => x ^ x2;
+const rootOf = (pL, pR) => { const u = hi(pL), v = hi(pR); return 2 * u + (u ^ v); };
+// child table over 16 leaf pairs: h = r H + sqrt(1 - r^2) N with H = (-1)^{first bit of x xor x'} and N a fixed unit
+// function orthogonal to H, N = (G1 + G2)/sqrt 2, G1 = (-1)^{low bits}, G2 = (-1)^{first bit of x}.
+const Hf = (x, x2) => sgn(hi(x ^ x2));
+const Nf = (x, x2) => (sgn(lo(x) ^ lo(x2)) + sgn(hi(x))) / Math.SQRT2;
+const table = (r) => (x, x2) => r * Hf(x, x2) + Math.sqrt(1 - r * r) * Nf(x, x2);
+function enumerate(wOverride) {
+  const hL = table(PL.rl), hR = table(PL.rr), wv = wOverride === undefined ? PL.w : wOverride;
+  let loss = 0, gw = 0, gb = 0, aL = 0, aR = 0, RL = 0, RR = 0, Dh = 0;
+  for (let i = 0; i < 256; i++) {
+    const x = [i >> 6 & 3, i >> 4 & 3, i >> 2 & 3, i & 3], pL = bottom(x[0], x[1]), pR = bottom(x[2], x[3]);
+    const U = sgn(hi(pL)), Vv = sgn(hi(pR)), l = hL(x[0], x[1]), r = hR(x[2], x[3]), p = 1 / 256;
+    const eErr = PL.b * l - PL.s * U, hErr = wv * l * r - U * Vv;
+    loss += p * 0.5 * (eErr * eErr + hErr * hErr); gw += p * hErr * l * r; gb += p * eErr * l;
+    aL += p * l * U; aR += p * r * Vv; RL += p * l * l; RR += p * r * r; Dh += p * hErr * hErr;
+  }
+  return { loss, gw, gb, aL, aR, RL, RR, Dh: 1 - Dh };
+}
+function drawPlantedRules() {
+  const pL = bottom(PL.x[0], PL.x[1]), pR = bottom(PL.x[2], PL.x[3]), y = rootOf(pL, pR);
+  let h = '<table class="rules"><tr><th>bottom parent</th><th colspan="4">productions (leaf pairs)</th></tr>';
+  for (let p = 0; p < 4; p++) h += `<tr><td>${p}</td>` + [0, 1, 2, 3].map((k) => { const hl = (p === pL && PL.x[0] === k) || (p === pR && PL.x[2] === k); return `<td class="${hl ? 'hl' : ''}">${k}${k ^ p}</td>`; }).join('') + '</tr>';
+  h += '</table><table class="rules" style="margin-top:8px"><tr><th>root (U, UV)</th><th colspan="4">productions (child pairs)</th></tr>';
+  for (let r = 0; r < 4; r++) {
+    const u = hi(r), v = u ^ lo(r);
+    h += `<tr><td>${r} <span class="note">(${sgn(u) > 0 ? '+' : '−'},${sgn(u ^ v) > 0 ? '+' : '−'})</span></td>` +
+      [0, 1, 2, 3].map((k) => { const c1 = 2 * u + (k >> 1), c2 = 2 * v + (k & 1); return `<td class="${r === y && c1 === pL && c2 === pR ? 'hl' : ''}">${c1}${c2}</td>`; }).join('') + '</tr>';
+  }
+  $('pl-rules').innerHTML = h + '</table>';
+}
+function drawPlantedExample() {
+  drawPlantedRules();
+  const x = PL.x, pL = bottom(x[0], x[1]), pR = bottom(x[2], x[3]), y = rootOf(pL, pR), U = sgn(hi(pL)), Vv = sgn(hi(pR));
+  $('pl-leaves').querySelectorAll('select').forEach((s, i) => { s.value = String(x[i]); });
+  $('pl-joint').innerHTML = `<h3>Joint law of this string</h3>
+    <dl class="kv"><dt>bottom nodes x₁⊕x₂, x₃⊕x₄</dt><dd>${pL}, ${pR}</dd><dt>first bits u, v</dt><dd>${hi(pL)}, ${hi(pR)}</dd>
+    <dt>root (u, u⊕v)</dt><dd>${y}</dd><dt>U, V, UV</dt><dd>${U > 0 ? '+1' : '−1'}, ${Vv > 0 ? '+1' : '−1'}, ${U * Vv > 0 ? '+1' : '−1'}</dd>
+    <dt>P(x, y) = ¼ · ¼ · ¼ · ¼</dt><dd>1/256</dd></dl>
+    <p class="note">Root prior, root production and two bottom productions, each 1/4. Every one of the 256 strings has exactly
+      one root, so P(x) = 1/256 and the posterior is one-hot, as in the depth-four grammars.</p>`;
+  const hL = table(PL.rl)(x[0], x[1]), hR = table(PL.rr)(x[2], x[3]);
+  $('pl-pred').innerHTML = `<h3>Predictions on this string</h3>
+    <dl class="kv"><dt>left table h<sub>L</sub>(x₁, x₂)</dt><dd>${fmt(hL, 3)}</dd><dt>right table h<sub>R</sub>(x₃, x₄)</dt><dd>${fmt(hR, 3)}</dd>
+    <dt>easy b·h<sub>L</sub>, target U</dt><dd>${fmt(PL.b * hL, 3)} vs ${U > 0 ? '+1' : '−1'}</dd>
+    <dt>hard w·h<sub>L</sub>h<sub>R</sub>, target UV</dt><dd>${fmt(PL.w * hL * hR, 3)} vs ${U * Vv > 0 ? '+1' : '−1'}</dd></dl>
+    <p class="note">Each table is <span class="math">h = rH + √(1−r²)N</span> on the 16 leaf pairs: H is the hidden sign of
+      the pair's parent and N a fixed unit function orthogonal to it.</p>`;
+}
+function drawPlantedLoss() {
+  const e = enumerate(), { rl, rr, w, b, s } = PL;
+  const closed = 0.5 * (s * s + 1 + b * b * e.RL + w * w * e.RL * e.RR - 2 * s * b * e.aL - 2 * w * e.aL * e.aR);
+  const gwC = w * e.RL * e.RR - e.aL * e.aR, gbC = b * e.RL - s * e.aL;
+  const ceil = rl * rl * rr * rr, best = enumerate(e.aL * e.aR / (e.RL * e.RR));
+  $('pl-loss').innerHTML = `<h3>Population loss and root gradient, by enumeration and in closed form</h3>
+    <div class="tablewrap"><table><thead><tr><th>quantity</th><th>formula</th><th class="n">sum over 256 strings</th><th class="n">closed form</th></tr></thead><tbody>
+    <tr><td>loss 𝓛</td><td class="math">½(s² + 1 + b²R<sub>L</sub> + w²R<sub>L</sub>R<sub>R</sub> − 2sb a<sub>L</sub> − 2w a<sub>L</sub>a<sub>R</sub>)</td><td class="n">${fmt(e.loss, 6)}</td><td class="n">${fmt(closed, 6)}</td></tr>
+    <tr><td>∂𝓛/∂w</td><td class="math">wR<sub>L</sub>R<sub>R</sub> − a<sub>L</sub>a<sub>R</sub></td><td class="n">${fmt(e.gw, 6)}</td><td class="n">${fmt(gwC, 6)}</td></tr>
+    <tr><td>∂𝓛/∂b</td><td class="math">bR<sub>L</sub> − s a<sub>L</sub></td><td class="n">${fmt(e.gb, 6)}</td><td class="n">${fmt(gbC, 6)}</td></tr>
+    <tr><td>hard fit D<sub>h</sub></td><td class="math">r<sub>L</sub>²r<sub>R</sub>² − (w√(R<sub>L</sub>R<sub>R</sub>) − r<sub>L</sub>r<sub>R</sub>)²</td><td class="n">${fmt(e.Dh, 6)}</td><td class="n">${fmt(ceil - (w * Math.sqrt(e.RL * e.RR) - rl * rr) ** 2, 6)}</td></tr>
+    <tr><td>ceiling A<sub>h</sub></td><td class="math">D<sub>h</sub> at the best w = a<sub>L</sub>a<sub>R</sub>/(R<sub>L</sub>R<sub>R</sub>)</td><td class="n">${fmt(best.Dh, 6)}</td><td class="n">${fmt(ceil, 6)}</td></tr>
+    </tbody></table></div>
+    <p class="note">Here a<sub>L</sub> = ${fmt(e.aL, 4)}, a<sub>R</sub> = ${fmt(e.aR, 4)}, R<sub>L</sub> = ${fmt(e.RL, 4)}, R<sub>R</sub> = ${fmt(e.RR, 4)}. At w = 0 the hard readout's gradient is
+      −a<sub>L</sub>a<sub>R</sub> = ${fmt(-e.aL * e.aR, 4)}: a product of the two alignments, so it is of order δ² when both children start at alignment δ.
+      That is why the hard target alone takes order 1/δ² time, and why a left child already taught by the easy target makes the
+      right child's problem only first order in its own alignment.</p>`;
+}
+function drawHeat() {
+  const svg = $('pl-heat'), W = Math.max(240, svg.parentNode.clientWidth - 20), side = Math.min(W - 60, 260), Ht = side + 44, m = { l: 44, t: 8 };
+  svg.setAttribute('viewBox', `0 0 ${W} ${Ht}`); svg.replaceChildren();
+  const n = 26, cell = side / n;
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const rl = (i + 0.5) / n, rr = (j + 0.5) / n, v = rl * rl * rr * rr;
+    svg.append(el('rect', { x: m.l + i * cell, y: m.t + side - (j + 1) * cell, width: cell + 0.5, height: cell + 0.5, class: 'f-intact', 'fill-opacity': (0.04 + 0.9 * v).toFixed(3) }));
+  }
+  const pts = [];
+  for (let k = 0; k <= 60; k++) { const rl = Math.SQRT1_2 ** 0.5 + (1 - Math.SQRT1_2 ** 0.5) * k / 60, rr = Math.sqrt(0.5) / rl; if (rr <= 1) pts.push(`${m.l + rl * side},${m.t + side - rr * side}`); }
+  svg.append(el('polyline', { points: pts.join(' '), class: 'line c-ink thin dash' }));
+  svg.append(el('rect', { x: m.l, y: m.t, width: side, height: side, fill: 'none', class: 'c-ink2' }));
+  for (const v of [0, 0.5, 1]) {
+    svg.append(el('text', { x: m.l + v * side, y: m.t + side + 14, 'text-anchor': 'middle' }, String(v)));
+    svg.append(el('text', { x: m.l - 6, y: m.t + side - v * side + 4, 'text-anchor': 'end' }, String(v)));
+  }
+  svg.append(el('text', { x: m.l + side / 2, y: Ht - 4, 'text-anchor': 'middle' }, 'left alignment r_L'));
+  svg.append(el('text', { x: 11, y: m.t + side / 2, 'text-anchor': 'middle', transform: `rotate(-90 11 ${m.t + side / 2})` }, 'right r_R'));
+  const cx = m.l + PL.rl * side, cy = m.t + side - PL.rr * side, c = PL.rl ** 2 * PL.rr ** 2;
+  svg.append(el('circle', { cx, cy, r: 6, class: 'f-surface c-ink', 'stroke-width': 2 }));
+  svg.append(el('text', { x: Math.min(cx + 9, m.l + side - 70), y: cy - 8, class: 'f-ink strong' }, `A_h = ${c.toFixed(3)}`));
+  if (W - m.l - side > 50) svg.append(el('text', { x: m.l + side + 6, y: m.t + 14 }, '1/2'));
+}
+function drawPlantedSliders() {
+  for (const k of ['rl', 'rr', 'w', 'b']) $(`pl-${k}-v`).textContent = PL[k].toFixed(2);
+  drawPlantedExample(); drawPlantedLoss(); drawHeat();
+}
+
+// planted dynamics (reuses the explorer's integrator)
+const P = { tied: 'untied', s: '1', axis: 'linear', delta: 10 ** -1.7 };
+const ARMS = [
+  { tied: true, s: 1, label: 'tied, both', cls: 'c-intact', lab: 'f-intact' },
+  { tied: false, s: 1, label: 'untied, both', cls: 'c-left', lab: 'f-left' },
+  { tied: true, s: 0, label: 'tied, hard only', cls: 'c-detached', lab: 'f-detached' },
+  { tied: false, s: 0, label: 'untied, hard only', cls: 'c-right', lab: 'f-right' },
+];
+const SWEEP = [];
+for (let e = -2.5; e <= -0.699; e += 0.075) SWEEP.push(10 ** e);
+let sweepCache = null;
+function drawPlanted() {
+  const tied = P.tied === 'tied', s = Number(P.s);
+  $('delta-val').textContent = P.delta.toPrecision(3);
+  const run = integrate(tied, s, P.delta), ev = run.events;
+  const wait = (ev.hard !== null && ev.left !== null) ? ev.hard - ev.left : null, lead = law(tied, s, P.delta);
+  const rows = [['r<sub>L</sub> reaches 1/2 at', fmt(ev.left, 2)], ['r<sub>R</sub> reaches 1/2 at', fmt(ev.right, 2)], ['D<sub>h</sub> reaches 1/2 at', fmt(ev.hard, 2)],
+    ['wait from r<sub>L</sub> to D<sub>h</sub>', fmt(wait, 2)], ['leading terms of the law', fmt(lead, 2)], ['remainder (bounded as δ → 0)', ev.hard === null ? '–' : fmt(ev.hard - lead, 2)]];
+  $('planted-out').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  const Lg = 'log(1/δ)';
+  $('planted-law').textContent = s === 1
+    ? (tied ? `Law: T = ${Lg}/λ₁ + O(1), λ₁ = ${LAMBDA_1.toFixed(3)}. The shared table hands the right child the feature the easy target taught the left one, so the wait stays bounded.`
+      : `Law: T = (1/λ₁ + 1/λ₂)·${Lg} + O(1), λ₂ = ${LAMBDA_2.toFixed(3)}. The right table is still at alignment of order δ when the left one has learned, and escapes at rate λ₂.`)
+    : (tied ? `Law: T = 1/(4δ²) + (5/2)·${Lg} + O(1). Without the easy target the only signal is second order in the alignment.`
+      : `Law: T = 1/(2δ²) + 3·${Lg} + O(1). Each untied table gets half the gradient a shared one would.`);
+  const tMax = run.tFinal, tMin = Math.max(1e-2, Math.min(1, tMax / 1e4));
+  const col = (k) => run.path.map((p) => [P.axis === 'log' ? Math.max(p[0], tMin) : p[0], p[k]]);
+  const f = frame($('traj'), { xlim: [P.axis === 'log' ? tMin : 0, tMax], ylim: [0, 1.02], xlog: P.axis === 'log', xlabel: 'gradient-flow time t', ylabel: 'alignment, fraction of variance', hlines: [0.5] });
+  f.line(col(1), 'c-left thin');
+  if (!tied) f.line(col(2), 'c-right thin');
+  f.line(col(4), 'c-intact dash thin'); f.line(col(3), 'c-intact');
+  for (const [t, cls] of [[ev.left, 'c-left'], [tied ? null : ev.right, 'c-right'], [ev.hard, 'c-intact']]) {
+    if (t !== null) f.svg.append(el('line', { class: 'line thin ' + cls, x1: f.x(Math.max(t, P.axis === 'log' ? tMin : 0)), x2: f.x(Math.max(t, P.axis === 'log' ? tMin : 0)), y1: f.Ht - f.m.b, y2: f.Ht - f.m.b - 9 }));
+  }
+  if (!sweepCache) sweepCache = ARMS.map((a) => SWEEP.map((d) => [d, integrate(a.tied, a.s, d, { keep: false }).events.hard]));
+  const cur = ARMS.findIndex((a) => a.tied === tied && a.s === s);
+  const g = frame($('sweep'), { xlim: [SWEEP[0], 0.2], ylim: [1, 1e5], xlog: true, ylog: true, xlabel: 'initial alignment δ', ylabel: 'hard half-fit time' });
+  ARMS.forEach((a, i) => {
+    g.line(sweepCache[i], a.cls + (i === cur ? '' : ' thin faint'));
+    const first = sweepCache[i][0];
+    g.svg.append(el('text', { class: a.lab + ' strong', x: g.x(first[0]) + 6, y: g.clampY(first[1]) + [14, -6, 14, -6][i] }, a.label));
+    for (const sv of STUDY.planted.filter((q) => q.tied === a.tied && q.s === a.s)) g.svg.append(el('circle', { cx: g.x(sv.delta), cy: g.y(sv.hard), r: 3.5, fill: 'none', class: a.cls, 'stroke-width': 1.4 }));
+  });
+  g.svg.append(el('circle', { class: 'f-ink', cx: g.x(P.delta), cy: g.clampY(ev.hard === null ? 1e5 : ev.hard), r: 4.5 }));
+}
+
+// ============================================================================================ wiring
+let setPg, setPs;
+function update(what) {
+  if (what === 'tree' || what === 'all') { S.stage = 9; nodeCard(); parseCard(); }
+  if (what === 'sel') nodeCard();
+  drawTree1(); drawTree2(); ttnCard(); learnerId(); outputs();
+}
+function setGrammar(g, viaEdit) {
+  if (viaEdit) remember({ kind: 'grammar', from: S.g, to: g });
+  S.g = g;
+  $('g-seed').value = String(g);
+  learnerId();
+  update('tree');
+  loadWeights(g).then(() => { if (S.g === g) update('tree'); });
+}
+function start() {
+  const gs = $('g-seed');
+  gs.innerHTML = Array.from({ length: 10 }, (_, s) => `<option value="${s}">seed ${s}${s <= 2 ? ' (study grammar)' : ' (no trained network)'}</option>`).join('');
+  gs.addEventListener('change', () => setGrammar(+gs.value, true));
+  $('g-next').addEventListener('click', () => setGrammar((S.g + 1) % 10, true));
+  const rs = $('root-sym');
+  rs.innerHTML = Array.from({ length: 16 }, (_, a) => `<option value="${a}">${a}</option>`).join('');
+  rs.value = String(S.root);
+  rs.addEventListener('change', () => { remember({ kind: 'resample' }); S.root = +rs.value; S.prods = randomProds(treeRng); update('tree'); });
+  $('resample').addEventListener('click', () => { remember({ kind: 'resample' }); S.prods = randomProds(treeRng); update('tree'); });
+  S.prods = randomProds(treeRng);
+  S.sel = { l: 2, p: 1 };
+
+  $('stages').innerHTML = STAGES.map(([n]) => `<button type="button">${n}</button>`).join('');
+  $('stages').querySelectorAll('button').forEach((b, i) => b.addEventListener('click', () => { stopPlay(); S.stage = i; drawTree2(); }));
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stopPlay = () => { if (S.playing) { clearInterval(S.playing); S.playing = null; $('play').textContent = 'Play both passes'; } };
+  $('play').addEventListener('click', () => {
+    if (S.playing) { stopPlay(); return; }
+    if (reduce) { S.stage = 9; drawTree2(); return; }
+    S.stage = 0; drawTree2(); $('play').textContent = 'Stop';
+    S.playing = setInterval(() => { S.stage += 1; drawTree2(); if (S.stage >= 9) stopPlay(); }, 750);
+  });
+  segmented('learner', S.learner, (v) => { S.learner = v; S.prevBonds = (S.prevLeaves && WEIGHTS[S.g]) ? forward(WEIGHTS[S.g][v], S.prevLeaves).bonds : null; update('learner'); });
+
+  $('proto').innerHTML = STUDY.protocols.map((p) => `<button type="button" data-v="${p.key}">${p.label}</button>`).join('');
+  segmented('proto', S.proto, (v) => { S.proto = v; S.yz = v === 'written' ? 'zoom' : 'full'; setYz(S.yz); drawPair(); });
+  setPg = segmented('pg', S.pg, (v) => { S.pg = +v; drawPair(); });
+  setPs = segmented('ps', S.ps, (v) => { S.ps = +v; drawPair(); });
+  segmented('ct', S.ct, (v) => { S.ct = v; drawPair(); });
+  const setYz = segmented('yz', S.yz, (v) => { S.yz = v; drawPair(); });
+  segmented('rg', S.rg, (v) => { S.rg = +v; drawReadout(); });
+
+  $('pl-leaves').innerHTML = [0, 1, 2, 3].map((i) => `<select id="pl-x${i}" aria-label="leaf ${i + 1}">${[0, 1, 2, 3].map((v) => `<option value="${v}">${v}</option>`).join('')}</select>`).join('');
+  $('pl-leaves').querySelectorAll('select').forEach((s, i) => s.addEventListener('change', () => { PL.x[i] = +s.value; drawPlantedExample(); }));
+  const prng = rng(99);
+  $('pl-rand').addEventListener('click', () => { PL.x = PL.x.map(() => Math.floor(prng() * 4)); drawPlantedExample(); });
+  for (const k of ['rl', 'rr', 'w', 'b']) $(`pl-${k}`).addEventListener('input', (e) => { PL[k] = +e.target.value; drawPlantedSliders(); });
+  $('pl-best').addEventListener('click', () => { const e = enumerate(); PL.w = Math.min(1.2, e.aL * e.aR / (e.RL * e.RR)); $('pl-w').value = PL.w; drawPlantedSliders(); });
+  segmented('tie', P.tied, (v) => { P.tied = v; drawPlanted(); });
+  segmented('easy', P.s, (v) => { P.s = v; drawPlanted(); });
+  segmented('axis', P.axis, (v) => { P.axis = v; drawPlanted(); });
+  $('delta').addEventListener('input', (e) => { P.delta = 10 ** Number(e.target.value); drawPlanted(); });
+
+  $('foot-data').innerHTML = `Data bundled with this page: rule tables, contrasts, every saved evaluation of the 21 intervention pairs, both pilots, the 135-checkpoint readout, the planted event times, and the network weights shown in section 2 (cores rounded to float16). Exported from commit <span class="num">${STUDY.built_from.slice(0, 7)}</span> of the public repository. Trees in sections 1 and 2 are drawn in your browser; the rule tables are the study's.`;
+  hypotheses(); settings();
+  update('all'); drawPair(); drawReadout(); drawPlantedSliders(); drawPlanted();
+  loadWeights(S.g).then(() => update('all'));
+
+  // section bar highlight
+  const links = [...document.querySelectorAll('nav.sections a')];
+  const parts = links.map((a) => document.querySelector(a.getAttribute('href')));
+  const onScroll = () => {
+    let k = 0;
+    parts.forEach((p, i) => { if (p.getBoundingClientRect().top < 120) k = i; });
+    links.forEach((a, i) => a.classList.toggle('on', i === k));
+  };
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  let pending = 0;
+  window.addEventListener('resize', () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => { update('resize'); drawPair(); drawReadout(); drawHeat(); drawPlanted(); }); });
+  window.CFE = { S, STUDY, WEIGHTS, forward, parse, symbols, loadWeights, sampleFit, enumerate, PL, setGrammar, switchProduction, update, drawPair, summary };
+}
+
+getJSON('data/study.json').then((d) => { STUDY = d; start(); })
+  .catch((e) => { document.querySelector('.page').insertAdjacentHTML('afterbegin', `<p class="callout">The study data did not load (${esc(e.message)}). Reload the page to try again.</p>`); });
+</script>
