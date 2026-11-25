@@ -56,3 +56,13 @@ The grammar audit already rules out an exactly pure interaction of the original 
 Deliver the raw per-run/per-checkpoint data, source commit, realized configs, seed pairs, estimator and precision, censored or missing rows, one regenerating plotting script, and a short results README. Show the analytic reference lines and the actual/optimal fits on common axes. Identify separately which result checks the planted theorem, which tests transfer to the three fixed grammars, and which is only observational at a CE checkpoint. The manually designed two-head loss is the bridge between those two regimes. The standard training code uses minibatch Adam and cross-entropy, so changes in its global accuracy alone do not establish the predicted Euclidean-flow clock.
 
 The analytic checks and exact-grammar figures are CPU tasks. If the subsequent training proposal needs Runpod, use the current project setup in `orch.toml` and the user's Runpod rules. Confirm CBAI and the exact `aniket-` pod prefix, quote hardware, time limit and cost, and follow the experiment workflow before allocating. The present branch contains no new billable run or commitment.
+
+## Status after execution (2026-11-25)
+
+The pending work above has been run; the results, checks and limits are in the [study README](../../studies/rhm/child_feature_enabling/README.md). In short:
+
+- **Planted sweep.** All four time laws hold at $\delta$ from 0.08 to 0.005 (untied wait slopes 1.441 to 1.432 against $1/\lambda_2=1.4317$; tied wait 1.0571 at every $\delta$).
+- **Checkpoint readout.** All 135 checkpoints were found in the published archive and read; none is missing. Both contrasts are nearly absent from the root's features at initialization and the easy ceiling leads the hard one through the transition.
+- **Intervention.** The protocol as written (rates up to $10^{-3}$, 4,000 updates) left every arm censored. Under the amended protocol (rate 0.3, horizon 40,000; amendments A3 to A5 in the experiment definition) detaching the easy gradient delayed the hard contrast's half fit by a median factor of 2.41 (2.09 to 2.51) in nine of nine pairs, with the trained fit on its frozen-child ceiling in both arms.
+
+Not done, and listed in the README under "Not yet checked": a control with a second poorly additive contrast in place of the easy one, the same comparison under exact population gradient descent, other initialization scales, more grammars, and the original cross-entropy/Adam training. A draft post for the training dynamics channel is in [zulip-post.md](zulip-post.md) and an interactive page in [explorer.html](explorer.html).

@@ -83,7 +83,11 @@ def checkpoints():
     out['acc_range_by_step'] = {step: [min(r['acc'] for r in rows if r['step'] == step),
                                        max(r['acc'] for r in rows if r['step'] == step)] for step in (100, 150, 200, 300)}
     out['A_e_over_A_h'] = {step: [min(r['A_e'] / r['A_h'] for r in rows if r['step'] == step),
-                                  max(r['A_e'] / r['A_h'] for r in rows if r['step'] == step)] for step in (100, 150)}
+                                  max(r['A_e'] / r['A_h'] for r in rows if r['step'] == step)]
+                           for step in (100, 150, 200, 300)}
+    out['hard_at_or_above_easy_from_300'] = dict(
+        n=len(late), n_true=sum(r['A_h'] >= r['A_e'] for r in late),
+        earliest_step=min((r['step'] for r in late if r['A_h'] >= r['A_e']), default=None))
     # the contrasts' additive fractions against the committed audit of the same rule tables
     audit = json.loads((HERE / 'results/grammar_audit.json').read_text())['tables']
     out['contrast_vs_audit_max_abs_diff'] = max(
@@ -95,6 +99,7 @@ def checkpoints():
     for key in ('A_h_step0_range', 'A_e_step0_range', 'A_h_after_300_range', 'A_e_after_300_range', 'easy_leads_hard',
                 'cutoff_sensitivity_max', 'min_rank', 'logged_loss_max_abs_diff', 'ce_reveal1_min_width',
                 'ce_reveal1_max_width', 'D_ce_after_300_min', 'acc_range_by_step', 'A_e_over_A_h',
+                'hard_at_or_above_easy_from_300',
                 'contrast_vs_audit_max_abs_diff', 'contrast_eigenspace_dims'):
         print(f'{key}: {out[key]}')
     print('final test (50,000 trees): acc ' + ', '.join(f"{t['acc']:.5f}" for t in data['final_test'])
@@ -127,6 +132,13 @@ def intervention(folder):
                             final_A_e=cols['A_e'][-1], max_D_h=max(cols['D_h']),
                             max_D_minus_A=p['arms'][arm]['max_D_minus_A'], final_lower_shift=cols['lower_shift'][-1],
                             last_step=cols['step'][-1])
+            # After its first crossing the fit can fall back under 1/2. T_stay is the first evaluation from which it
+            # stays at or above 1/2 to the end of the saved run (None if it never does).
+            below = [k for k, d in enumerate(cols['D_h']) if d < 0.5]
+            stay = below[-1] + 1 if below else 0
+            row[arm]['T_stay'] = cols['step'][stay] if stay < len(cols['step']) else None
+            row[arm]['evaluations_below_after_T'] = (0 if cross['censored'] else
+                                                     sum(1 for k in below if cols['step'][k] > cross['T']))
             if not cross['censored']:  # state of the arm at its own half-fit evaluation
                 k = cols['step'].index(cross['T'])
                 row[arm]['at_T'] = dict(A_h=cols['A_h'][k], A_e=cols['A_e'][k], D_e=cols['D_e'][k],
@@ -152,6 +164,7 @@ def intervention(folder):
         row['capped_difference'] = min(b['T'] or horizon, horizon) - min(a['T'] or horizon, horizon)
         row['ratio'] = None if a['censored'] or b['censored'] else b['T'] / a['T']
         row['ratio_lower_bound'] = None if a['censored'] or not b['censored'] else horizon / a['T']
+        row['ratio_stay'] = None if a['T_stay'] is None or b['T_stay'] is None or a['censored'] else b['T_stay'] / a['T_stay']
         out['pairs'].append(row)
         fmt = lambda x: f"{x['T']:,}" if not x['censored'] else f'> {horizon:,}'
         tc = lambda x: f"{x['T_ceiling']:,}" if x['T_ceiling'] is not None else f'> {horizon:,}'
@@ -172,6 +185,14 @@ def intervention(folder):
     ratios = [r['ratio'] for r in rows if r['ratio']]
     if ratios:
         out['ratio'] = dict(n=len(ratios), median=statistics.median(ratios), min=min(ratios), max=max(ratios))
+        stay = [r['ratio_stay'] for r in rows if r['ratio_stay']]
+        out['ratio_stay'] = dict(n=len(stay), median=statistics.median(stay), min=min(stay), max=max(stay))
+        out['fall_back_after_T'] = {arm: dict(
+            pairs=sum(r[arm]['evaluations_below_after_T'] > 0 for r in rows),
+            max_evaluations=max(r[arm]['evaluations_below_after_T'] for r in rows),
+            max_updates_after_T=max((r[arm]['T_stay'] - 25 - r[arm]['T']) for r in rows
+                                    if r[arm]['evaluations_below_after_T'] > 0) if any(
+                r[arm]['evaluations_below_after_T'] > 0 for r in rows) else 0) for arm in ARMS}
     for arm in ARMS:
         ts = [r[arm]['T'] for r in rows if not r[arm]['censored']]
         if ts:
@@ -212,7 +233,7 @@ def intervention(folder):
     out['final_A_e_range'] = {arm: [min(r[arm]['final_A_e'] for r in rows), max(r[arm]['final_A_e'] for r in rows)]
                               for arm in ARMS}
     for key in ('censored', 'nonfinite', 'intact_first', 'detached_first', 'capped_difference', 'ratio', 'T_intact',
-                'T_detached', 'ceiling_to_fit_lag_intact', 'ceiling_to_fit_lag_detached', 'at_T_intact', 'at_T_detached', 'max_ceiling_gap',
+                'T_detached', 'ratio_stay', 'fall_back_after_T', 'ceiling_to_fit_lag_intact', 'ceiling_to_fit_lag_detached', 'at_T_intact', 'at_T_detached', 'max_ceiling_gap',
                 'median_ceiling_gap', 'evaluations_with_gap_above_0.05', 'early_grad_ratio_easy_over_hard',
                 'early_grad_cos', 'min_rank', 'cutoff_sensitivity_max', 'max_final_or_any_D_h', 'steps_done',
                 'seconds', 'init_kinds',
